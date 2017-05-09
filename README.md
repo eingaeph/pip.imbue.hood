@@ -1,5 +1,6 @@
 # pip.imbue.hood
 
-  Blountville proof of concept. Actual coding to follow
+  Blountville proof of concept. 
 
-  Check licensing issues.
+  Prototype code kilo.c contains a copyright notice (2016)
+  here incorporated as LICENSE.md. 
