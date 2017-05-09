@@ -1,0 +1,1275 @@
+0000 KILO /* Kilo -- A very simple editor in less than 1-kilo lines of code (as counted
+0001 KILO  *         by "cloc"). Does not depend on libcurses, directly emits VT100
+0002 KILO  *         escapes on the terminal.
+0003 KILO  *
+0004 KILO  * -----------------------------------------------------------------------
+0005 KILO  *
+0006 KILO  * Copyright (C) 2016 Salvatore Sanfilippo <antirez at gmail dot com>
+0007 KILO  *
+0008 KILO  * All rights reserved.
+0009 KILO  *
+0010 KILO  * Redistribution and use in source and binary forms, with or without
+0011 KILO  * modification, are permitted provided that the following conditions are
+0012 KILO  * met:
+0013 KILO  *
+0014 KILO  *  *  Redistributions of source code must retain the above copyright
+0015 KILO  *     notice, this list of conditions and the following disclaimer.
+0016 KILO  *
+0017 KILO  *  *  Redistributions in binary form must reproduce the above copyright
+0018 KILO  *     notice, this list of conditions and the following disclaimer in the
+0019 KILO  *     documentation and/or other materials provided with the distribution.
+0020 KILO  *
+0021 KILO  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+0022 KILO  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+0023 KILO  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+0024 KILO  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+0025 KILO  * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+0026 KILO  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+0027 KILO  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+0028 KILO  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+0029 KILO  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+0030 KILO  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+0031 KILO  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+0032 KILO  */
+0033 KILO 
+0034 KILO #define KILO_VERSION "0.0.1"
+0035 KILO 
+0036 KILO #define _BSD_SOURCE
+0037 KILO #define _GNU_SOURCE
+0038 KILO 
+0039 KILO #include <termios.h>
+0040 KILO #include <stdlib.h>
+0041 KILO #include <stdio.h>
+0042 KILO #include <errno.h>
+0043 KILO #include <string.h>
+0044 KILO #include <stdlib.h>
+0045 KILO #include <ctype.h>
+0046 KILO #include <sys/types.h>
+0047 KILO #include <sys/ioctl.h>
+0048 KILO #include <sys/time.h>
+0049 KILO #include <unistd.h>
+0050 KILO #include <stdarg.h>
+0051 KILO #include <fcntl.h>
+0052 KILO 
+0053 KILO /* Syntax highlight types */
+0054 KILO #define HL_NORMAL 0
+0055 KILO #define HL_NONPRINT 1
+0056 KILO #define HL_COMMENT 2   /* Single line comment. */
+0057 KILO #define HL_MLCOMMENT 3 /* Multi-line comment. */
+0058 KILO #define HL_KEYWORD1 4
+0059 KILO #define HL_KEYWORD2 5
+0060 KILO #define HL_STRING 6
+0061 KILO #define HL_NUMBER 7
+0062 KILO #define HL_MATCH 8      /* Search match. */
+0063 KILO 
+0064 KILO #define HL_HIGHLIGHT_STRINGS (1<<0)
+0065 KILO #define HL_HIGHLIGHT_NUMBERS (1<<1)
+0066 KILO 
+0067 KILO struct editorSyntax {
+0068 KILO     char **filematch;
+0069 KILO     char **keywords;
+0070 KILO     char singleline_comment_start[2];
+0071 KILO     char multiline_comment_start[3];
+0072 KILO     char multiline_comment_end[3];
+0073 KILO     int flags;
+0074 KILO };
+0075 KILO 
+0076 KILO /* This structure represents a single line of the file we are editing. */
+0077 KILO typedef struct erow {
+0078 KILO     int idx;            /* Row index in the file, zero-based. */
+0079 KILO     int size;           /* Size of the row, excluding the null term. */
+0080 KILO     int rsize;          /* Size of the rendered row. */
+0081 KILO     char *chars;        /* Row content. */
+0082 KILO     char *render;       /* Row content "rendered" for screen (for TABs). */
+0083 KILO     unsigned char *hl;  /* Syntax highlight type for each character in render.*/
+0084 KILO     int hl_oc;          /* Row had open comment at end in last syntax highlight
+0085 KILO                            check. */
+0086 KILO } erow;
+0087 KILO 
+0088 KILO typedef struct hlcolor {
+0089 KILO     int r,g,b;
+0090 KILO } hlcolor;
+0091 KILO 
+0092 KILO struct editorConfig {
+0093 KILO     int cx,cy;  /* Cursor x and y position in characters */
+0094 KILO     int rowoff;     /* Offset of row displayed. */
+0095 KILO     int coloff;     /* Offset of column displayed. */
+0096 KILO     int screenrows; /* Number of rows that we can show */
+0097 KILO     int screencols; /* Number of cols that we can show */
+0098 KILO     int numrows;    /* Number of rows */
+0099 KILO     int rawmode;    /* Is terminal raw mode enabled? */
+0100 KILO     erow *row;      /* Rows */
+0101 KILO     int dirty;      /* File modified but not saved. */
+0102 KILO     char *filename; /* Currently open filename */
+0103 KILO     char statusmsg[80];
+0104 KILO     time_t statusmsg_time;
+0105 KILO     struct editorSyntax *syntax;    /* Current syntax highlight, or NULL. */
+0106 KILO };
+0107 KILO 
+0108 KILO static struct editorConfig E;
+0109 KILO 
+0110 KILO enum KEY_ACTION{
+0111 KILO         KEY_NULL = 0,       /* NULL */
+0112 KILO         CTRL_C = 3,         /* Ctrl-c */
+0113 KILO         CTRL_D = 4,         /* Ctrl-d */
+0114 KILO         CTRL_F = 6,         /* Ctrl-f */
+0115 KILO         CTRL_H = 8,         /* Ctrl-h */
+0116 KILO         TAB = 9,            /* Tab */
+0117 KILO         CTRL_L = 12,        /* Ctrl+l */
+0118 KILO         ENTER = 13,         /* Enter */
+0119 KILO         CTRL_Q = 17,        /* Ctrl-q */
+0120 KILO         CTRL_S = 19,        /* Ctrl-s */
+0121 KILO         CTRL_U = 21,        /* Ctrl-u */
+0122 KILO         ESC = 27,           /* Escape */
+0123 KILO         BACKSPACE =  127,   /* Backspace */
+0124 KILO         /* The following are just soft codes, not really reported by the
+0125 KILO          * terminal directly. */
+0126 KILO         ARROW_LEFT = 1000,
+0127 KILO         ARROW_RIGHT,
+0128 KILO         ARROW_UP,
+0129 KILO         ARROW_DOWN,
+0130 KILO         DEL_KEY,
+0131 KILO         HOME_KEY,
+0132 KILO         END_KEY,
+0133 KILO         PAGE_UP,
+0134 KILO         PAGE_DOWN
+0135 KILO };
+0136 KILO 
+0137 KILO void editorSetStatusMessage(const char *fmt, ...);
+0138 KILO 
+0139 KILO /* =========================== Syntax highlights DB =========================
+0140 KILO  *
+0141 KILO  * In order to add a new syntax, define two arrays with a list of file name
+0142 KILO  * matches and keywords. The file name matches are used in order to match
+0143 KILO  * a given syntax with a given file name: if a match pattern starts with a
+0144 KILO  * dot, it is matched as the last past of the filename, for example ".c".
+0145 KILO  * Otherwise the pattern is just searched inside the filenme, like "Makefile").
+0146 KILO  *
+0147 KILO  * The list of keywords to highlight is just a list of words, however if they
+0148 KILO  * a trailing '|' character is added at the end, they are highlighted in
+0149 KILO  * a different color, so that you can have two different sets of keywords.
+0150 KILO  *
+0151 KILO  * Finally add a stanza in the HLDB global variable with two two arrays
+0152 KILO  * of strings, and a set of flags in order to enable highlighting of
+0153 KILO  * comments and numbers.
+0154 KILO  *
+0155 KILO  * The characters for single and multi line comments must be exactly two
+0156 KILO  * and must be provided as well (see the C language example).
+0157 KILO  *
+0158 KILO  * There is no support to highlight patterns currently. */
+0159 KILO 
+0160 KILO /* C / C++ */
+0161 KILO char *C_HL_extensions[] = {".c",".cpp",NULL};
+0162 KILO char *C_HL_keywords[] = {
+0163 KILO         /* A few C / C++ keywords */
+0164 KILO         "switch","if","while","for","break","continue","return","else",
+0165 KILO         "struct","union","typedef","static","enum","class",
+0166 KILO         /* C types */
+0167 KILO         "int|","long|","double|","float|","char|","unsigned|","signed|",
+0168 KILO         "void|",NULL
+0169 KILO };
+0170 KILO 
+0171 KILO /* Here we define an array of syntax highlights by extensions, keywords,
+0172 KILO  * comments delimiters and flags. */
+0173 KILO struct editorSyntax HLDB[] = {
+0174 KILO     {
+0175 KILO         /* C / C++ */
+0176 KILO         C_HL_extensions,
+0177 KILO         C_HL_keywords,
+0178 KILO         "//","/*","*/",
+0179 KILO         HL_HIGHLIGHT_STRINGS | HL_HIGHLIGHT_NUMBERS
+0180 KILO     }
+0181 KILO };
+0182 KILO 
+0183 KILO #define HLDB_ENTRIES (sizeof(HLDB)/sizeof(HLDB[0]))
+0184 KILO 
+0185 KILO /* ======================= Low level terminal handling ====================== */
+0186 KILO 
+0187 KILO static struct termios orig_termios; /* In order to restore at exit.*/
+0188 KILO 
+0189 KILO void disableRawMode(int fd) {
+0190 KILO     /* Don't even check the return value as it's too late. */
+0191 KILO     if (E.rawmode) {
+0192 KILO         tcsetattr(fd,TCSAFLUSH,&orig_termios);
+0193 KILO         E.rawmode = 0;
+0194 KILO     }
+0195 KILO }
+0196 KILO 
+0197 KILO /* Called at exit to avoid remaining in raw mode. */
+0198 KILO void editorAtExit(void) {
+0199 KILO     disableRawMode(STDIN_FILENO);
+0200 KILO }
+0201 KILO 
+0202 KILO /* Raw mode: 1960 magic shit. */
+0203 KILO int enableRawMode(int fd) {
+0204 KILO     struct termios raw;
+0205 KILO 
+0206 KILO     if (E.rawmode) return 0; /* Already enabled. */
+0207 KILO     if (!isatty(STDIN_FILENO)) goto fatal;
+0208 KILO     atexit(editorAtExit);
+0209 KILO     if (tcgetattr(fd,&orig_termios) == -1) goto fatal;
+0210 KILO 
+0211 KILO     raw = orig_termios;  /* modify the original mode */
+0212 KILO     /* input modes: no break, no CR to NL, no parity check, no strip char,
+0213 KILO      * no start/stop output control. */
+0214 KILO     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+0215 KILO     /* output modes - disable post processing */
+0216 KILO     raw.c_oflag &= ~(OPOST);
+0217 KILO     /* control modes - set 8 bit chars */
+0218 KILO     raw.c_cflag |= (CS8);
+0219 KILO     /* local modes - choing off, canonical off, no extended functions,
+0220 KILO      * no signal chars (^Z,^C) */
+0221 KILO     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+0222 KILO     /* control chars - set return condition: min number of bytes and timer. */
+0223 KILO     raw.c_cc[VMIN] = 0; /* Return each byte, or zero for timeout. */
+0224 KILO     raw.c_cc[VTIME] = 1; /* 100 ms timeout (unit is tens of second). */
+0225 KILO 
+0226 KILO     /* put terminal in raw mode after flushing */
+0227 KILO     if (tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal;
+0228 KILO     E.rawmode = 1;
+0229 KILO     return 0;
+0230 KILO 
+0231 KILO fatal:
+0232 KILO     errno = ENOTTY;
+0233 KILO     return -1;
+0234 KILO }
+0235 KILO 
+0236 KILO /* Read a key from the terminal put in raw mode, trying to handle
+0237 KILO  * escape sequences. */
+0238 KILO int editorReadKey(int fd) {
+0239 KILO     int nread;
+0240 KILO     char c, seq[3];
+0241 KILO     while ((nread = read(fd,&c,1)) == 0);
+0242 KILO     if (nread == -1) exit(1);
+0243 KILO 
+0244 KILO     while(1) {
+0245 KILO         switch(c) {
+0246 KILO         case ESC:    /* escape sequence */
+0247 KILO             /* If this is just an ESC, we'll timeout here. */
+0248 KILO             if (read(fd,seq,1) == 0) return ESC;
+0249 KILO             if (read(fd,seq+1,1) == 0) return ESC;
+0250 KILO 
+0251 KILO             /* ESC [ sequences. */
+0252 KILO             if (seq[0] == '[') {
+0253 KILO                 if (seq[1] >= '0' && seq[1] <= '9') {
+0254 KILO                     /* Extended escape, read additional byte. */
+0255 KILO                     if (read(fd,seq+2,1) == 0) return ESC;
+0256 KILO                     if (seq[2] == '~') {
+0257 KILO                         switch(seq[1]) {
+0258 KILO                         case '3': return DEL_KEY;
+0259 KILO                         case '5': return PAGE_UP;
+0260 KILO                         case '6': return PAGE_DOWN;
+0261 KILO                         }
+0262 KILO                     }
+0263 KILO                 } else {
+0264 KILO                     switch(seq[1]) {
+0265 KILO                     case 'A': return ARROW_UP;
+0266 KILO                     case 'B': return ARROW_DOWN;
+0267 KILO                     case 'C': return ARROW_RIGHT;
+0268 KILO                     case 'D': return ARROW_LEFT;
+0269 KILO                     case 'H': return HOME_KEY;
+0270 KILO                     case 'F': return END_KEY;
+0271 KILO                     }
+0272 KILO                 }
+0273 KILO             }
+0274 KILO 
+0275 KILO             /* ESC O sequences. */
+0276 KILO             else if (seq[0] == 'O') {
+0277 KILO                 switch(seq[1]) {
+0278 KILO                 case 'H': return HOME_KEY;
+0279 KILO                 case 'F': return END_KEY;
+0280 KILO                 }
+0281 KILO             }
+0282 KILO             break;
+0283 KILO         default:
+0284 KILO             return c;
+0285 KILO         }
+0286 KILO     }
+0287 KILO }
+0288 KILO 
+0289 KILO /* Use the ESC [6n escape sequence to query the horizontal cursor position
+0290 KILO  * and return it. On error -1 is returned, on success the position of the
+0291 KILO  * cursor is stored at *rows and *cols and 0 is returned. */
+0292 KILO int getCursorPosition(int ifd, int ofd, int *rows, int *cols) {
+0293 KILO     char buf[32];
+0294 KILO     unsigned int i = 0;
+0295 KILO 
+0296 KILO     /* Report cursor location */
+0297 KILO     if (write(ofd, "\x1b[6n", 4) != 4) return -1;
+0298 KILO 
+0299 KILO     /* Read the response: ESC [ rows ; cols R */
+0300 KILO     while (i < sizeof(buf)-1) {
+0301 KILO         if (read(ifd,buf+i,1) != 1) break;
+0302 KILO         if (buf[i] == 'R') break;
+0303 KILO         i++;
+0304 KILO     }
+0305 KILO     buf[i] = '\0';
+0306 KILO 
+0307 KILO     /* Parse it. */
+0308 KILO     if (buf[0] != ESC || buf[1] != '[') return -1;
+0309 KILO     if (sscanf(buf+2,"%d;%d",rows,cols) != 2) return -1;
+0310 KILO     return 0;
+0311 KILO }
+0312 KILO 
+0313 KILO /* Try to get the number of columns in the current terminal. If the ioctl()
+0314 KILO  * call fails the function will try to query the terminal itself.
+0315 KILO  * Returns 0 on success, -1 on error. */
+0316 KILO int getWindowSize(int ifd, int ofd, int *rows, int *cols) {
+0317 KILO     struct winsize ws;
+0318 KILO 
+0319 KILO     if (ioctl(1, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+0320 KILO         /* ioctl() failed. Try to query the terminal itself. */
+0321 KILO         int orig_row, orig_col, retval;
+0322 KILO 
+0323 KILO         /* Get the initial position so we can restore it later. */
+0324 KILO         retval = getCursorPosition(ifd,ofd,&orig_row,&orig_col);
+0325 KILO         if (retval == -1) goto failed;
+0326 KILO 
+0327 KILO         /* Go to right/bottom margin and get position. */
+0328 KILO         if (write(ofd,"\x1b[999C\x1b[999B",12) != 12) goto failed;
+0329 KILO         retval = getCursorPosition(ifd,ofd,rows,cols);
+0330 KILO         if (retval == -1) goto failed;
+0331 KILO 
+0332 KILO         /* Restore position. */
+0333 KILO         char seq[32];
+0334 KILO         snprintf(seq,32,"\x1b[%d;%dH",orig_row,orig_col);
+0335 KILO         if (write(ofd,seq,strlen(seq)) == -1) {
+0336 KILO             /* Can't recover... */
+0337 KILO         }
+0338 KILO         return 0;
+0339 KILO     } else {
+0340 KILO         *cols = ws.ws_col;
+0341 KILO         *rows = ws.ws_row;
+0342 KILO         return 0;
+0343 KILO     }
+0344 KILO 
+0345 KILO failed:
+0346 KILO     return -1;
+0347 KILO }
+0348 KILO 
+0349 KILO /* ====================== Syntax highlight color scheme  ==================== */
+0350 KILO 
+0351 KILO int is_separator(int c) {
+0352 KILO     return c == '\0' || isspace(c) || strchr(",.()+-/*=~%[];",c) != NULL;
+0353 KILO }
+0354 KILO 
+0355 KILO /* Return true if the specified row last char is part of a multi line comment
+0356 KILO  * that starts at this row or at one before, and does not end at the end
+0357 KILO  * of the row but spawns to the next row. */
+0358 KILO int editorRowHasOpenComment(erow *row) {
+0359 KILO     if (row->hl && row->rsize && row->hl[row->rsize-1] == HL_MLCOMMENT &&
+0360 KILO         (row->rsize < 2 || (row->render[row->rsize-2] != '*' ||
+0361 KILO                             row->render[row->rsize-1] != '/'))) return 1;
+0362 KILO     return 0;
+0363 KILO }
+0364 KILO 
+0365 KILO /* Set every byte of row->hl (that corresponds to every character in the line)
+0366 KILO  * to the right syntax highlight type (HL_* defines). */
+0367 KILO void editorUpdateSyntax(erow *row) {
+0368 KILO     row->hl = realloc(row->hl,row->rsize);
+0369 KILO     memset(row->hl,HL_NORMAL,row->rsize);
+0370 KILO 
+0371 KILO     if (E.syntax == NULL) return; /* No syntax, everything is HL_NORMAL. */
+0372 KILO 
+0373 KILO     int i, prev_sep, in_string, in_comment;
+0374 KILO     char *p;
+0375 KILO     char **keywords = E.syntax->keywords;
+0376 KILO     char *scs = E.syntax->singleline_comment_start;
+0377 KILO     char *mcs = E.syntax->multiline_comment_start;
+0378 KILO     char *mce = E.syntax->multiline_comment_end;
+0379 KILO 
+0380 KILO     /* Point to the first non-space char. */
+0381 KILO     p = row->render;
+0382 KILO     i = 0; /* Current char offset */
+0383 KILO     while(*p && isspace(*p)) {
+0384 KILO         p++;
+0385 KILO         i++;
+0386 KILO     }
+0387 KILO     prev_sep = 1; /* Tell the parser if 'i' points to start of word. */
+0388 KILO     in_string = 0; /* Are we inside "" or '' ? */
+0389 KILO     in_comment = 0; /* Are we inside multi-line comment? */
+0390 KILO 
+0391 KILO     /* If the previous line has an open comment, this line starts
+0392 KILO      * with an open comment state. */
+0393 KILO     if (row->idx > 0 && editorRowHasOpenComment(&E.row[row->idx-1]))
+0394 KILO         in_comment = 1;
+0395 KILO 
+0396 KILO     while(*p) {
+0397 KILO         /* Handle // comments. */
+0398 KILO         if (prev_sep && *p == scs[0] && *(p+1) == scs[1]) {
+0399 KILO             /* From here to end is a comment */
+0400 KILO             memset(row->hl+i,HL_COMMENT,row->size-i);
+0401 KILO             return;
+0402 KILO         }
+0403 KILO 
+0404 KILO         /* Handle multi line comments. */
+0405 KILO         if (in_comment) {
+0406 KILO             row->hl[i] = HL_MLCOMMENT;
+0407 KILO             if (*p == mce[0] && *(p+1) == mce[1]) {
+0408 KILO                 row->hl[i+1] = HL_MLCOMMENT;
+0409 KILO                 p += 2; i += 2;
+0410 KILO                 in_comment = 0;
+0411 KILO                 prev_sep = 1;
+0412 KILO                 continue;
+0413 KILO             } else {
+0414 KILO                 prev_sep = 0;
+0415 KILO                 p++; i++;
+0416 KILO                 continue;
+0417 KILO             }
+0418 KILO         } else if (*p == mcs[0] && *(p+1) == mcs[1]) {
+0419 KILO             row->hl[i] = HL_MLCOMMENT;
+0420 KILO             row->hl[i+1] = HL_MLCOMMENT;
+0421 KILO             p += 2; i += 2;
+0422 KILO             in_comment = 1;
+0423 KILO             prev_sep = 0;
+0424 KILO             continue;
+0425 KILO         }
+0426 KILO 
+0427 KILO         /* Handle "" and '' */
+0428 KILO         if (in_string) {
+0429 KILO             row->hl[i] = HL_STRING;
+0430 KILO             if (*p == '\\') {
+0431 KILO                 row->hl[i+1] = HL_STRING;
+0432 KILO                 p += 2; i += 2;
+0433 KILO                 prev_sep = 0;
+0434 KILO                 continue;
+0435 KILO             }
+0436 KILO             if (*p == in_string) in_string = 0;
+0437 KILO             p++; i++;
+0438 KILO             continue;
+0439 KILO         } else {
+0440 KILO             if (*p == '"' || *p == '\'') {
+0441 KILO                 in_string = *p;
+0442 KILO                 row->hl[i] = HL_STRING;
+0443 KILO                 p++; i++;
+0444 KILO                 prev_sep = 0;
+0445 KILO                 continue;
+0446 KILO             }
+0447 KILO         }
+0448 KILO 
+0449 KILO         /* Handle non printable chars. */
+0450 KILO         if (!isprint(*p)) {
+0451 KILO             row->hl[i] = HL_NONPRINT;
+0452 KILO             p++; i++;
+0453 KILO             prev_sep = 0;
+0454 KILO             continue;
+0455 KILO         }
+0456 KILO 
+0457 KILO         /* Handle numbers */
+0458 KILO         if ((isdigit(*p) && (prev_sep || row->hl[i-1] == HL_NUMBER)) ||
+0459 KILO             (*p == '.' && i >0 && row->hl[i-1] == HL_NUMBER)) {
+0460 KILO             row->hl[i] = HL_NUMBER;
+0461 KILO             p++; i++;
+0462 KILO             prev_sep = 0;
+0463 KILO             continue;
+0464 KILO         }
+0465 KILO 
+0466 KILO         /* Handle keywords and lib calls */
+0467 KILO         if (prev_sep) {
+0468 KILO             int j;
+0469 KILO             for (j = 0; keywords[j]; j++) {
+0470 KILO                 int klen = strlen(keywords[j]);
+0471 KILO                 int kw2 = keywords[j][klen-1] == '|';
+0472 KILO                 if (kw2) klen--;
+0473 KILO 
+0474 KILO                 if (!memcmp(p,keywords[j],klen) &&
+0475 KILO                     is_separator(*(p+klen)))
+0476 KILO                 {
+0477 KILO                     /* Keyword */
+0478 KILO                     memset(row->hl+i,kw2 ? HL_KEYWORD2 : HL_KEYWORD1,klen);
+0479 KILO                     p += klen;
+0480 KILO                     i += klen;
+0481 KILO                     break;
+0482 KILO                 }
+0483 KILO             }
+0484 KILO             if (keywords[j] != NULL) {
+0485 KILO                 prev_sep = 0;
+0486 KILO                 continue; /* We had a keyword match */
+0487 KILO             }
+0488 KILO         }
+0489 KILO 
+0490 KILO         /* Not special chars */
+0491 KILO         prev_sep = is_separator(*p);
+0492 KILO         p++; i++;
+0493 KILO     }
+0494 KILO 
+0495 KILO     /* Propagate syntax change to the next row if the open commen
+0496 KILO      * state changed. This may recursively affect all the following rows
+0497 KILO      * in the file. */
+0498 KILO     int oc = editorRowHasOpenComment(row);
+0499 KILO     if (row->hl_oc != oc && row->idx+1 < E.numrows)
+0500 KILO         editorUpdateSyntax(&E.row[row->idx+1]);
+0501 KILO     row->hl_oc = oc;
+0502 KILO }
+0503 KILO 
+0504 KILO /* Maps syntax highlight token types to terminal colors. */
+0505 KILO int editorSyntaxToColor(int hl) {
+0506 KILO     switch(hl) {
+0507 KILO     case HL_COMMENT:
+0508 KILO     case HL_MLCOMMENT: return 36;     /* cyan */
+0509 KILO     case HL_KEYWORD1: return 33;    /* yellow */
+0510 KILO     case HL_KEYWORD2: return 32;    /* green */
+0511 KILO     case HL_STRING: return 35;      /* magenta */
+0512 KILO     case HL_NUMBER: return 31;      /* red */
+0513 KILO     case HL_MATCH: return 34;      /* blu */
+0514 KILO     default: return 37;             /* white */
+0515 KILO     }
+0516 KILO }
+0517 KILO 
+0518 KILO /* Select the syntax highlight scheme depending on the filename,
+0519 KILO  * setting it in the global state E.syntax. */
+0520 KILO void editorSelectSyntaxHighlight(char *filename) {
+0521 KILO     for (unsigned int j = 0; j < HLDB_ENTRIES; j++) {
+0522 KILO         struct editorSyntax *s = HLDB+j;
+0523 KILO         unsigned int i = 0;
+0524 KILO         while(s->filematch[i]) {
+0525 KILO             char *p;
+0526 KILO             int patlen = strlen(s->filematch[i]);
+0527 KILO             if ((p = strstr(filename,s->filematch[i])) != NULL) {
+0528 KILO                 if (s->filematch[i][0] != '.' || p[patlen] == '\0') {
+0529 KILO                     E.syntax = s;
+0530 KILO                     return;
+0531 KILO                 }
+0532 KILO             }
+0533 KILO             i++;
+0534 KILO         }
+0535 KILO     }
+0536 KILO }
+0537 KILO 
+0538 KILO /* ======================= Editor rows implementation ======================= */
+0539 KILO 
+0540 KILO /* Update the rendered version and the syntax highlight of a row. */
+0541 KILO void editorUpdateRow(erow *row) {
+0542 KILO     int tabs = 0, nonprint = 0, j, idx;
+0543 KILO 
+0544 KILO    /* Create a version of the row we can directly print on the screen,
+0545 KILO      * respecting tabs, substituting non printable characters with '?'. */
+0546 KILO     free(row->render);
+0547 KILO     for (j = 0; j < row->size; j++)
+0548 KILO         if (row->chars[j] == TAB) tabs++;
+0549 KILO 
+0550 KILO     row->render = malloc(row->size + tabs*8 + nonprint*9 + 1);
+0551 KILO     idx = 0;
+0552 KILO     for (j = 0; j < row->size; j++) {
+0553 KILO         if (row->chars[j] == TAB) {
+0554 KILO             row->render[idx++] = ' ';
+0555 KILO             while((idx+1) % 8 != 0) row->render[idx++] = ' ';
+0556 KILO         } else {
+0557 KILO             row->render[idx++] = row->chars[j];
+0558 KILO         }
+0559 KILO     }
+0560 KILO     row->rsize = idx;
+0561 KILO     row->render[idx] = '\0';
+0562 KILO 
+0563 KILO     /* Update the syntax highlighting attributes of the row. */
+0564 KILO     editorUpdateSyntax(row);
+0565 KILO }
+0566 KILO 
+0567 KILO /* Insert a row at the specified position, shifting the other rows on the bottom
+0568 KILO  * if required. */
+0569 KILO void editorInsertRow(int at, char *s, size_t len) {
+0570 KILO     if (at > E.numrows) return;
+0571 KILO     E.row = realloc(E.row,sizeof(erow)*(E.numrows+1));
+0572 KILO     if (at != E.numrows) {
+0573 KILO         memmove(E.row+at+1,E.row+at,sizeof(E.row[0])*(E.numrows-at));
+0574 KILO         for (int j = at+1; j <= E.numrows; j++) E.row[j].idx++;
+0575 KILO     }
+0576 KILO     E.row[at].size = len;
+0577 KILO     E.row[at].chars = malloc(len+1);
+0578 KILO     memcpy(E.row[at].chars,s,len+1);
+0579 KILO     E.row[at].hl = NULL;
+0580 KILO     E.row[at].hl_oc = 0;
+0581 KILO     E.row[at].render = NULL;
+0582 KILO     E.row[at].rsize = 0;
+0583 KILO     E.row[at].idx = at;
+0584 KILO     editorUpdateRow(E.row+at);
+0585 KILO     E.numrows++;
+0586 KILO     E.dirty++;
+0587 KILO }
+0588 KILO 
+0589 KILO /* Free row's heap allocated stuff. */
+0590 KILO void editorFreeRow(erow *row) {
+0591 KILO     free(row->render);
+0592 KILO     free(row->chars);
+0593 KILO     free(row->hl);
+0594 KILO }
+0595 KILO 
+0596 KILO /* Remove the row at the specified position, shifting the remainign on the
+0597 KILO  * top. */
+0598 KILO void editorDelRow(int at) {
+0599 KILO     erow *row;
+0600 KILO 
+0601 KILO     if (at >= E.numrows) return;
+0602 KILO     row = E.row+at;
+0603 KILO     editorFreeRow(row);
+0604 KILO     memmove(E.row+at,E.row+at+1,sizeof(E.row[0])*(E.numrows-at-1));
+0605 KILO     for (int j = at; j < E.numrows-1; j++) E.row[j].idx++;
+0606 KILO     E.numrows--;
+0607 KILO     E.dirty++;
+0608 KILO }
+0609 KILO 
+0610 KILO /* Turn the editor rows into a single heap-allocated string.
+0611 KILO  * Returns the pointer to the heap-allocated string and populate the
+0612 KILO  * integer pointed by 'buflen' with the size of the string, escluding
+0613 KILO  * the final nulterm. */
+0614 KILO char *editorRowsToString(int *buflen) {
+0615 KILO     char *buf = NULL, *p;
+0616 KILO     int totlen = 0;
+0617 KILO     int j;
+0618 KILO 
+0619 KILO     /* Compute count of bytes */
+0620 KILO     for (j = 0; j < E.numrows; j++)
+0621 KILO         totlen += E.row[j].size+1; /* +1 is for "\n" at end of every row */
+0622 KILO     *buflen = totlen;
+0623 KILO     totlen++; /* Also make space for nulterm */
+0624 KILO 
+0625 KILO     p = buf = malloc(totlen);
+0626 KILO     for (j = 0; j < E.numrows; j++) {
+0627 KILO         memcpy(p,E.row[j].chars,E.row[j].size);
+0628 KILO         p += E.row[j].size;
+0629 KILO         *p = '\n';
+0630 KILO         p++;
+0631 KILO     }
+0632 KILO     *p = '\0';
+0633 KILO     return buf;
+0634 KILO }
+0635 KILO 
+0636 KILO /* Insert a character at the specified position in a row, moving the remaining
+0637 KILO  * chars on the right if needed. */
+0638 KILO void editorRowInsertChar(erow *row, int at, int c) {
+0639 KILO     if (at > row->size) {
+0640 KILO         /* Pad the string with spaces if the insert location is outside the
+0641 KILO          * current length by more than a single character. */
+0642 KILO         int padlen = at-row->size;
+0643 KILO         /* In the next line +2 means: new char and null term. */
+0644 KILO         row->chars = realloc(row->chars,row->size+padlen+2);
+0645 KILO         memset(row->chars+row->size,' ',padlen);
+0646 KILO         row->chars[row->size+padlen+1] = '\0';
+0647 KILO         row->size += padlen+1;
+0648 KILO     } else {
+0649 KILO         /* If we are in the middle of the string just make space for 1 new
+0650 KILO          * char plus the (already existing) null term. */
+0651 KILO         row->chars = realloc(row->chars,row->size+2);
+0652 KILO         memmove(row->chars+at+1,row->chars+at,row->size-at+1);
+0653 KILO         row->size++;
+0654 KILO     }
+0655 KILO     row->chars[at] = c;
+0656 KILO     editorUpdateRow(row);
+0657 KILO     E.dirty++;
+0658 KILO }
+0659 KILO 
+0660 KILO /* Append the string 's' at the end of a row */
+0661 KILO void editorRowAppendString(erow *row, char *s, size_t len) {
+0662 KILO     row->chars = realloc(row->chars,row->size+len+1);
+0663 KILO     memcpy(row->chars+row->size,s,len);
+0664 KILO     row->size += len;
+0665 KILO     row->chars[row->size] = '\0';
+0666 KILO     editorUpdateRow(row);
+0667 KILO     E.dirty++;
+0668 KILO }
+0669 KILO 
+0670 KILO /* Delete the character at offset 'at' from the specified row. */
+0671 KILO void editorRowDelChar(erow *row, int at) {
+0672 KILO     if (row->size <= at) return;
+0673 KILO     memmove(row->chars+at,row->chars+at+1,row->size-at);
+0674 KILO     editorUpdateRow(row);
+0675 KILO     row->size--;
+0676 KILO     E.dirty++;
+0677 KILO }
+0678 KILO 
+0679 KILO /* Insert the specified char at the current prompt position. */
+0680 KILO void editorInsertChar(int c) {
+0681 KILO     int filerow = E.rowoff+E.cy;
+0682 KILO     int filecol = E.coloff+E.cx;
+0683 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+0684 KILO 
+0685 KILO     /* If the row where the cursor is currently located does not exist in our
+0686 KILO      * logical representaion of the file, add enough empty rows as needed. */
+0687 KILO     if (!row) {
+0688 KILO         while(E.numrows <= filerow)
+0689 KILO             editorInsertRow(E.numrows,"",0);
+0690 KILO     }
+0691 KILO     row = &E.row[filerow];
+0692 KILO     editorRowInsertChar(row,filecol,c);
+0693 KILO     if (E.cx == E.screencols-1)
+0694 KILO         E.coloff++;
+0695 KILO     else
+0696 KILO         E.cx++;
+0697 KILO     E.dirty++;
+0698 KILO }
+0699 KILO 
+0700 KILO /* Inserting a newline is slightly complex as we have to handle inserting a
+0701 KILO  * newline in the middle of a line, splitting the line as needed. */
+0702 KILO void editorInsertNewline(void) {
+0703 KILO     int filerow = E.rowoff+E.cy;
+0704 KILO     int filecol = E.coloff+E.cx;
+0705 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+0706 KILO 
+0707 KILO     if (!row) {
+0708 KILO         if (filerow == E.numrows) {
+0709 KILO             editorInsertRow(filerow,"",0);
+0710 KILO             goto fixcursor;
+0711 KILO         }
+0712 KILO         return;
+0713 KILO     }
+0714 KILO     /* If the cursor is over the current line size, we want to conceptually
+0715 KILO      * think it's just over the last character. */
+0716 KILO     if (filecol >= row->size) filecol = row->size;
+0717 KILO     if (filecol == 0) {
+0718 KILO         editorInsertRow(filerow,"",0);
+0719 KILO     } else {
+0720 KILO         /* We are in the middle of a line. Split it between two rows. */
+0721 KILO         editorInsertRow(filerow+1,row->chars+filecol,row->size-filecol);
+0722 KILO         row = &E.row[filerow];
+0723 KILO         row->chars[filecol] = '\0';
+0724 KILO         row->size = filecol;
+0725 KILO         editorUpdateRow(row);
+0726 KILO     }
+0727 KILO fixcursor:
+0728 KILO     if (E.cy == E.screenrows-1) {
+0729 KILO         E.rowoff++;
+0730 KILO     } else {
+0731 KILO         E.cy++;
+0732 KILO     }
+0733 KILO     E.cx = 0;
+0734 KILO     E.coloff = 0;
+0735 KILO }
+0736 KILO 
+0737 KILO /* Delete the char at the current prompt position. */
+0738 KILO void editorDelChar() {
+0739 KILO     int filerow = E.rowoff+E.cy;
+0740 KILO     int filecol = E.coloff+E.cx;
+0741 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+0742 KILO 
+0743 KILO     if (!row || (filecol == 0 && filerow == 0)) return;
+0744 KILO     if (filecol == 0) {
+0745 KILO         /* Handle the case of column 0, we need to move the current line
+0746 KILO          * on the right of the previous one. */
+0747 KILO         filecol = E.row[filerow-1].size;
+0748 KILO         editorRowAppendString(&E.row[filerow-1],row->chars,row->size);
+0749 KILO         editorDelRow(filerow);
+0750 KILO         row = NULL;
+0751 KILO         if (E.cy == 0)
+0752 KILO             E.rowoff--;
+0753 KILO         else
+0754 KILO             E.cy--;
+0755 KILO         E.cx = filecol;
+0756 KILO         if (E.cx >= E.screencols) {
+0757 KILO             int shift = (E.screencols-E.cx)+1;
+0758 KILO             E.cx -= shift;
+0759 KILO             E.coloff += shift;
+0760 KILO         }
+0761 KILO     } else {
+0762 KILO         editorRowDelChar(row,filecol-1);
+0763 KILO         if (E.cx == 0 && E.coloff)
+0764 KILO             E.coloff--;
+0765 KILO         else
+0766 KILO             E.cx--;
+0767 KILO     }
+0768 KILO     if (row) editorUpdateRow(row);
+0769 KILO     E.dirty++;
+0770 KILO }
+0771 KILO 
+0772 KILO /* Load the specified program in the editor memory and returns 0 on success
+0773 KILO  * or 1 on error. */
+0774 KILO int editorOpen(char *filename) {
+0775 KILO     FILE *fp;
+0776 KILO 
+0777 KILO     E.dirty = 0;
+0778 KILO     free(E.filename);
+0779 KILO     E.filename = strdup(filename);
+0780 KILO 
+0781 KILO     fp = fopen(filename,"r");
+0782 KILO     if (!fp) {
+0783 KILO         if (errno != ENOENT) {
+0784 KILO             perror("Opening file");
+0785 KILO             exit(1);
+0786 KILO         }
+0787 KILO         return 1;
+0788 KILO     }
+0789 KILO 
+0790 KILO     char *line = NULL;
+0791 KILO     size_t linecap = 0;
+0792 KILO     ssize_t linelen;
+0793 KILO     while((linelen = getline(&line,&linecap,fp)) != -1) {
+0794 KILO         if (linelen && (line[linelen-1] == '\n' || line[linelen-1] == '\r'))
+0795 KILO             line[--linelen] = '\0';
+0796 KILO         editorInsertRow(E.numrows,line,linelen);
+0797 KILO     }
+0798 KILO     free(line);
+0799 KILO     fclose(fp);
+0800 KILO     E.dirty = 0;
+0801 KILO     return 0;
+0802 KILO }
+0803 KILO 
+0804 KILO /* Save the current file on disk. Return 0 on success, 1 on error. */
+0805 KILO int editorSave(void) {
+0806 KILO     int len;
+0807 KILO     char *buf = editorRowsToString(&len);
+0808 KILO     int fd = open(E.filename,O_RDWR|O_CREAT,0644);
+0809 KILO     if (fd == -1) goto writeerr;
+0810 KILO 
+0811 KILO     /* Use truncate + a single write(2) call in order to make saving
+0812 KILO      * a bit safer, under the limits of what we can do in a small editor. */
+0813 KILO     if (ftruncate(fd,len) == -1) goto writeerr;
+0814 KILO     if (write(fd,buf,len) != len) goto writeerr;
+0815 KILO 
+0816 KILO     close(fd);
+0817 KILO     free(buf);
+0818 KILO     E.dirty = 0;
+0819 KILO     editorSetStatusMessage("%d bytes written on disk", len);
+0820 KILO     return 0;
+0821 KILO 
+0822 KILO writeerr:
+0823 KILO     free(buf);
+0824 KILO     if (fd != -1) close(fd);
+0825 KILO     editorSetStatusMessage("Can't save! I/O error: %s",strerror(errno));
+0826 KILO     return 1;
+0827 KILO }
+0828 KILO 
+0829 KILO /* ============================= Terminal update ============================ */
+0830 KILO 
+0831 KILO /* We define a very simple "append buffer" structure, that is an heap
+0832 KILO  * allocated string where we can append to. This is useful in order to
+0833 KILO  * write all the escape sequences in a buffer and flush them to the standard
+0834 KILO  * output in a single call, to avoid flickering effects. */
+0835 KILO struct abuf {
+0836 KILO     char *b;
+0837 KILO     int len;
+0838 KILO };
+0839 KILO 
+0840 KILO #define ABUF_INIT {NULL,0}
+0841 KILO 
+0842 KILO void abAppend(struct abuf *ab, const char *s, int len) {
+0843 KILO     char *new = realloc(ab->b,ab->len+len);
+0844 KILO 
+0845 KILO     if (new == NULL) return;
+0846 KILO     memcpy(new+ab->len,s,len);
+0847 KILO     ab->b = new;
+0848 KILO     ab->len += len;
+0849 KILO }
+0850 KILO 
+0851 KILO void abFree(struct abuf *ab) {
+0852 KILO     free(ab->b);
+0853 KILO }
+0854 KILO 
+0855 KILO /* This function writes the whole screen using VT100 escape characters
+0856 KILO  * starting from the logical state of the editor in the global state 'E'. */
+0857 KILO void editorRefreshScreen(void) {
+0858 KILO     int y;
+0859 KILO     erow *r;
+0860 KILO     char buf[32];
+0861 KILO     struct abuf ab = ABUF_INIT;
+0862 KILO 
+0863 KILO     abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */
+0864 KILO     abAppend(&ab,"\x1b[H",3); /* Go home. */
+0865 KILO     for (y = 0; y < E.screenrows; y++) {
+0866 KILO         int filerow = E.rowoff+y;
+0867 KILO 
+0868 KILO         if (filerow >= E.numrows) {
+0869 KILO             if (E.numrows == 0 && y == E.screenrows/3) {
+0870 KILO                 char welcome[80];
+0871 KILO                 int welcomelen = snprintf(welcome,sizeof(welcome),
+0872 KILO                     "Kilo editor -- verison %s\x1b[0K\r\n", KILO_VERSION);
+0873 KILO                 int padding = (E.screencols-welcomelen)/2;
+0874 KILO                 if (padding) {
+0875 KILO                     abAppend(&ab,"~",1);
+0876 KILO                     padding--;
+0877 KILO                 }
+0878 KILO                 while(padding--) abAppend(&ab," ",1);
+0879 KILO                 abAppend(&ab,welcome,welcomelen);
+0880 KILO             } else {
+0881 KILO                 abAppend(&ab,"~\x1b[0K\r\n",7);
+0882 KILO             }
+0883 KILO             continue;
+0884 KILO         }
+0885 KILO 
+0886 KILO         r = &E.row[filerow];
+0887 KILO 
+0888 KILO         int len = r->rsize - E.coloff;
+0889 KILO         int current_color = -1;
+0890 KILO         if (len > 0) {
+0891 KILO             if (len > E.screencols) len = E.screencols;
+0892 KILO             char *c = r->render+E.coloff;
+0893 KILO             unsigned char *hl = r->hl+E.coloff;
+0894 KILO             int j;
+0895 KILO             for (j = 0; j < len; j++) {
+0896 KILO                 if (hl[j] == HL_NONPRINT) {
+0897 KILO                     char sym;
+0898 KILO                     abAppend(&ab,"\x1b[7m",4);
+0899 KILO                     if (c[j] <= 26)
+0900 KILO                         sym = '@'+c[j];
+0901 KILO                     else
+0902 KILO                         sym = '?';
+0903 KILO                     abAppend(&ab,&sym,1);
+0904 KILO                     abAppend(&ab,"\x1b[0m",4);
+0905 KILO                 } else if (hl[j] == HL_NORMAL) {
+0906 KILO                     if (current_color != -1) {
+0907 KILO                         abAppend(&ab,"\x1b[39m",5);
+0908 KILO                         current_color = -1;
+0909 KILO                     }
+0910 KILO                     abAppend(&ab,c+j,1);
+0911 KILO                 } else {
+0912 KILO                     int color = editorSyntaxToColor(hl[j]);
+0913 KILO                     if (color != current_color) {
+0914 KILO                         char buf[16];
+0915 KILO                         int clen = snprintf(buf,sizeof(buf),"\x1b[%dm",color);
+0916 KILO                         current_color = color;
+0917 KILO                         abAppend(&ab,buf,clen);
+0918 KILO                     }
+0919 KILO                     abAppend(&ab,c+j,1);
+0920 KILO                 }
+0921 KILO             }
+0922 KILO         }
+0923 KILO         abAppend(&ab,"\x1b[39m",5);
+0924 KILO         abAppend(&ab,"\x1b[0K",4);
+0925 KILO         abAppend(&ab,"\r\n",2);
+0926 KILO     }
+0927 KILO 
+0928 KILO     /* Create a two rows status. First row: */
+0929 KILO     abAppend(&ab,"\x1b[0K",4);
+0930 KILO     abAppend(&ab,"\x1b[7m",4);
+0931 KILO     char status[80], rstatus[80];
+0932 KILO     int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
+0933 KILO         E.filename, E.numrows, E.dirty ? "(modified)" : "");
+0934 KILO     int rlen = snprintf(rstatus, sizeof(rstatus),
+0935 KILO         "%d/%d",E.rowoff+E.cy+1,E.numrows);
+0936 KILO     if (len > E.screencols) len = E.screencols;
+0937 KILO     abAppend(&ab,status,len);
+0938 KILO     while(len < E.screencols) {
+0939 KILO         if (E.screencols - len == rlen) {
+0940 KILO             abAppend(&ab,rstatus,rlen);
+0941 KILO             break;
+0942 KILO         } else {
+0943 KILO             abAppend(&ab," ",1);
+0944 KILO             len++;
+0945 KILO         }
+0946 KILO     }
+0947 KILO     abAppend(&ab,"\x1b[0m\r\n",6);
+0948 KILO 
+0949 KILO     /* Second row depends on E.statusmsg and the status message update time. */
+0950 KILO     abAppend(&ab,"\x1b[0K",4);
+0951 KILO     int msglen = strlen(E.statusmsg);
+0952 KILO     if (msglen && time(NULL)-E.statusmsg_time < 5)
+0953 KILO         abAppend(&ab,E.statusmsg,msglen <= E.screencols ? msglen : E.screencols);
+0954 KILO 
+0955 KILO     /* Put cursor at its current position. Note that the horizontal position
+0956 KILO      * at which the cursor is displayed may be different compared to 'E.cx'
+0957 KILO      * because of TABs. */
+0958 KILO     int j;
+0959 KILO     int cx = 1;
+0960 KILO     int filerow = E.rowoff+E.cy;
+0961 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+0962 KILO     if (row) {
+0963 KILO         for (j = E.coloff; j < (E.cx+E.coloff); j++) {
+0964 KILO             if (j < row->size && row->chars[j] == TAB) cx += 7-((cx)%8);
+0965 KILO             cx++;
+0966 KILO         }
+0967 KILO     }
+0968 KILO     snprintf(buf,sizeof(buf),"\x1b[%d;%dH",E.cy+1,cx);
+0969 KILO     abAppend(&ab,buf,strlen(buf));
+0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
+0971 KILO     write(STDOUT_FILENO,ab.b,ab.len);
+0972 KILO     abFree(&ab);
+0973 KILO }
+0974 KILO 
+0975 KILO /* Set an editor status message for the second line of the status, at the
+0976 KILO  * end of the screen. */
+0977 KILO void editorSetStatusMessage(const char *fmt, ...) {
+0978 KILO     va_list ap;
+0979 KILO     va_start(ap,fmt);
+0980 KILO     vsnprintf(E.statusmsg,sizeof(E.statusmsg),fmt,ap);
+0981 KILO     va_end(ap);
+0982 KILO     E.statusmsg_time = time(NULL);
+0983 KILO }
+0984 KILO 
+0985 KILO /* =============================== Find mode ================================ */
+0986 KILO 
+0987 KILO #define KILO_QUERY_LEN 256
+0988 KILO 
+0989 KILO void editorFind(int fd) {
+0990 KILO     char query[KILO_QUERY_LEN+1] = {0};
+0991 KILO     int qlen = 0;
+0992 KILO     int last_match = -1; /* Last line where a match was found. -1 for none. */
+0993 KILO     int find_next = 0; /* if 1 search next, if -1 search prev. */
+0994 KILO     int saved_hl_line = -1;  /* No saved HL */
+0995 KILO     char *saved_hl = NULL;
+0996 KILO 
+0997 KILO #define FIND_RESTORE_HL do { \
+0998 KILO     if (saved_hl) { \
+0999 KILO         memcpy(E.row[saved_hl_line].hl,saved_hl, E.row[saved_hl_line].rsize); \
+1000 KILO         saved_hl = NULL; \
+1001 KILO     } \
+1002 KILO } while (0)
+1003 KILO 
+1004 KILO     /* Save the cursor position in order to restore it later. */
+1005 KILO     int saved_cx = E.cx, saved_cy = E.cy;
+1006 KILO     int saved_coloff = E.coloff, saved_rowoff = E.rowoff;
+1007 KILO 
+1008 KILO     while(1) {
+1009 KILO         editorSetStatusMessage(
+1010 KILO             "Search: %s (Use ESC/Arrows/Enter)", query);
+1011 KILO         editorRefreshScreen();
+1012 KILO 
+1013 KILO         int c = editorReadKey(fd);
+1014 KILO         if (c == DEL_KEY || c == CTRL_H || c == BACKSPACE) {
+1015 KILO             if (qlen != 0) query[--qlen] = '\0';
+1016 KILO             last_match = -1;
+1017 KILO         } else if (c == ESC || c == ENTER) {
+1018 KILO             if (c == ESC) {
+1019 KILO                 E.cx = saved_cx; E.cy = saved_cy;
+1020 KILO                 E.coloff = saved_coloff; E.rowoff = saved_rowoff;
+1021 KILO             }
+1022 KILO             FIND_RESTORE_HL;
+1023 KILO             editorSetStatusMessage("");
+1024 KILO             return;
+1025 KILO         } else if (c == ARROW_RIGHT || c == ARROW_DOWN) {
+1026 KILO             find_next = 1;
+1027 KILO         } else if (c == ARROW_LEFT || c == ARROW_UP) {
+1028 KILO             find_next = -1;
+1029 KILO         } else if (isprint(c)) {
+1030 KILO             if (qlen < KILO_QUERY_LEN) {
+1031 KILO                 query[qlen++] = c;
+1032 KILO                 query[qlen] = '\0';
+1033 KILO                 last_match = -1;
+1034 KILO             }
+1035 KILO         }
+1036 KILO 
+1037 KILO         /* Search occurrence. */
+1038 KILO         if (last_match == -1) find_next = 1;
+1039 KILO         if (find_next) {
+1040 KILO             char *match = NULL;
+1041 KILO             int match_offset = 0;
+1042 KILO             int i, current = last_match;
+1043 KILO 
+1044 KILO             for (i = 0; i < E.numrows; i++) {
+1045 KILO                 current += find_next;
+1046 KILO                 if (current == -1) current = E.numrows-1;
+1047 KILO                 else if (current == E.numrows) current = 0;
+1048 KILO                 match = strstr(E.row[current].render,query);
+1049 KILO                 if (match) {
+1050 KILO                     match_offset = match-E.row[current].render;
+1051 KILO                     break;
+1052 KILO                 }
+1053 KILO             }
+1054 KILO             find_next = 0;
+1055 KILO 
+1056 KILO             /* Highlight */
+1057 KILO             FIND_RESTORE_HL;
+1058 KILO 
+1059 KILO             if (match) {
+1060 KILO                 erow *row = &E.row[current];
+1061 KILO                 last_match = current;
+1062 KILO                 if (row->hl) {
+1063 KILO                     saved_hl_line = current;
+1064 KILO                     saved_hl = malloc(row->rsize);
+1065 KILO                     memcpy(saved_hl,row->hl,row->rsize);
+1066 KILO                     memset(row->hl+match_offset,HL_MATCH,qlen);
+1067 KILO                 }
+1068 KILO                 E.cy = 0;
+1069 KILO                 E.cx = match_offset;
+1070 KILO                 E.rowoff = current;
+1071 KILO                 E.coloff = 0;
+1072 KILO                 /* Scroll horizontally as needed. */
+1073 KILO                 if (E.cx > E.screencols) {
+1074 KILO                     int diff = E.cx - E.screencols;
+1075 KILO                     E.cx -= diff;
+1076 KILO                     E.coloff += diff;
+1077 KILO                 }
+1078 KILO             }
+1079 KILO         }
+1080 KILO     }
+1081 KILO }
+1082 KILO 
+1083 KILO /* ========================= Editor events handling  ======================== */
+1084 KILO 
+1085 KILO /* Handle cursor position change because arrow keys were pressed. */
+1086 KILO void editorMoveCursor(int key) {
+1087 KILO     int filerow = E.rowoff+E.cy;
+1088 KILO     int filecol = E.coloff+E.cx;
+1089 KILO     int rowlen;
+1090 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+1091 KILO 
+1092 KILO     switch(key) {
+1093 KILO     case ARROW_LEFT:
+1094 KILO         if (E.cx == 0) {
+1095 KILO             if (E.coloff) {
+1096 KILO                 E.coloff--;
+1097 KILO             } else {
+1098 KILO                 if (filerow > 0) {
+1099 KILO                     E.cy--;
+1100 KILO                     E.cx = E.row[filerow-1].size;
+1101 KILO                     if (E.cx > E.screencols-1) {
+1102 KILO                         E.coloff = E.cx-E.screencols+1;
+1103 KILO                         E.cx = E.screencols-1;
+1104 KILO                     }
+1105 KILO                 }
+1106 KILO             }
+1107 KILO         } else {
+1108 KILO             E.cx -= 1;
+1109 KILO         }
+1110 KILO         break;
+1111 KILO     case ARROW_RIGHT:
+1112 KILO         if (row && filecol < row->size) {
+1113 KILO             if (E.cx == E.screencols-1) {
+1114 KILO                 E.coloff++;
+1115 KILO             } else {
+1116 KILO                 E.cx += 1;
+1117 KILO             }
+1118 KILO         } else if (row && filecol == row->size) {
+1119 KILO             E.cx = 0;
+1120 KILO             E.coloff = 0;
+1121 KILO             if (E.cy == E.screenrows-1) {
+1122 KILO                 E.rowoff++;
+1123 KILO             } else {
+1124 KILO                 E.cy += 1;
+1125 KILO             }
+1126 KILO         }
+1127 KILO         break;
+1128 KILO     case ARROW_UP:
+1129 KILO         if (E.cy == 0) {
+1130 KILO             if (E.rowoff) E.rowoff--;
+1131 KILO         } else {
+1132 KILO             E.cy -= 1;
+1133 KILO         }
+1134 KILO         break;
+1135 KILO     case ARROW_DOWN:
+1136 KILO         if (filerow < E.numrows) {
+1137 KILO             if (E.cy == E.screenrows-1) {
+1138 KILO                 E.rowoff++;
+1139 KILO             } else {
+1140 KILO                 E.cy += 1;
+1141 KILO             }
+1142 KILO         }
+1143 KILO         break;
+1144 KILO     }
+1145 KILO     /* Fix cx if the current line has not enough chars. */
+1146 KILO     filerow = E.rowoff+E.cy;
+1147 KILO     filecol = E.coloff+E.cx;
+1148 KILO     row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+1149 KILO     rowlen = row ? row->size : 0;
+1150 KILO     if (filecol > rowlen) {
+1151 KILO         E.cx -= filecol-rowlen;
+1152 KILO         if (E.cx < 0) {
+1153 KILO             E.coloff += E.cx;
+1154 KILO             E.cx = 0;
+1155 KILO         }
+1156 KILO     }
+1157 KILO }
+1158 KILO 
+1159 KILO /* Process events arriving from the standard input, which is, the user
+1160 KILO  * is typing stuff on the terminal. */
+1161 KILO #define KILO_QUIT_TIMES 3
+1162 KILO void editorProcessKeypress(int fd) {
+1163 KILO     /* When the file is modified, requires Ctrl-q to be pressed N times
+1164 KILO      * before actually quitting. */
+1165 KILO     static int quit_times = KILO_QUIT_TIMES;
+1166 KILO 
+1167 KILO     int c = editorReadKey(fd);
+1168 KILO     switch(c) {
+1169 KILO     case ENTER:         /* Enter */
+1170 KILO         editorInsertNewline();
+1171 KILO         break;
+1172 KILO     case CTRL_C:        /* Ctrl-c */
+1173 KILO         /* We ignore ctrl-c, it can't be so simple to lose the changes
+1174 KILO          * to the edited file. */
+1175 KILO         break;
+1176 KILO     case CTRL_Q:        /* Ctrl-q */
+1177 KILO         /* Quit if the file was already saved. */
+1178 KILO         if (E.dirty && quit_times) {
+1179 KILO             editorSetStatusMessage("WARNING!!! File has unsaved changes. "
+1180 KILO                 "Press Ctrl-Q %d more times to quit.", quit_times);
+1181 KILO             quit_times--;
+1182 KILO             return;
+1183 KILO         }
+1184 KILO         exit(0);
+1185 KILO         break;
+1186 KILO     case CTRL_S:        /* Ctrl-s */
+1187 KILO         editorSave();
+1188 KILO         break;
+1189 KILO     case CTRL_F:
+1190 KILO         editorFind(fd);
+1191 KILO         break;
+1192 KILO     case BACKSPACE:     /* Backspace */
+1193 KILO     case CTRL_H:        /* Ctrl-h */
+1194 KILO     case DEL_KEY:
+1195 KILO         editorDelChar();
+1196 KILO         break;
+1197 KILO     case PAGE_UP:
+1198 KILO     case PAGE_DOWN:
+1199 KILO         if (c == PAGE_UP && E.cy != 0)
+1200 KILO             E.cy = 0;
+1201 KILO         else if (c == PAGE_DOWN && E.cy != E.screenrows-1)
+1202 KILO             E.cy = E.screenrows-1;
+1203 KILO         {
+1204 KILO         int times = E.screenrows;
+1205 KILO         while(times--)
+1206 KILO             editorMoveCursor(c == PAGE_UP ? ARROW_UP:
+1207 KILO                                             ARROW_DOWN);
+1208 KILO         }
+1209 KILO         break;
+1210 KILO 
+1211 KILO     case ARROW_UP:
+1212 KILO     case ARROW_DOWN:
+1213 KILO     case ARROW_LEFT:
+1214 KILO     case ARROW_RIGHT:
+1215 KILO         editorMoveCursor(c);
+1216 KILO         break;
+1217 KILO     case CTRL_L: /* ctrl+l, clear screen */
+1218 KILO         /* Just refresht the line as side effect. */
+1219 KILO         break;
+1220 KILO     case ESC:
+1221 KILO         /* Nothing to do for ESC in this mode. */
+1222 KILO         break;
+1223 KILO     default:
+1224 KILO         editorInsertChar(c);
+1225 KILO         break;
+1226 KILO     }
+1227 KILO 
+1228 KILO     quit_times = KILO_QUIT_TIMES; /* Reset it to the original value. */
+1229 KILO }
+1230 KILO 
+1231 KILO int editorFileWasModified(void) {
+1232 KILO     return E.dirty;
+1233 KILO }
+1234 KILO 
+1235 KILO void initEditor(void) {
+1236 KILO     E.cx = 0;
+1237 KILO     E.cy = 0;
+1238 KILO     E.rowoff = 0;
+1239 KILO     E.coloff = 0;
+1240 KILO     E.numrows = 0;
+1241 KILO     E.row = NULL;
+1242 KILO     E.dirty = 0;
+1243 KILO     E.filename = NULL;
+1244 KILO     E.syntax = NULL;
+1245 KILO     if (getWindowSize(STDIN_FILENO,STDOUT_FILENO,
+1246 KILO                       &E.screenrows,&E.screencols) == -1)
+1247 KILO     {
+1248 KILO         perror("Unable to query the screen for size (columns / rows)");
+1249 KILO         exit(1);
+1250 KILO     }
+1251 KILO     E.screenrows -= 2; /* Get room for status bar. */
+1252 KILO }
+1253 KILO 
+1254 KILO int main(int argc, char **argv) {
+1255 KILO     if (argc != 2) {
+1256 KILO         fprintf(stderr,"Usage: kilo <filename>\n");
+1257 KILO         exit(1);
+1258 KILO     }
+1259 KILO 
+1260 KILO     initEditor();
+1261 KILO     editorSelectSyntaxHighlight(argv[1]);
+1262 KILO     editorOpen(argv[1]);
+1263 KILO     enableRawMode(STDIN_FILENO);
+1264 KILO     editorSetStatusMessage(
+1265 KILO         "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
+1266 KILO     while(1) {
+1267 KILO         editorRefreshScreen();
+1268 KILO         editorProcessKeypress(STDIN_FILENO);
+1269 KILO     }
+1270 KILO     return 0;
+1271 KILO }
+1272 KILO 
+1273 KILO 
+1274 KILO 
