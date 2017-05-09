@@ -1,6 +1,5 @@
 # pip.imbue.hood
 
-  Blountville proof of concept
-  Actual coding to follow
+  Blountville proof of concept. Actual coding to follow
 
-  Check licsensing issues
+  Check licensing issues.
