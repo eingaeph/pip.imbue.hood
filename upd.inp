@@ -1,0 +1,2 @@
+0352 KILO     return c == '\0' || isspace(c) || strchr(",.()+-**=~%[];",c) != NULL;
+          /* temporary: correct bad <block> edit */
