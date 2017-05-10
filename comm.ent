@@ -1,0 +1,146 @@
+lineno 1 0000 KILO /* Kilo -- A very simple editor in less than 1-kilo lines of code (as counted
+lineno 2 0001 KILO  *         by "cloc"). Does not depend on libcurses, directly emits VT100
+lineno 3 0002 KILO  *         escapes on the terminal.
+lineno 4 0003 KILO  *
+lineno 5 0004 KILO  * -----------------------------------------------------------------------
+lineno 6 0005 KILO  *
+lineno 7 0006 KILO  * Copyright (C) 2016 Salvatore Sanfilippo <antirez at gmail dot com>
+lineno 8 0007 KILO  *
+lineno 9 0008 KILO  * All rights reserved.
+lineno 10 0009 KILO  *
+lineno 11 0010 KILO  * Redistribution and use in source and binary forms, with or without
+lineno 12 0011 KILO  * modification, are permitted provided that the following conditions are
+lineno 13 0012 KILO  * met:
+lineno 14 0013 KILO  *
+lineno 15 0014 KILO  *  *  Redistributions of source code must retain the above copyright
+lineno 16 0015 KILO  *     notice, this list of conditions and the following disclaimer.
+lineno 17 0016 KILO  *
+lineno 18 0017 KILO  *  *  Redistributions in binary form must reproduce the above copyright
+lineno 19 0018 KILO  *     notice, this list of conditions and the following disclaimer in the
+lineno 20 0019 KILO  *     documentation and/or other materials provided with the distribution.
+lineno 21 0020 KILO  *
+lineno 22 0021 KILO  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+lineno 23 0022 KILO  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+lineno 24 0023 KILO  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+lineno 25 0024 KILO  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+lineno 26 0025 KILO  * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+lineno 27 0026 KILO  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+lineno 28 0027 KILO  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+lineno 29 0028 KILO  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+lineno 30 0029 KILO  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+lineno 31 0030 KILO  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+lineno 32 0031 KILO  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+lineno 33 0032 KILO  */
+
+lineno 54 0053 KILO /* Syntax highlight types */
+
+lineno 57 0056 KILO #define HL_COMMENT 2   /* Single line comment. */
+
+lineno 63 0062 KILO #define HL_MATCH 8      /* Search match. */
+
+lineno 77 0076 KILO /* This structure represents a single line of the file we are editing. */
+
+lineno 79 0078 KILO     int idx;            /* Row index in the file, zero-based. */
+
+lineno 94 0093 KILO     int cx,cy;  /* Cursor x and y position in characters */
+
+lineno 106 0105 KILO     struct editorSyntax *syntax;    /* Current syntax highlight, or NULL. */
+
+lineno 112 0111 KILO         KEY_NULL = 0,       /* NULL */
+
+lineno 140 0139 KILO /* =========================== Syntax highlights DB =========================
+lineno 141 0140 KILO  *
+lineno 142 0141 KILO  * In order to add a new syntax, define two arrays with a list of file name
+lineno 143 0142 KILO  * matches and keywords. The file name matches are used in order to match
+lineno 144 0143 KILO  * a given syntax with a given file name: if a match pattern starts with a
+lineno 145 0144 KILO  * dot, it is matched as the last past of the filename, for example ".c".
+lineno 146 0145 KILO  * Otherwise the pattern is just searched inside the filenme, like "Makefile").
+lineno 147 0146 KILO  *
+lineno 148 0147 KILO  * The list of keywords to highlight is just a list of words, however if they
+lineno 149 0148 KILO  * a trailing '|' character is added at the end, they are highlighted in
+lineno 150 0149 KILO  * a different color, so that you can have two different sets of keywords.
+lineno 151 0150 KILO  *
+lineno 152 0151 KILO  * Finally add a stanza in the HLDB global variable with two two arrays
+lineno 153 0152 KILO  * of strings, and a set of flags in order to enable highlighting of
+lineno 154 0153 KILO  * comments and numbers.
+lineno 155 0154 KILO  *
+lineno 156 0155 KILO  * The characters for single and multi line comments must be exactly two
+lineno 157 0156 KILO  * and must be provided as well (see the C language example).
+lineno 158 0157 KILO  *
+lineno 159 0158 KILO  * There is no support to highlight patterns currently. */
+
+lineno 161 0160 KILO /* C / C++ */
+
+lineno 164 0163 KILO         /* A few C / C++ keywords */
+
+lineno 167 0166 KILO         /* C types */
+
+lineno 172 0171 KILO /* Here we define an array of syntax highlights by extensions, keywords,
+lineno 173 0172 KILO  * comments delimiters and flags. */
+
+lineno 176 0175 KILO         /* C / C++ */
+
+lineno 179 0178 KILO         "//","/*","*/",
+
+lineno 186 0185 KILO /* ======================= Low level terminal handling ====================== */
+
+lineno 188 0187 KILO static struct termios orig_termios; /* In order to restore at exit.*/
+
+lineno 191 0190 KILO     /* Don't even check the return value as it's too late. */
+
+lineno 198 0197 KILO /* Called at exit to avoid remaining in raw mode. */
+
+lineno 203 0202 KILO /* Raw mode: 1960 magic shit. */
+
+lineno 207 0206 KILO     if (E.rawmode) return 0; /* Already enabled. */
+
+lineno 212 0211 KILO     raw = orig_termios;  /* modify the original mode */
+
+lineno 216 0215 KILO     /* output modes - disable post processing */
+
+lineno 218 0217 KILO     /* control modes - set 8 bit chars */
+
+lineno 220 0219 KILO     /* local modes - choing off, canonical off, no extended functions,
+lineno 221 0220 KILO      * no signal chars (^Z,^C) */
+
+lineno 223 0222 KILO     /* control chars - set return condition: min number of bytes and timer. */
+
+lineno 227 0226 KILO     /* put terminal in raw mode after flushing */
+
+lineno 237 0236 KILO /* Read a key from the terminal put in raw mode, trying to handle
+lineno 238 0237 KILO  * escape sequences. */
+
+lineno 247 0246 KILO         case ESC:    /* escape sequence */
+
+lineno 252 0251 KILO             /* ESC [ sequences. */
+
+lineno 255 0254 KILO                     /* Extended escape, read additional byte. */
+
+lineno 276 0275 KILO             /* ESC O sequences. */
+
+lineno 290 0289 KILO /* Use the ESC [6n escape sequence to query the horizontal cursor position
+lineno 291 0290 KILO  * and return it. On error -1 is returned, on success the position of the
+lineno 292 0291 KILO  * cursor is stored at *rows and *cols and 0 is returned. */
+
+lineno 297 0296 KILO     /* Report cursor location */
+
+lineno 300 0299 KILO     /* Read the response: ESC [ rows ; cols R */
+
+lineno 308 0307 KILO     /* Parse it. */
+
+lineno 314 0313 KILO /* Try to get the number of columns in the current terminal. If the ioctl()
+lineno 315 0314 KILO  * call fails the function will try to query the terminal itself.
+lineno 316 0315 KILO  * Returns 0 on success, -1 on error. */
+
+lineno 321 0320 KILO         /* ioctl() failed. Try to query the terminal itself. */
+
+lineno 324 0323 KILO         /* Get the initial position so we can restore it later. */
+
+lineno 328 0327 KILO         /* Go to right/bottom margin and get position. */
+
+lineno 333 0332 KILO         /* Restore position. */
+
+lineno 337 0336 KILO             /* Can't recover... */
+
+lineno 350 0349 KILO /* ====================== Syntax highlight color scheme  ==================== */
+
