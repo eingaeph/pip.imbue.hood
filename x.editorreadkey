@@ -1,0 +1,3 @@
+0238 KILO int editorReadKey(int fd) {
+1013 KILO         int c = editorReadKey(fd);
+1167 KILO     int c = editorReadKey(fd);
