@@ -1,0 +1,1146 @@
+lineno 68 0067 KILO struct editorSyntax {
+lineno 69 0068 KILO     char **filematch;
+lineno 70 0069 KILO     char **keywords;
+lineno 71 0070 KILO     char singleline_comment_start[2];
+lineno 72 0071 KILO     char multiline_comment_start[3];
+lineno 73 0072 KILO     char multiline_comment_end[3];
+lineno 74 0073 KILO     int flags;
+lineno 75 0074 KILO };
+
+
+lineno 78 0077 KILO typedef struct erow {
+lineno 79 0078 KILO     int idx;            /* Row index in the file, zero-based. */
+lineno 80 0079 KILO     int size;           /* Size of the row, excluding the null term. */
+lineno 81 0080 KILO     int rsize;          /* Size of the rendered row. */
+lineno 82 0081 KILO     char *chars;        /* Row content. */
+lineno 83 0082 KILO     char *render;       /* Row content "rendered" for screen (for TABs). */
+lineno 84 0083 KILO     unsigned char *hl;  /* Syntax highlight type for each character in render.*/
+lineno 85 0084 KILO     int hl_oc;          /* Row had open comment at end in last syntax highlight
+lineno 86 0085 KILO                            check. */
+lineno 87 0086 KILO } erow;
+
+
+lineno 89 0088 KILO typedef struct hlcolor {
+lineno 90 0089 KILO     int r,g,b;
+lineno 91 0090 KILO } hlcolor;
+
+
+lineno 93 0092 KILO struct editorConfig {
+lineno 94 0093 KILO     int cx,cy;  /* Cursor x and y position in characters */
+lineno 95 0094 KILO     int rowoff;     /* Offset of row displayed. */
+lineno 96 0095 KILO     int coloff;     /* Offset of column displayed. */
+lineno 97 0096 KILO     int screenrows; /* Number of rows that we can show */
+lineno 98 0097 KILO     int screencols; /* Number of cols that we can show */
+lineno 99 0098 KILO     int numrows;    /* Number of rows */
+lineno 100 0099 KILO     int rawmode;    /* Is terminal raw mode enabled? */
+lineno 101 0100 KILO     erow *row;      /* Rows */
+lineno 102 0101 KILO     int dirty;      /* File modified but not saved. */
+lineno 103 0102 KILO     char *filename; /* Currently open filename */
+lineno 104 0103 KILO     char statusmsg[80];
+lineno 105 0104 KILO     time_t statusmsg_time;
+lineno 106 0105 KILO     struct editorSyntax *syntax;    /* Current syntax highlight, or NULL. */
+lineno 107 0106 KILO };
+
+
+lineno 111 0110 KILO enum KEY_ACTION{
+lineno 112 0111 KILO         KEY_NULL = 0,       /* NULL */
+lineno 113 0112 KILO         CTRL_C = 3,         /* Ctrl-c */
+lineno 114 0113 KILO         CTRL_D = 4,         /* Ctrl-d */
+lineno 115 0114 KILO         CTRL_F = 6,         /* Ctrl-f */
+lineno 116 0115 KILO         CTRL_H = 8,         /* Ctrl-h */
+lineno 117 0116 KILO         TAB = 9,            /* Tab */
+lineno 118 0117 KILO         CTRL_L = 12,        /* Ctrl+l */
+lineno 119 0118 KILO         ENTER = 13,         /* Enter */
+lineno 120 0119 KILO         CTRL_Q = 17,        /* Ctrl-q */
+lineno 121 0120 KILO         CTRL_S = 19,        /* Ctrl-s */
+lineno 122 0121 KILO         CTRL_U = 21,        /* Ctrl-u */
+lineno 123 0122 KILO         ESC = 27,           /* Escape */
+lineno 124 0123 KILO         BACKSPACE =  127,   /* Backspace */
+lineno 125 0124 KILO         /* The following are just soft codes, not really reported by the
+lineno 126 0125 KILO          * terminal directly. */
+lineno 127 0126 KILO         ARROW_LEFT = 1000,
+lineno 128 0127 KILO         ARROW_RIGHT,
+lineno 129 0128 KILO         ARROW_UP,
+lineno 130 0129 KILO         ARROW_DOWN,
+lineno 131 0130 KILO         DEL_KEY,
+lineno 132 0131 KILO         HOME_KEY,
+lineno 133 0132 KILO         END_KEY,
+lineno 134 0133 KILO         PAGE_UP,
+lineno 135 0134 KILO         PAGE_DOWN
+lineno 136 0135 KILO };
+
+
+lineno 162 0161 KILO char *C_HL_extensions[] = {".c",".cpp",NULL};
+
+
+
+
+lineno 174 0173 KILO struct editorSyntax HLDB[] = {
+lineno 175 0174 KILO     {
+lineno 176 0175 KILO         /* C / C++ */
+lineno 177 0176 KILO         C_HL_extensions,
+lineno 178 0177 KILO         C_HL_keywords,
+lineno 179 0178 KILO         "//","/*","*/",
+lineno 180 0179 KILO         HL_HIGHLIGHT_STRINGS | HL_HIGHLIGHT_NUMBERS
+lineno 181 0180 KILO     }
+lineno 182 0181 KILO };
+
+
+lineno 190 0189 KILO void disableRawMode(int fd) {
+lineno 191 0190 KILO     /* Don't even check the return value as it's too late. */
+lineno 192 0191 KILO     if (E.rawmode) {
+lineno 193 0192 KILO         tcsetattr(fd,TCSAFLUSH,&orig_termios);
+lineno 194 0193 KILO         E.rawmode = 0;
+lineno 195 0194 KILO     }
+lineno 196 0195 KILO }
+
+
+lineno 199 0198 KILO void editorAtExit(void) {
+lineno 200 0199 KILO     disableRawMode(STDIN_FILENO);
+lineno 201 0200 KILO }
+
+
+lineno 204 0203 KILO int enableRawMode(int fd) {
+lineno 205 0204 KILO     struct termios raw;
+lineno 206 0205 KILO 
+lineno 207 0206 KILO     if (E.rawmode) return 0; /* Already enabled. */
+lineno 208 0207 KILO     if (!isatty(STDIN_FILENO)) goto fatal;
+lineno 209 0208 KILO     atexit(editorAtExit);
+lineno 210 0209 KILO     if (tcgetattr(fd,&orig_termios) == -1) goto fatal;
+lineno 211 0210 KILO 
+lineno 212 0211 KILO     raw = orig_termios;  /* modify the original mode */
+lineno 213 0212 KILO     /* input modes: no break, no CR to NL, no parity check, no strip char,
+lineno 214 0213 KILO      * no start/stop output control. */
+lineno 215 0214 KILO     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+lineno 216 0215 KILO     /* output modes - disable post processing */
+lineno 217 0216 KILO     raw.c_oflag &= ~(OPOST);
+lineno 218 0217 KILO     /* control modes - set 8 bit chars */
+lineno 219 0218 KILO     raw.c_cflag |= (CS8);
+lineno 220 0219 KILO     /* local modes - choing off, canonical off, no extended functions,
+lineno 221 0220 KILO      * no signal chars (^Z,^C) */
+lineno 222 0221 KILO     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+lineno 223 0222 KILO     /* control chars - set return condition: min number of bytes and timer. */
+lineno 224 0223 KILO     raw.c_cc[VMIN] = 0; /* Return each byte, or zero for timeout. */
+lineno 225 0224 KILO     raw.c_cc[VTIME] = 1; /* 100 ms timeout (unit is tens of second). */
+lineno 226 0225 KILO 
+lineno 227 0226 KILO     /* put terminal in raw mode after flushing */
+lineno 228 0227 KILO     if (tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal;
+lineno 229 0228 KILO     E.rawmode = 1;
+lineno 230 0229 KILO     return 0;
+lineno 231 0230 KILO 
+lineno 232 0231 KILO fatal:
+lineno 233 0232 KILO     errno = ENOTTY;
+lineno 234 0233 KILO     return -1;
+lineno 235 0234 KILO }
+
+
+lineno 239 0238 KILO int editorReadKey(int fd) {
+lineno 240 0239 KILO     int nread;
+lineno 241 0240 KILO     char c, seq[3];
+lineno 242 0241 KILO     while ((nread = read(fd,&c,1)) == 0);
+lineno 243 0242 KILO     if (nread == -1) exit(1);
+lineno 244 0243 KILO 
+lineno 245 0244 KILO     while(1) {
+lineno 246 0245 KILO         switch(c) {
+lineno 247 0246 KILO         case ESC:    /* escape sequence */
+lineno 248 0247 KILO             /* If this is just an ESC, we'll timeout here. */
+lineno 249 0248 KILO             if (read(fd,seq,1) == 0) return ESC;
+lineno 250 0249 KILO             if (read(fd,seq+1,1) == 0) return ESC;
+lineno 251 0250 KILO 
+lineno 252 0251 KILO             /* ESC [ sequences. */
+lineno 253 0252 KILO             if (seq[0] == '[') {
+lineno 254 0253 KILO                 if (seq[1] >= '0' && seq[1] <= '9') {
+lineno 255 0254 KILO                     /* Extended escape, read additional byte. */
+lineno 256 0255 KILO                     if (read(fd,seq+2,1) == 0) return ESC;
+lineno 257 0256 KILO                     if (seq[2] == '~') {
+lineno 258 0257 KILO                         switch(seq[1]) {
+lineno 259 0258 KILO                         case '3': return DEL_KEY;
+lineno 260 0259 KILO                         case '5': return PAGE_UP;
+lineno 261 0260 KILO                         case '6': return PAGE_DOWN;
+lineno 262 0261 KILO                         }
+lineno 263 0262 KILO                     }
+lineno 264 0263 KILO                 } else {
+lineno 265 0264 KILO                     switch(seq[1]) {
+lineno 266 0265 KILO                     case 'A': return ARROW_UP;
+lineno 267 0266 KILO                     case 'B': return ARROW_DOWN;
+lineno 268 0267 KILO                     case 'C': return ARROW_RIGHT;
+lineno 269 0268 KILO                     case 'D': return ARROW_LEFT;
+lineno 270 0269 KILO                     case 'H': return HOME_KEY;
+lineno 271 0270 KILO                     case 'F': return END_KEY;
+lineno 272 0271 KILO                     }
+lineno 273 0272 KILO                 }
+lineno 274 0273 KILO             }
+lineno 275 0274 KILO 
+lineno 276 0275 KILO             /* ESC O sequences. */
+lineno 277 0276 KILO             else if (seq[0] == 'O') {
+lineno 278 0277 KILO                 switch(seq[1]) {
+lineno 279 0278 KILO                 case 'H': return HOME_KEY;
+lineno 280 0279 KILO                 case 'F': return END_KEY;
+lineno 281 0280 KILO                 }
+lineno 282 0281 KILO             }
+lineno 283 0282 KILO             break;
+lineno 284 0283 KILO         default:
+lineno 285 0284 KILO             return c;
+lineno 286 0285 KILO         }
+lineno 287 0286 KILO     }
+lineno 288 0287 KILO }
+
+
+lineno 293 0292 KILO int getCursorPosition(int ifd, int ofd, int *rows, int *cols) {
+lineno 294 0293 KILO     char buf[32];
+lineno 295 0294 KILO     unsigned int i = 0;
+lineno 296 0295 KILO 
+lineno 297 0296 KILO     /* Report cursor location */
+lineno 298 0297 KILO     if (write(ofd, "\x1b[6n", 4) != 4) return -1;
+lineno 299 0298 KILO 
+lineno 300 0299 KILO     /* Read the response: ESC [ rows ; cols R */
+lineno 301 0300 KILO     while (i < sizeof(buf)-1) {
+lineno 302 0301 KILO         if (read(ifd,buf+i,1) != 1) break;
+lineno 303 0302 KILO         if (buf[i] == 'R') break;
+lineno 304 0303 KILO         i++;
+lineno 305 0304 KILO     }
+lineno 306 0305 KILO     buf[i] = '\0';
+lineno 307 0306 KILO 
+lineno 308 0307 KILO     /* Parse it. */
+lineno 309 0308 KILO     if (buf[0] != ESC || buf[1] != '[') return -1;
+lineno 310 0309 KILO     if (sscanf(buf+2,"%d;%d",rows,cols) != 2) return -1;
+lineno 311 0310 KILO     return 0;
+lineno 312 0311 KILO }
+
+
+lineno 317 0316 KILO int getWindowSize(int ifd, int ofd, int *rows, int *cols) {
+lineno 318 0317 KILO     struct winsize ws;
+lineno 319 0318 KILO 
+lineno 320 0319 KILO     if (ioctl(1, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+lineno 321 0320 KILO         /* ioctl() failed. Try to query the terminal itself. */
+lineno 322 0321 KILO         int orig_row, orig_col, retval;
+lineno 323 0322 KILO 
+lineno 324 0323 KILO         /* Get the initial position so we can restore it later. */
+lineno 325 0324 KILO         retval = getCursorPosition(ifd,ofd,&orig_row,&orig_col);
+lineno 326 0325 KILO         if (retval == -1) goto failed;
+lineno 327 0326 KILO 
+lineno 328 0327 KILO         /* Go to right/bottom margin and get position. */
+lineno 329 0328 KILO         if (write(ofd,"\x1b[999C\x1b[999B",12) != 12) goto failed;
+lineno 330 0329 KILO         retval = getCursorPosition(ifd,ofd,rows,cols);
+lineno 331 0330 KILO         if (retval == -1) goto failed;
+lineno 332 0331 KILO 
+lineno 333 0332 KILO         /* Restore position. */
+lineno 334 0333 KILO         char seq[32];
+lineno 335 0334 KILO         snprintf(seq,32,"\x1b[%d;%dH",orig_row,orig_col);
+lineno 336 0335 KILO         if (write(ofd,seq,strlen(seq)) == -1) {
+lineno 337 0336 KILO             /* Can't recover... */
+lineno 338 0337 KILO         }
+lineno 339 0338 KILO         return 0;
+lineno 340 0339 KILO     } else {
+lineno 341 0340 KILO         *cols = ws.ws_col;
+lineno 342 0341 KILO         *rows = ws.ws_row;
+lineno 343 0342 KILO         return 0;
+lineno 344 0343 KILO     }
+lineno 345 0344 KILO 
+lineno 346 0345 KILO failed:
+lineno 347 0346 KILO     return -1;
+lineno 348 0347 KILO }
+
+
+lineno 352 0351 KILO int is_separator(int c) {
+lineno 353 0352 KILO     return c == '\0' || isspace(c) || strchr(",.()+-/*=~%[];",c) != NULL;
+lineno 354 0353 KILO }
+
+
+lineno 359 0358 KILO int editorRowHasOpenComment(erow *row) {
+lineno 360 0359 KILO     if (row->hl && row->rsize && row->hl[row->rsize-1] == HL_MLCOMMENT &&
+lineno 361 0360 KILO         (row->rsize < 2 || (row->render[row->rsize-2] != '*' ||
+lineno 362 0361 KILO                             row->render[row->rsize-1] != '/'))) return 1;
+lineno 363 0362 KILO     return 0;
+lineno 364 0363 KILO }
+
+
+lineno 368 0367 KILO void editorUpdateSyntax(erow *row) {
+lineno 369 0368 KILO     row->hl = realloc(row->hl,row->rsize);
+lineno 370 0369 KILO     memset(row->hl,HL_NORMAL,row->rsize);
+lineno 371 0370 KILO 
+lineno 372 0371 KILO     if (E.syntax == NULL) return; /* No syntax, everything is HL_NORMAL. */
+lineno 373 0372 KILO 
+lineno 374 0373 KILO     int i, prev_sep, in_string, in_comment;
+lineno 375 0374 KILO     char *p;
+lineno 376 0375 KILO     char **keywords = E.syntax->keywords;
+lineno 377 0376 KILO     char *scs = E.syntax->singleline_comment_start;
+lineno 378 0377 KILO     char *mcs = E.syntax->multiline_comment_start;
+lineno 379 0378 KILO     char *mce = E.syntax->multiline_comment_end;
+lineno 380 0379 KILO 
+lineno 381 0380 KILO     /* Point to the first non-space char. */
+lineno 382 0381 KILO     p = row->render;
+lineno 383 0382 KILO     i = 0; /* Current char offset */
+lineno 384 0383 KILO     while(*p && isspace(*p)) {
+lineno 385 0384 KILO         p++;
+lineno 386 0385 KILO         i++;
+lineno 387 0386 KILO     }
+lineno 388 0387 KILO     prev_sep = 1; /* Tell the parser if 'i' points to start of word. */
+lineno 389 0388 KILO     in_string = 0; /* Are we inside "" or '' ? */
+lineno 390 0389 KILO     in_comment = 0; /* Are we inside multi-line comment? */
+lineno 391 0390 KILO 
+lineno 392 0391 KILO     /* If the previous line has an open comment, this line starts
+lineno 393 0392 KILO      * with an open comment state. */
+lineno 394 0393 KILO     if (row->idx > 0 && editorRowHasOpenComment(&E.row[row->idx-1]))
+lineno 395 0394 KILO         in_comment = 1;
+lineno 396 0395 KILO 
+lineno 397 0396 KILO     while(*p) {
+lineno 398 0397 KILO         /* Handle // comments. */
+lineno 399 0398 KILO         if (prev_sep && *p == scs[0] && *(p+1) == scs[1]) {
+lineno 400 0399 KILO             /* From here to end is a comment */
+lineno 401 0400 KILO             memset(row->hl+i,HL_COMMENT,row->size-i);
+lineno 402 0401 KILO             return;
+lineno 403 0402 KILO         }
+lineno 404 0403 KILO 
+lineno 405 0404 KILO         /* Handle multi line comments. */
+lineno 406 0405 KILO         if (in_comment) {
+lineno 407 0406 KILO             row->hl[i] = HL_MLCOMMENT;
+lineno 408 0407 KILO             if (*p == mce[0] && *(p+1) == mce[1]) {
+lineno 409 0408 KILO                 row->hl[i+1] = HL_MLCOMMENT;
+lineno 410 0409 KILO                 p += 2; i += 2;
+lineno 411 0410 KILO                 in_comment = 0;
+lineno 412 0411 KILO                 prev_sep = 1;
+lineno 413 0412 KILO                 continue;
+lineno 414 0413 KILO             } else {
+lineno 415 0414 KILO                 prev_sep = 0;
+lineno 416 0415 KILO                 p++; i++;
+lineno 417 0416 KILO                 continue;
+lineno 418 0417 KILO             }
+lineno 419 0418 KILO         } else if (*p == mcs[0] && *(p+1) == mcs[1]) {
+lineno 420 0419 KILO             row->hl[i] = HL_MLCOMMENT;
+lineno 421 0420 KILO             row->hl[i+1] = HL_MLCOMMENT;
+lineno 422 0421 KILO             p += 2; i += 2;
+lineno 423 0422 KILO             in_comment = 1;
+lineno 424 0423 KILO             prev_sep = 0;
+lineno 425 0424 KILO             continue;
+lineno 426 0425 KILO         }
+lineno 427 0426 KILO 
+lineno 428 0427 KILO         /* Handle "" and '' */
+lineno 429 0428 KILO         if (in_string) {
+lineno 430 0429 KILO             row->hl[i] = HL_STRING;
+lineno 431 0430 KILO             if (*p == '\\') {
+lineno 432 0431 KILO                 row->hl[i+1] = HL_STRING;
+lineno 433 0432 KILO                 p += 2; i += 2;
+lineno 434 0433 KILO                 prev_sep = 0;
+lineno 435 0434 KILO                 continue;
+lineno 436 0435 KILO             }
+lineno 437 0436 KILO             if (*p == in_string) in_string = 0;
+lineno 438 0437 KILO             p++; i++;
+lineno 439 0438 KILO             continue;
+lineno 440 0439 KILO         } else {
+lineno 441 0440 KILO             if (*p == '"' || *p == '\'') {
+lineno 442 0441 KILO                 in_string = *p;
+lineno 443 0442 KILO                 row->hl[i] = HL_STRING;
+lineno 444 0443 KILO                 p++; i++;
+lineno 445 0444 KILO                 prev_sep = 0;
+lineno 446 0445 KILO                 continue;
+lineno 447 0446 KILO             }
+lineno 448 0447 KILO         }
+lineno 449 0448 KILO 
+lineno 450 0449 KILO         /* Handle non printable chars. */
+lineno 451 0450 KILO         if (!isprint(*p)) {
+lineno 452 0451 KILO             row->hl[i] = HL_NONPRINT;
+lineno 453 0452 KILO             p++; i++;
+lineno 454 0453 KILO             prev_sep = 0;
+lineno 455 0454 KILO             continue;
+lineno 456 0455 KILO         }
+lineno 457 0456 KILO 
+lineno 458 0457 KILO         /* Handle numbers */
+lineno 459 0458 KILO         if ((isdigit(*p) && (prev_sep || row->hl[i-1] == HL_NUMBER)) ||
+lineno 460 0459 KILO             (*p == '.' && i >0 && row->hl[i-1] == HL_NUMBER)) {
+lineno 461 0460 KILO             row->hl[i] = HL_NUMBER;
+lineno 462 0461 KILO             p++; i++;
+lineno 463 0462 KILO             prev_sep = 0;
+lineno 464 0463 KILO             continue;
+lineno 465 0464 KILO         }
+lineno 466 0465 KILO 
+lineno 467 0466 KILO         /* Handle keywords and lib calls */
+lineno 468 0467 KILO         if (prev_sep) {
+lineno 469 0468 KILO             int j;
+lineno 470 0469 KILO             for (j = 0; keywords[j]; j++) {
+lineno 471 0470 KILO                 int klen = strlen(keywords[j]);
+lineno 472 0471 KILO                 int kw2 = keywords[j][klen-1] == '|';
+lineno 473 0472 KILO                 if (kw2) klen--;
+lineno 474 0473 KILO 
+lineno 475 0474 KILO                 if (!memcmp(p,keywords[j],klen) &&
+lineno 476 0475 KILO                     is_separator(*(p+klen)))
+lineno 477 0476 KILO                 {
+lineno 478 0477 KILO                     /* Keyword */
+lineno 479 0478 KILO                     memset(row->hl+i,kw2 ? HL_KEYWORD2 : HL_KEYWORD1,klen);
+lineno 480 0479 KILO                     p += klen;
+lineno 481 0480 KILO                     i += klen;
+lineno 482 0481 KILO                     break;
+lineno 483 0482 KILO                 }
+lineno 484 0483 KILO             }
+lineno 485 0484 KILO             if (keywords[j] != NULL) {
+lineno 486 0485 KILO                 prev_sep = 0;
+lineno 487 0486 KILO                 continue; /* We had a keyword match */
+lineno 488 0487 KILO             }
+lineno 489 0488 KILO         }
+lineno 490 0489 KILO 
+lineno 491 0490 KILO         /* Not special chars */
+lineno 492 0491 KILO         prev_sep = is_separator(*p);
+lineno 493 0492 KILO         p++; i++;
+lineno 494 0493 KILO     }
+lineno 495 0494 KILO 
+lineno 496 0495 KILO     /* Propagate syntax change to the next row if the open commen
+lineno 497 0496 KILO      * state changed. This may recursively affect all the following rows
+lineno 498 0497 KILO      * in the file. */
+lineno 499 0498 KILO     int oc = editorRowHasOpenComment(row);
+lineno 500 0499 KILO     if (row->hl_oc != oc && row->idx+1 < E.numrows)
+lineno 501 0500 KILO         editorUpdateSyntax(&E.row[row->idx+1]);
+lineno 502 0501 KILO     row->hl_oc = oc;
+lineno 503 0502 KILO }
+
+
+lineno 506 0505 KILO int editorSyntaxToColor(int hl) {
+lineno 507 0506 KILO     switch(hl) {
+lineno 508 0507 KILO     case HL_COMMENT:
+lineno 509 0508 KILO     case HL_MLCOMMENT: return 36;     /* cyan */
+lineno 510 0509 KILO     case HL_KEYWORD1: return 33;    /* yellow */
+lineno 511 0510 KILO     case HL_KEYWORD2: return 32;    /* green */
+lineno 512 0511 KILO     case HL_STRING: return 35;      /* magenta */
+lineno 513 0512 KILO     case HL_NUMBER: return 31;      /* red */
+lineno 514 0513 KILO     case HL_MATCH: return 34;      /* blu */
+lineno 515 0514 KILO     default: return 37;             /* white */
+lineno 516 0515 KILO     }
+lineno 517 0516 KILO }
+
+
+lineno 521 0520 KILO void editorSelectSyntaxHighlight(char *filename) {
+lineno 522 0521 KILO     for (unsigned int j = 0; j < HLDB_ENTRIES; j++) {
+lineno 523 0522 KILO         struct editorSyntax *s = HLDB+j;
+lineno 524 0523 KILO         unsigned int i = 0;
+lineno 525 0524 KILO         while(s->filematch[i]) {
+lineno 526 0525 KILO             char *p;
+lineno 527 0526 KILO             int patlen = strlen(s->filematch[i]);
+lineno 528 0527 KILO             if ((p = strstr(filename,s->filematch[i])) != NULL) {
+lineno 529 0528 KILO                 if (s->filematch[i][0] != '.' || p[patlen] == '\0') {
+lineno 530 0529 KILO                     E.syntax = s;
+lineno 531 0530 KILO                     return;
+lineno 532 0531 KILO                 }
+lineno 533 0532 KILO             }
+lineno 534 0533 KILO             i++;
+lineno 535 0534 KILO         }
+lineno 536 0535 KILO     }
+lineno 537 0536 KILO }
+
+
+lineno 542 0541 KILO void editorUpdateRow(erow *row) {
+lineno 543 0542 KILO     int tabs = 0, nonprint = 0, j, idx;
+lineno 544 0543 KILO 
+lineno 545 0544 KILO    /* Create a version of the row we can directly print on the screen,
+lineno 546 0545 KILO      * respecting tabs, substituting non printable characters with '?'. */
+lineno 547 0546 KILO     free(row->render);
+lineno 548 0547 KILO     for (j = 0; j < row->size; j++)
+lineno 549 0548 KILO         if (row->chars[j] == TAB) tabs++;
+lineno 550 0549 KILO 
+lineno 551 0550 KILO     row->render = malloc(row->size + tabs*8 + nonprint*9 + 1);
+lineno 552 0551 KILO     idx = 0;
+lineno 553 0552 KILO     for (j = 0; j < row->size; j++) {
+lineno 554 0553 KILO         if (row->chars[j] == TAB) {
+lineno 555 0554 KILO             row->render[idx++] = ' ';
+lineno 556 0555 KILO             while((idx+1) % 8 != 0) row->render[idx++] = ' ';
+lineno 557 0556 KILO         } else {
+lineno 558 0557 KILO             row->render[idx++] = row->chars[j];
+lineno 559 0558 KILO         }
+lineno 560 0559 KILO     }
+lineno 561 0560 KILO     row->rsize = idx;
+lineno 562 0561 KILO     row->render[idx] = '\0';
+lineno 563 0562 KILO 
+lineno 564 0563 KILO     /* Update the syntax highlighting attributes of the row. */
+lineno 565 0564 KILO     editorUpdateSyntax(row);
+lineno 566 0565 KILO }
+
+
+lineno 570 0569 KILO void editorInsertRow(int at, char *s, size_t len) {
+lineno 571 0570 KILO     if (at > E.numrows) return;
+lineno 572 0571 KILO     E.row = realloc(E.row,sizeof(erow)*(E.numrows+1));
+lineno 573 0572 KILO     if (at != E.numrows) {
+lineno 574 0573 KILO         memmove(E.row+at+1,E.row+at,sizeof(E.row[0])*(E.numrows-at));
+lineno 575 0574 KILO         for (int j = at+1; j <= E.numrows; j++) E.row[j].idx++;
+lineno 576 0575 KILO     }
+lineno 577 0576 KILO     E.row[at].size = len;
+lineno 578 0577 KILO     E.row[at].chars = malloc(len+1);
+lineno 579 0578 KILO     memcpy(E.row[at].chars,s,len+1);
+lineno 580 0579 KILO     E.row[at].hl = NULL;
+lineno 581 0580 KILO     E.row[at].hl_oc = 0;
+lineno 582 0581 KILO     E.row[at].render = NULL;
+lineno 583 0582 KILO     E.row[at].rsize = 0;
+lineno 584 0583 KILO     E.row[at].idx = at;
+lineno 585 0584 KILO     editorUpdateRow(E.row+at);
+lineno 586 0585 KILO     E.numrows++;
+lineno 587 0586 KILO     E.dirty++;
+lineno 588 0587 KILO }
+
+
+lineno 591 0590 KILO void editorFreeRow(erow *row) {
+lineno 592 0591 KILO     free(row->render);
+lineno 593 0592 KILO     free(row->chars);
+lineno 594 0593 KILO     free(row->hl);
+lineno 595 0594 KILO }
+
+
+lineno 599 0598 KILO void editorDelRow(int at) {
+lineno 600 0599 KILO     erow *row;
+lineno 601 0600 KILO 
+lineno 602 0601 KILO     if (at >= E.numrows) return;
+lineno 603 0602 KILO     row = E.row+at;
+lineno 604 0603 KILO     editorFreeRow(row);
+lineno 605 0604 KILO     memmove(E.row+at,E.row+at+1,sizeof(E.row[0])*(E.numrows-at-1));
+lineno 606 0605 KILO     for (int j = at; j < E.numrows-1; j++) E.row[j].idx++;
+lineno 607 0606 KILO     E.numrows--;
+lineno 608 0607 KILO     E.dirty++;
+lineno 609 0608 KILO }
+
+
+lineno 615 0614 KILO char *editorRowsToString(int *buflen) {
+lineno 616 0615 KILO     char *buf = NULL, *p;
+lineno 617 0616 KILO     int totlen = 0;
+lineno 618 0617 KILO     int j;
+lineno 619 0618 KILO 
+lineno 620 0619 KILO     /* Compute count of bytes */
+lineno 621 0620 KILO     for (j = 0; j < E.numrows; j++)
+lineno 622 0621 KILO         totlen += E.row[j].size+1; /* +1 is for "\n" at end of every row */
+lineno 623 0622 KILO     *buflen = totlen;
+lineno 624 0623 KILO     totlen++; /* Also make space for nulterm */
+lineno 625 0624 KILO 
+lineno 626 0625 KILO     p = buf = malloc(totlen);
+lineno 627 0626 KILO     for (j = 0; j < E.numrows; j++) {
+lineno 628 0627 KILO         memcpy(p,E.row[j].chars,E.row[j].size);
+lineno 629 0628 KILO         p += E.row[j].size;
+lineno 630 0629 KILO         *p = '\n';
+lineno 631 0630 KILO         p++;
+lineno 632 0631 KILO     }
+lineno 633 0632 KILO     *p = '\0';
+lineno 634 0633 KILO     return buf;
+lineno 635 0634 KILO }
+
+
+lineno 639 0638 KILO void editorRowInsertChar(erow *row, int at, int c) {
+lineno 640 0639 KILO     if (at > row->size) {
+lineno 641 0640 KILO         /* Pad the string with spaces if the insert location is outside the
+lineno 642 0641 KILO          * current length by more than a single character. */
+lineno 643 0642 KILO         int padlen = at-row->size;
+lineno 644 0643 KILO         /* In the next line +2 means: new char and null term. */
+lineno 645 0644 KILO         row->chars = realloc(row->chars,row->size+padlen+2);
+lineno 646 0645 KILO         memset(row->chars+row->size,' ',padlen);
+lineno 647 0646 KILO         row->chars[row->size+padlen+1] = '\0';
+lineno 648 0647 KILO         row->size += padlen+1;
+lineno 649 0648 KILO     } else {
+lineno 650 0649 KILO         /* If we are in the middle of the string just make space for 1 new
+lineno 651 0650 KILO          * char plus the (already existing) null term. */
+lineno 652 0651 KILO         row->chars = realloc(row->chars,row->size+2);
+lineno 653 0652 KILO         memmove(row->chars+at+1,row->chars+at,row->size-at+1);
+lineno 654 0653 KILO         row->size++;
+lineno 655 0654 KILO     }
+lineno 656 0655 KILO     row->chars[at] = c;
+lineno 657 0656 KILO     editorUpdateRow(row);
+lineno 658 0657 KILO     E.dirty++;
+lineno 659 0658 KILO }
+
+
+lineno 662 0661 KILO void editorRowAppendString(erow *row, char *s, size_t len) {
+lineno 663 0662 KILO     row->chars = realloc(row->chars,row->size+len+1);
+lineno 664 0663 KILO     memcpy(row->chars+row->size,s,len);
+lineno 665 0664 KILO     row->size += len;
+lineno 666 0665 KILO     row->chars[row->size] = '\0';
+lineno 667 0666 KILO     editorUpdateRow(row);
+lineno 668 0667 KILO     E.dirty++;
+lineno 669 0668 KILO }
+
+
+lineno 672 0671 KILO void editorRowDelChar(erow *row, int at) {
+lineno 673 0672 KILO     if (row->size <= at) return;
+lineno 674 0673 KILO     memmove(row->chars+at,row->chars+at+1,row->size-at);
+lineno 675 0674 KILO     editorUpdateRow(row);
+lineno 676 0675 KILO     row->size--;
+lineno 677 0676 KILO     E.dirty++;
+lineno 678 0677 KILO }
+
+
+lineno 681 0680 KILO void editorInsertChar(int c) {
+lineno 682 0681 KILO     int filerow = E.rowoff+E.cy;
+lineno 683 0682 KILO     int filecol = E.coloff+E.cx;
+lineno 684 0683 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+lineno 685 0684 KILO 
+lineno 686 0685 KILO     /* If the row where the cursor is currently located does not exist in our
+lineno 687 0686 KILO      * logical representaion of the file, add enough empty rows as needed. */
+lineno 688 0687 KILO     if (!row) {
+lineno 689 0688 KILO         while(E.numrows <= filerow)
+lineno 690 0689 KILO             editorInsertRow(E.numrows,"",0);
+lineno 691 0690 KILO     }
+lineno 692 0691 KILO     row = &E.row[filerow];
+lineno 693 0692 KILO     editorRowInsertChar(row,filecol,c);
+lineno 694 0693 KILO     if (E.cx == E.screencols-1)
+lineno 695 0694 KILO         E.coloff++;
+lineno 696 0695 KILO     else
+lineno 697 0696 KILO         E.cx++;
+lineno 698 0697 KILO     E.dirty++;
+lineno 699 0698 KILO }
+
+
+lineno 703 0702 KILO void editorInsertNewline(void) {
+lineno 704 0703 KILO     int filerow = E.rowoff+E.cy;
+lineno 705 0704 KILO     int filecol = E.coloff+E.cx;
+lineno 706 0705 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+lineno 707 0706 KILO 
+lineno 708 0707 KILO     if (!row) {
+lineno 709 0708 KILO         if (filerow == E.numrows) {
+lineno 710 0709 KILO             editorInsertRow(filerow,"",0);
+lineno 711 0710 KILO             goto fixcursor;
+lineno 712 0711 KILO         }
+lineno 713 0712 KILO         return;
+lineno 714 0713 KILO     }
+lineno 715 0714 KILO     /* If the cursor is over the current line size, we want to conceptually
+lineno 716 0715 KILO      * think it's just over the last character. */
+lineno 717 0716 KILO     if (filecol >= row->size) filecol = row->size;
+lineno 718 0717 KILO     if (filecol == 0) {
+lineno 719 0718 KILO         editorInsertRow(filerow,"",0);
+lineno 720 0719 KILO     } else {
+lineno 721 0720 KILO         /* We are in the middle of a line. Split it between two rows. */
+lineno 722 0721 KILO         editorInsertRow(filerow+1,row->chars+filecol,row->size-filecol);
+lineno 723 0722 KILO         row = &E.row[filerow];
+lineno 724 0723 KILO         row->chars[filecol] = '\0';
+lineno 725 0724 KILO         row->size = filecol;
+lineno 726 0725 KILO         editorUpdateRow(row);
+lineno 727 0726 KILO     }
+lineno 728 0727 KILO fixcursor:
+lineno 729 0728 KILO     if (E.cy == E.screenrows-1) {
+lineno 730 0729 KILO         E.rowoff++;
+lineno 731 0730 KILO     } else {
+lineno 732 0731 KILO         E.cy++;
+lineno 733 0732 KILO     }
+lineno 734 0733 KILO     E.cx = 0;
+lineno 735 0734 KILO     E.coloff = 0;
+lineno 736 0735 KILO }
+
+
+lineno 739 0738 KILO void editorDelChar() {
+lineno 740 0739 KILO     int filerow = E.rowoff+E.cy;
+lineno 741 0740 KILO     int filecol = E.coloff+E.cx;
+lineno 742 0741 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+lineno 743 0742 KILO 
+lineno 744 0743 KILO     if (!row || (filecol == 0 && filerow == 0)) return;
+lineno 745 0744 KILO     if (filecol == 0) {
+lineno 746 0745 KILO         /* Handle the case of column 0, we need to move the current line
+lineno 747 0746 KILO          * on the right of the previous one. */
+lineno 748 0747 KILO         filecol = E.row[filerow-1].size;
+lineno 749 0748 KILO         editorRowAppendString(&E.row[filerow-1],row->chars,row->size);
+lineno 750 0749 KILO         editorDelRow(filerow);
+lineno 751 0750 KILO         row = NULL;
+lineno 752 0751 KILO         if (E.cy == 0)
+lineno 753 0752 KILO             E.rowoff--;
+lineno 754 0753 KILO         else
+lineno 755 0754 KILO             E.cy--;
+lineno 756 0755 KILO         E.cx = filecol;
+lineno 757 0756 KILO         if (E.cx >= E.screencols) {
+lineno 758 0757 KILO             int shift = (E.screencols-E.cx)+1;
+lineno 759 0758 KILO             E.cx -= shift;
+lineno 760 0759 KILO             E.coloff += shift;
+lineno 761 0760 KILO         }
+lineno 762 0761 KILO     } else {
+lineno 763 0762 KILO         editorRowDelChar(row,filecol-1);
+lineno 764 0763 KILO         if (E.cx == 0 && E.coloff)
+lineno 765 0764 KILO             E.coloff--;
+lineno 766 0765 KILO         else
+lineno 767 0766 KILO             E.cx--;
+lineno 768 0767 KILO     }
+lineno 769 0768 KILO     if (row) editorUpdateRow(row);
+lineno 770 0769 KILO     E.dirty++;
+lineno 771 0770 KILO }
+
+
+lineno 775 0774 KILO int editorOpen(char *filename) {
+lineno 776 0775 KILO     FILE *fp;
+lineno 777 0776 KILO 
+lineno 778 0777 KILO     E.dirty = 0;
+lineno 779 0778 KILO     free(E.filename);
+lineno 780 0779 KILO     E.filename = strdup(filename);
+lineno 781 0780 KILO 
+lineno 782 0781 KILO     fp = fopen(filename,"r");
+lineno 783 0782 KILO     if (!fp) {
+lineno 784 0783 KILO         if (errno != ENOENT) {
+lineno 785 0784 KILO             perror("Opening file");
+lineno 786 0785 KILO             exit(1);
+lineno 787 0786 KILO         }
+lineno 788 0787 KILO         return 1;
+lineno 789 0788 KILO     }
+lineno 790 0789 KILO 
+lineno 791 0790 KILO     char *line = NULL;
+lineno 792 0791 KILO     size_t linecap = 0;
+lineno 793 0792 KILO     ssize_t linelen;
+lineno 794 0793 KILO     while((linelen = getline(&line,&linecap,fp)) != -1) {
+lineno 795 0794 KILO         if (linelen && (line[linelen-1] == '\n' || line[linelen-1] == '\r'))
+lineno 796 0795 KILO             line[--linelen] = '\0';
+lineno 797 0796 KILO         editorInsertRow(E.numrows,line,linelen);
+lineno 798 0797 KILO     }
+lineno 799 0798 KILO     free(line);
+lineno 800 0799 KILO     fclose(fp);
+lineno 801 0800 KILO     E.dirty = 0;
+lineno 802 0801 KILO     return 0;
+lineno 803 0802 KILO }
+
+
+lineno 806 0805 KILO int editorSave(void) {
+lineno 807 0806 KILO     int len;
+lineno 808 0807 KILO     char *buf = editorRowsToString(&len);
+lineno 809 0808 KILO     int fd = open(E.filename,O_RDWR|O_CREAT,0644);
+lineno 810 0809 KILO     if (fd == -1) goto writeerr;
+lineno 811 0810 KILO 
+lineno 812 0811 KILO     /* Use truncate + a single write(2) call in order to make saving
+lineno 813 0812 KILO      * a bit safer, under the limits of what we can do in a small editor. */
+lineno 814 0813 KILO     if (ftruncate(fd,len) == -1) goto writeerr;
+lineno 815 0814 KILO     if (write(fd,buf,len) != len) goto writeerr;
+lineno 816 0815 KILO 
+lineno 817 0816 KILO     close(fd);
+lineno 818 0817 KILO     free(buf);
+lineno 819 0818 KILO     E.dirty = 0;
+lineno 820 0819 KILO     editorSetStatusMessage("%d bytes written on disk", len);
+lineno 821 0820 KILO     return 0;
+lineno 822 0821 KILO 
+lineno 823 0822 KILO writeerr:
+lineno 824 0823 KILO     free(buf);
+lineno 825 0824 KILO     if (fd != -1) close(fd);
+lineno 826 0825 KILO     editorSetStatusMessage("Can't save! I/O error: %s",strerror(errno));
+lineno 827 0826 KILO     return 1;
+lineno 828 0827 KILO }
+
+
+lineno 836 0835 KILO struct abuf {
+lineno 837 0836 KILO     char *b;
+lineno 838 0837 KILO     int len;
+lineno 839 0838 KILO };
+
+
+lineno 841 0840 KILO #define ABUF_INIT {NULL,0}
+
+
+lineno 843 0842 KILO void abAppend(struct abuf *ab, const char *s, int len) {
+lineno 844 0843 KILO     char *new = realloc(ab->b,ab->len+len);
+lineno 845 0844 KILO 
+lineno 846 0845 KILO     if (new == NULL) return;
+lineno 847 0846 KILO     memcpy(new+ab->len,s,len);
+lineno 848 0847 KILO     ab->b = new;
+lineno 849 0848 KILO     ab->len += len;
+lineno 850 0849 KILO }
+
+
+lineno 852 0851 KILO void abFree(struct abuf *ab) {
+lineno 853 0852 KILO     free(ab->b);
+lineno 854 0853 KILO }
+
+
+lineno 858 0857 KILO void editorRefreshScreen(void) {
+lineno 859 0858 KILO     int y;
+lineno 860 0859 KILO     erow *r;
+lineno 861 0860 KILO     char buf[32];
+lineno 862 0861 KILO     struct abuf ab = ABUF_INIT;
+lineno 863 0862 KILO 
+lineno 864 0863 KILO     abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */
+lineno 865 0864 KILO     abAppend(&ab,"\x1b[H",3); /* Go home. */
+lineno 866 0865 KILO     for (y = 0; y < E.screenrows; y++) {
+lineno 867 0866 KILO         int filerow = E.rowoff+y;
+lineno 868 0867 KILO 
+lineno 869 0868 KILO         if (filerow >= E.numrows) {
+lineno 870 0869 KILO             if (E.numrows == 0 && y == E.screenrows/3) {
+lineno 871 0870 KILO                 char welcome[80];
+lineno 872 0871 KILO                 int welcomelen = snprintf(welcome,sizeof(welcome),
+lineno 873 0872 KILO                     "Kilo editor -- verison %s\x1b[0K\r\n", KILO_VERSION);
+lineno 874 0873 KILO                 int padding = (E.screencols-welcomelen)/2;
+lineno 875 0874 KILO                 if (padding) {
+lineno 876 0875 KILO                     abAppend(&ab,"~",1);
+lineno 877 0876 KILO                     padding--;
+lineno 878 0877 KILO                 }
+lineno 879 0878 KILO                 while(padding--) abAppend(&ab," ",1);
+lineno 880 0879 KILO                 abAppend(&ab,welcome,welcomelen);
+lineno 881 0880 KILO             } else {
+lineno 882 0881 KILO                 abAppend(&ab,"~\x1b[0K\r\n",7);
+lineno 883 0882 KILO             }
+lineno 884 0883 KILO             continue;
+lineno 885 0884 KILO         }
+lineno 886 0885 KILO 
+lineno 887 0886 KILO         r = &E.row[filerow];
+lineno 888 0887 KILO 
+lineno 889 0888 KILO         int len = r->rsize - E.coloff;
+lineno 890 0889 KILO         int current_color = -1;
+lineno 891 0890 KILO         if (len > 0) {
+lineno 892 0891 KILO             if (len > E.screencols) len = E.screencols;
+lineno 893 0892 KILO             char *c = r->render+E.coloff;
+lineno 894 0893 KILO             unsigned char *hl = r->hl+E.coloff;
+lineno 895 0894 KILO             int j;
+lineno 896 0895 KILO             for (j = 0; j < len; j++) {
+lineno 897 0896 KILO                 if (hl[j] == HL_NONPRINT) {
+lineno 898 0897 KILO                     char sym;
+lineno 899 0898 KILO                     abAppend(&ab,"\x1b[7m",4);
+lineno 900 0899 KILO                     if (c[j] <= 26)
+lineno 901 0900 KILO                         sym = '@'+c[j];
+lineno 902 0901 KILO                     else
+lineno 903 0902 KILO                         sym = '?';
+lineno 904 0903 KILO                     abAppend(&ab,&sym,1);
+lineno 905 0904 KILO                     abAppend(&ab,"\x1b[0m",4);
+lineno 906 0905 KILO                 } else if (hl[j] == HL_NORMAL) {
+lineno 907 0906 KILO                     if (current_color != -1) {
+lineno 908 0907 KILO                         abAppend(&ab,"\x1b[39m",5);
+lineno 909 0908 KILO                         current_color = -1;
+lineno 910 0909 KILO                     }
+lineno 911 0910 KILO                     abAppend(&ab,c+j,1);
+lineno 912 0911 KILO                 } else {
+lineno 913 0912 KILO                     int color = editorSyntaxToColor(hl[j]);
+lineno 914 0913 KILO                     if (color != current_color) {
+lineno 915 0914 KILO                         char buf[16];
+lineno 916 0915 KILO                         int clen = snprintf(buf,sizeof(buf),"\x1b[%dm",color);
+lineno 917 0916 KILO                         current_color = color;
+lineno 918 0917 KILO                         abAppend(&ab,buf,clen);
+lineno 919 0918 KILO                     }
+lineno 920 0919 KILO                     abAppend(&ab,c+j,1);
+lineno 921 0920 KILO                 }
+lineno 922 0921 KILO             }
+lineno 923 0922 KILO         }
+lineno 924 0923 KILO         abAppend(&ab,"\x1b[39m",5);
+lineno 925 0924 KILO         abAppend(&ab,"\x1b[0K",4);
+lineno 926 0925 KILO         abAppend(&ab,"\r\n",2);
+lineno 927 0926 KILO     }
+lineno 928 0927 KILO 
+lineno 929 0928 KILO     /* Create a two rows status. First row: */
+lineno 930 0929 KILO     abAppend(&ab,"\x1b[0K",4);
+lineno 931 0930 KILO     abAppend(&ab,"\x1b[7m",4);
+lineno 932 0931 KILO     char status[80], rstatus[80];
+lineno 933 0932 KILO     int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
+lineno 934 0933 KILO         E.filename, E.numrows, E.dirty ? "(modified)" : "");
+lineno 935 0934 KILO     int rlen = snprintf(rstatus, sizeof(rstatus),
+lineno 936 0935 KILO         "%d/%d",E.rowoff+E.cy+1,E.numrows);
+lineno 937 0936 KILO     if (len > E.screencols) len = E.screencols;
+lineno 938 0937 KILO     abAppend(&ab,status,len);
+lineno 939 0938 KILO     while(len < E.screencols) {
+lineno 940 0939 KILO         if (E.screencols - len == rlen) {
+lineno 941 0940 KILO             abAppend(&ab,rstatus,rlen);
+lineno 942 0941 KILO             break;
+lineno 943 0942 KILO         } else {
+lineno 944 0943 KILO             abAppend(&ab," ",1);
+lineno 945 0944 KILO             len++;
+lineno 946 0945 KILO         }
+lineno 947 0946 KILO     }
+lineno 948 0947 KILO     abAppend(&ab,"\x1b[0m\r\n",6);
+lineno 949 0948 KILO 
+lineno 950 0949 KILO     /* Second row depends on E.statusmsg and the status message update time. */
+lineno 951 0950 KILO     abAppend(&ab,"\x1b[0K",4);
+lineno 952 0951 KILO     int msglen = strlen(E.statusmsg);
+lineno 953 0952 KILO     if (msglen && time(NULL)-E.statusmsg_time < 5)
+lineno 954 0953 KILO         abAppend(&ab,E.statusmsg,msglen <= E.screencols ? msglen : E.screencols);
+lineno 955 0954 KILO 
+lineno 956 0955 KILO     /* Put cursor at its current position. Note that the horizontal position
+lineno 957 0956 KILO      * at which the cursor is displayed may be different compared to 'E.cx'
+lineno 958 0957 KILO      * because of TABs. */
+lineno 959 0958 KILO     int j;
+lineno 960 0959 KILO     int cx = 1;
+lineno 961 0960 KILO     int filerow = E.rowoff+E.cy;
+lineno 962 0961 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+lineno 963 0962 KILO     if (row) {
+lineno 964 0963 KILO         for (j = E.coloff; j < (E.cx+E.coloff); j++) {
+lineno 965 0964 KILO             if (j < row->size && row->chars[j] == TAB) cx += 7-((cx)%8);
+lineno 966 0965 KILO             cx++;
+lineno 967 0966 KILO         }
+lineno 968 0967 KILO     }
+lineno 969 0968 KILO     snprintf(buf,sizeof(buf),"\x1b[%d;%dH",E.cy+1,cx);
+lineno 970 0969 KILO     abAppend(&ab,buf,strlen(buf));
+lineno 971 0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
+lineno 972 0971 KILO     write(STDOUT_FILENO,ab.b,ab.len);
+lineno 973 0972 KILO     abFree(&ab);
+lineno 974 0973 KILO }
+
+
+lineno 978 0977 KILO void editorSetStatusMessage(const char *fmt, ...) {
+lineno 979 0978 KILO     va_list ap;
+lineno 980 0979 KILO     va_start(ap,fmt);
+lineno 981 0980 KILO     vsnprintf(E.statusmsg,sizeof(E.statusmsg),fmt,ap);
+lineno 982 0981 KILO     va_end(ap);
+lineno 983 0982 KILO     E.statusmsg_time = time(NULL);
+lineno 984 0983 KILO }
+
+
+lineno 990 0989 KILO void editorFind(int fd) {
+lineno 991 0990 KILO     char query[KILO_QUERY_LEN+1] = {0};
+lineno 992 0991 KILO     int qlen = 0;
+lineno 993 0992 KILO     int last_match = -1; /* Last line where a match was found. -1 for none. */
+lineno 994 0993 KILO     int find_next = 0; /* if 1 search next, if -1 search prev. */
+lineno 995 0994 KILO     int saved_hl_line = -1;  /* No saved HL */
+lineno 996 0995 KILO     char *saved_hl = NULL;
+lineno 997 0996 KILO 
+lineno 998 0997 KILO #define FIND_RESTORE_HL do { \
+lineno 999 0998 KILO     if (saved_hl) { \
+lineno 1000 0999 KILO         memcpy(E.row[saved_hl_line].hl,saved_hl, E.row[saved_hl_line].rsize); \
+lineno 1001 1000 KILO         saved_hl = NULL; \
+lineno 1002 1001 KILO     } \
+lineno 1003 1002 KILO } while (0)
+lineno 1004 1003 KILO 
+lineno 1005 1004 KILO     /* Save the cursor position in order to restore it later. */
+lineno 1006 1005 KILO     int saved_cx = E.cx, saved_cy = E.cy;
+lineno 1007 1006 KILO     int saved_coloff = E.coloff, saved_rowoff = E.rowoff;
+lineno 1008 1007 KILO 
+lineno 1009 1008 KILO     while(1) {
+lineno 1010 1009 KILO         editorSetStatusMessage(
+lineno 1011 1010 KILO             "Search: %s (Use ESC/Arrows/Enter)", query);
+lineno 1012 1011 KILO         editorRefreshScreen();
+lineno 1013 1012 KILO 
+lineno 1014 1013 KILO         int c = editorReadKey(fd);
+lineno 1015 1014 KILO         if (c == DEL_KEY || c == CTRL_H || c == BACKSPACE) {
+lineno 1016 1015 KILO             if (qlen != 0) query[--qlen] = '\0';
+lineno 1017 1016 KILO             last_match = -1;
+lineno 1018 1017 KILO         } else if (c == ESC || c == ENTER) {
+lineno 1019 1018 KILO             if (c == ESC) {
+lineno 1020 1019 KILO                 E.cx = saved_cx; E.cy = saved_cy;
+lineno 1021 1020 KILO                 E.coloff = saved_coloff; E.rowoff = saved_rowoff;
+lineno 1022 1021 KILO             }
+lineno 1023 1022 KILO             FIND_RESTORE_HL;
+lineno 1024 1023 KILO             editorSetStatusMessage("");
+lineno 1025 1024 KILO             return;
+lineno 1026 1025 KILO         } else if (c == ARROW_RIGHT || c == ARROW_DOWN) {
+lineno 1027 1026 KILO             find_next = 1;
+lineno 1028 1027 KILO         } else if (c == ARROW_LEFT || c == ARROW_UP) {
+lineno 1029 1028 KILO             find_next = -1;
+lineno 1030 1029 KILO         } else if (isprint(c)) {
+lineno 1031 1030 KILO             if (qlen < KILO_QUERY_LEN) {
+lineno 1032 1031 KILO                 query[qlen++] = c;
+lineno 1033 1032 KILO                 query[qlen] = '\0';
+lineno 1034 1033 KILO                 last_match = -1;
+lineno 1035 1034 KILO             }
+lineno 1036 1035 KILO         }
+lineno 1037 1036 KILO 
+lineno 1038 1037 KILO         /* Search occurrence. */
+lineno 1039 1038 KILO         if (last_match == -1) find_next = 1;
+lineno 1040 1039 KILO         if (find_next) {
+lineno 1041 1040 KILO             char *match = NULL;
+lineno 1042 1041 KILO             int match_offset = 0;
+lineno 1043 1042 KILO             int i, current = last_match;
+lineno 1044 1043 KILO 
+lineno 1045 1044 KILO             for (i = 0; i < E.numrows; i++) {
+lineno 1046 1045 KILO                 current += find_next;
+lineno 1047 1046 KILO                 if (current == -1) current = E.numrows-1;
+lineno 1048 1047 KILO                 else if (current == E.numrows) current = 0;
+lineno 1049 1048 KILO                 match = strstr(E.row[current].render,query);
+lineno 1050 1049 KILO                 if (match) {
+lineno 1051 1050 KILO                     match_offset = match-E.row[current].render;
+lineno 1052 1051 KILO                     break;
+lineno 1053 1052 KILO                 }
+lineno 1054 1053 KILO             }
+lineno 1055 1054 KILO             find_next = 0;
+lineno 1056 1055 KILO 
+lineno 1057 1056 KILO             /* Highlight */
+lineno 1058 1057 KILO             FIND_RESTORE_HL;
+lineno 1059 1058 KILO 
+lineno 1060 1059 KILO             if (match) {
+lineno 1061 1060 KILO                 erow *row = &E.row[current];
+lineno 1062 1061 KILO                 last_match = current;
+lineno 1063 1062 KILO                 if (row->hl) {
+lineno 1064 1063 KILO                     saved_hl_line = current;
+lineno 1065 1064 KILO                     saved_hl = malloc(row->rsize);
+lineno 1066 1065 KILO                     memcpy(saved_hl,row->hl,row->rsize);
+lineno 1067 1066 KILO                     memset(row->hl+match_offset,HL_MATCH,qlen);
+lineno 1068 1067 KILO                 }
+lineno 1069 1068 KILO                 E.cy = 0;
+lineno 1070 1069 KILO                 E.cx = match_offset;
+lineno 1071 1070 KILO                 E.rowoff = current;
+lineno 1072 1071 KILO                 E.coloff = 0;
+lineno 1073 1072 KILO                 /* Scroll horizontally as needed. */
+lineno 1074 1073 KILO                 if (E.cx > E.screencols) {
+lineno 1075 1074 KILO                     int diff = E.cx - E.screencols;
+lineno 1076 1075 KILO                     E.cx -= diff;
+lineno 1077 1076 KILO                     E.coloff += diff;
+lineno 1078 1077 KILO                 }
+lineno 1079 1078 KILO             }
+lineno 1080 1079 KILO         }
+lineno 1081 1080 KILO     }
+lineno 1082 1081 KILO }
+
+
+lineno 1087 1086 KILO void editorMoveCursor(int key) {
+lineno 1088 1087 KILO     int filerow = E.rowoff+E.cy;
+lineno 1089 1088 KILO     int filecol = E.coloff+E.cx;
+lineno 1090 1089 KILO     int rowlen;
+lineno 1091 1090 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+lineno 1092 1091 KILO 
+lineno 1093 1092 KILO     switch(key) {
+lineno 1094 1093 KILO     case ARROW_LEFT:
+lineno 1095 1094 KILO         if (E.cx == 0) {
+lineno 1096 1095 KILO             if (E.coloff) {
+lineno 1097 1096 KILO                 E.coloff--;
+lineno 1098 1097 KILO             } else {
+lineno 1099 1098 KILO                 if (filerow > 0) {
+lineno 1100 1099 KILO                     E.cy--;
+lineno 1101 1100 KILO                     E.cx = E.row[filerow-1].size;
+lineno 1102 1101 KILO                     if (E.cx > E.screencols-1) {
+lineno 1103 1102 KILO                         E.coloff = E.cx-E.screencols+1;
+lineno 1104 1103 KILO                         E.cx = E.screencols-1;
+lineno 1105 1104 KILO                     }
+lineno 1106 1105 KILO                 }
+lineno 1107 1106 KILO             }
+lineno 1108 1107 KILO         } else {
+lineno 1109 1108 KILO             E.cx -= 1;
+lineno 1110 1109 KILO         }
+lineno 1111 1110 KILO         break;
+lineno 1112 1111 KILO     case ARROW_RIGHT:
+lineno 1113 1112 KILO         if (row && filecol < row->size) {
+lineno 1114 1113 KILO             if (E.cx == E.screencols-1) {
+lineno 1115 1114 KILO                 E.coloff++;
+lineno 1116 1115 KILO             } else {
+lineno 1117 1116 KILO                 E.cx += 1;
+lineno 1118 1117 KILO             }
+lineno 1119 1118 KILO         } else if (row && filecol == row->size) {
+lineno 1120 1119 KILO             E.cx = 0;
+lineno 1121 1120 KILO             E.coloff = 0;
+lineno 1122 1121 KILO             if (E.cy == E.screenrows-1) {
+lineno 1123 1122 KILO                 E.rowoff++;
+lineno 1124 1123 KILO             } else {
+lineno 1125 1124 KILO                 E.cy += 1;
+lineno 1126 1125 KILO             }
+lineno 1127 1126 KILO         }
+lineno 1128 1127 KILO         break;
+lineno 1129 1128 KILO     case ARROW_UP:
+lineno 1130 1129 KILO         if (E.cy == 0) {
+lineno 1131 1130 KILO             if (E.rowoff) E.rowoff--;
+lineno 1132 1131 KILO         } else {
+lineno 1133 1132 KILO             E.cy -= 1;
+lineno 1134 1133 KILO         }
+lineno 1135 1134 KILO         break;
+lineno 1136 1135 KILO     case ARROW_DOWN:
+lineno 1137 1136 KILO         if (filerow < E.numrows) {
+lineno 1138 1137 KILO             if (E.cy == E.screenrows-1) {
+lineno 1139 1138 KILO                 E.rowoff++;
+lineno 1140 1139 KILO             } else {
+lineno 1141 1140 KILO                 E.cy += 1;
+lineno 1142 1141 KILO             }
+lineno 1143 1142 KILO         }
+lineno 1144 1143 KILO         break;
+lineno 1145 1144 KILO     }
+lineno 1146 1145 KILO     /* Fix cx if the current line has not enough chars. */
+lineno 1147 1146 KILO     filerow = E.rowoff+E.cy;
+lineno 1148 1147 KILO     filecol = E.coloff+E.cx;
+lineno 1149 1148 KILO     row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+lineno 1150 1149 KILO     rowlen = row ? row->size : 0;
+lineno 1151 1150 KILO     if (filecol > rowlen) {
+lineno 1152 1151 KILO         E.cx -= filecol-rowlen;
+lineno 1153 1152 KILO         if (E.cx < 0) {
+lineno 1154 1153 KILO             E.coloff += E.cx;
+lineno 1155 1154 KILO             E.cx = 0;
+lineno 1156 1155 KILO         }
+lineno 1157 1156 KILO     }
+lineno 1158 1157 KILO }
+
+
+lineno 1163 1162 KILO void editorProcessKeypress(int fd) {
+lineno 1164 1163 KILO     /* When the file is modified, requires Ctrl-q to be pressed N times
+lineno 1165 1164 KILO      * before actually quitting. */
+lineno 1166 1165 KILO     static int quit_times = KILO_QUIT_TIMES;
+lineno 1167 1166 KILO 
+lineno 1168 1167 KILO     int c = editorReadKey(fd);
+lineno 1169 1168 KILO     switch(c) {
+lineno 1170 1169 KILO     case ENTER:         /* Enter */
+lineno 1171 1170 KILO         editorInsertNewline();
+lineno 1172 1171 KILO         break;
+lineno 1173 1172 KILO     case CTRL_C:        /* Ctrl-c */
+lineno 1174 1173 KILO         /* We ignore ctrl-c, it can't be so simple to lose the changes
+lineno 1175 1174 KILO          * to the edited file. */
+lineno 1176 1175 KILO         break;
+lineno 1177 1176 KILO     case CTRL_Q:        /* Ctrl-q */
+lineno 1178 1177 KILO         /* Quit if the file was already saved. */
+lineno 1179 1178 KILO         if (E.dirty && quit_times) {
+lineno 1180 1179 KILO             editorSetStatusMessage("WARNING!!! File has unsaved changes. "
+lineno 1181 1180 KILO                 "Press Ctrl-Q %d more times to quit.", quit_times);
+lineno 1182 1181 KILO             quit_times--;
+lineno 1183 1182 KILO             return;
+lineno 1184 1183 KILO         }
+lineno 1185 1184 KILO         exit(0);
+lineno 1186 1185 KILO         break;
+lineno 1187 1186 KILO     case CTRL_S:        /* Ctrl-s */
+lineno 1188 1187 KILO         editorSave();
+lineno 1189 1188 KILO         break;
+lineno 1190 1189 KILO     case CTRL_F:
+lineno 1191 1190 KILO         editorFind(fd);
+lineno 1192 1191 KILO         break;
+lineno 1193 1192 KILO     case BACKSPACE:     /* Backspace */
+lineno 1194 1193 KILO     case CTRL_H:        /* Ctrl-h */
+lineno 1195 1194 KILO     case DEL_KEY:
+lineno 1196 1195 KILO         editorDelChar();
+lineno 1197 1196 KILO         break;
+lineno 1198 1197 KILO     case PAGE_UP:
+lineno 1199 1198 KILO     case PAGE_DOWN:
+lineno 1200 1199 KILO         if (c == PAGE_UP && E.cy != 0)
+lineno 1201 1200 KILO             E.cy = 0;
+lineno 1202 1201 KILO         else if (c == PAGE_DOWN && E.cy != E.screenrows-1)
+lineno 1203 1202 KILO             E.cy = E.screenrows-1;
+lineno 1204 1203 KILO         {
+lineno 1205 1204 KILO         int times = E.screenrows;
+lineno 1206 1205 KILO         while(times--)
+lineno 1207 1206 KILO             editorMoveCursor(c == PAGE_UP ? ARROW_UP:
+lineno 1208 1207 KILO                                             ARROW_DOWN);
+lineno 1209 1208 KILO         }
+lineno 1210 1209 KILO         break;
+lineno 1211 1210 KILO 
+lineno 1212 1211 KILO     case ARROW_UP:
+lineno 1213 1212 KILO     case ARROW_DOWN:
+lineno 1214 1213 KILO     case ARROW_LEFT:
+lineno 1215 1214 KILO     case ARROW_RIGHT:
+lineno 1216 1215 KILO         editorMoveCursor(c);
+lineno 1217 1216 KILO         break;
+lineno 1218 1217 KILO     case CTRL_L: /* ctrl+l, clear screen */
+lineno 1219 1218 KILO         /* Just refresht the line as side effect. */
+lineno 1220 1219 KILO         break;
+lineno 1221 1220 KILO     case ESC:
+lineno 1222 1221 KILO         /* Nothing to do for ESC in this mode. */
+lineno 1223 1222 KILO         break;
+lineno 1224 1223 KILO     default:
+lineno 1225 1224 KILO         editorInsertChar(c);
+lineno 1226 1225 KILO         break;
+lineno 1227 1226 KILO     }
+lineno 1228 1227 KILO 
+lineno 1229 1228 KILO     quit_times = KILO_QUIT_TIMES; /* Reset it to the original value. */
+lineno 1230 1229 KILO }
+
+
+lineno 1232 1231 KILO int editorFileWasModified(void) {
+lineno 1233 1232 KILO     return E.dirty;
+lineno 1234 1233 KILO }
+
+
+lineno 1236 1235 KILO void initEditor(void) {
+lineno 1237 1236 KILO     E.cx = 0;
+lineno 1238 1237 KILO     E.cy = 0;
+lineno 1239 1238 KILO     E.rowoff = 0;
+lineno 1240 1239 KILO     E.coloff = 0;
+lineno 1241 1240 KILO     E.numrows = 0;
+lineno 1242 1241 KILO     E.row = NULL;
+lineno 1243 1242 KILO     E.dirty = 0;
+lineno 1244 1243 KILO     E.filename = NULL;
+lineno 1245 1244 KILO     E.syntax = NULL;
+lineno 1246 1245 KILO     if (getWindowSize(STDIN_FILENO,STDOUT_FILENO,
+lineno 1247 1246 KILO                       &E.screenrows,&E.screencols) == -1)
+lineno 1248 1247 KILO     {
+lineno 1249 1248 KILO         perror("Unable to query the screen for size (columns / rows)");
+lineno 1250 1249 KILO         exit(1);
+lineno 1251 1250 KILO     }
+lineno 1252 1251 KILO     E.screenrows -= 2; /* Get room for status bar. */
+lineno 1253 1252 KILO }
+
+
+lineno 1255 1254 KILO int main(int argc, char **argv) {
+lineno 1256 1255 KILO     if (argc != 2) {
+lineno 1257 1256 KILO         fprintf(stderr,"Usage: kilo <filename>\n");
+lineno 1258 1257 KILO         exit(1);
+lineno 1259 1258 KILO     }
+lineno 1260 1259 KILO 
+lineno 1261 1260 KILO     initEditor();
+lineno 1262 1261 KILO     editorSelectSyntaxHighlight(argv[1]);
+lineno 1263 1262 KILO     editorOpen(argv[1]);
+lineno 1264 1263 KILO     enableRawMode(STDIN_FILENO);
+lineno 1265 1264 KILO     editorSetStatusMessage(
+lineno 1266 1265 KILO         "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
+lineno 1267 1266 KILO     while(1) {
+lineno 1268 1267 KILO         editorRefreshScreen();
+lineno 1269 1268 KILO         editorProcessKeypress(STDIN_FILENO);
+lineno 1270 1269 KILO     }
+lineno 1271 1270 KILO     return 0;
+lineno 1272 1271 KILO }
+
+
+44 162 162 7
