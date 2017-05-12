@@ -16,3 +16,4 @@ selected lines executed (editing a two line file)
 
     raw = orig_termios;  /* modify the original mode */ 
 
+(s.d fails here after terminal is raw mode)

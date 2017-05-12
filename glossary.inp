@@ -1,3 +1,4 @@
+current controlling terminal of a process
 termios (API)
 termios (struct)
 raw mode (terminal)
@@ -5,6 +6,20 @@ cooked mode (terminal)
 terminal driver 
 Stty
 serial device
+terminal device
 file handle
 baud rate
 escape codes (terminal driver)
+escape sequence (terminal driver)
+echoing
+cursor (horizontal position)
+cursor (vertical position)
+rows (screen)
+cols (screen)
+ioctl.h
+device name
+window size
+tty (serial device)
+serial device (tty)
+termios flags (there are 60 termios flags)
+terminal attributes (terminal flags)
