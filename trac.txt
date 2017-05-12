@@ -1,0 +1,18 @@
+*************************************************
+selected lines executed (editing a two line file)
+*************************************************
+
+    editorOpen(argv[1]); 
+
+    fp = fopen(filename,"r"); 
+
+        editorInsertRow(E.numrows,line,linelen); 
+
+        editorInsertRow(E.numrows,line,linelen); 
+
+    enableRawMode(STDIN_FILENO); 
+
+    if (E.rawmode) return 0; /* Already enabled. */ 
+
+    raw = orig_termios;  /* modify the original mode */ 
+
