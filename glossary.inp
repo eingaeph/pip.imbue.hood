@@ -6,7 +6,7 @@ cooked mode (terminal)
 terminal driver 
 Stty
 serial device
-terminal device
+keyboard device
 file handle
 baud rate
 escape codes (terminal driver)
@@ -23,3 +23,8 @@ tty (serial device)
 serial device (tty)
 termios flags (there are 60 termios flags)
 terminal attributes (terminal flags)
+terminal flag
+terminal (emulator)
+terminal 
+terminal window
+terminal (distinguish from) shell
