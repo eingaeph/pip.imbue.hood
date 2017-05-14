@@ -1,7 +1,9 @@
 # pip.imbue.hood
 
-  Blountville proof of concept. 
+  Project Blountville. Extract illustrative code snippets.
 
   Prototype code kilo.c contains a copyright notice (2016)
-  owned by Salvatore Sanfilippo 
-  here incorporated as LICENSE.md. 
+  Code licensed by Salvatore Sanfilippo 
+  Terms here incorporated as LICENSE.md. 
+
+  
