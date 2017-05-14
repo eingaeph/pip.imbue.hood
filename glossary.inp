@@ -1,7 +1,7 @@
 terminal emulator running under X Window
 terminal emulator (VT102)
 console
-xorg, gnome-terminal, kworker
+xorg, gnome-terminal
 user -- grapical interface -- display server (window manger) -- kernel -- hardware
 current controlling terminal of a process
 termios (API)
@@ -33,3 +33,4 @@ terminal (emulator)
 terminal 
 terminal window
 terminal (distinguish from) shell
+console_codes - Linux console escape and control sequences (man page)
