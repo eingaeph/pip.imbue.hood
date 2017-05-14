@@ -1,3 +1,8 @@
+terminal emulator running under X Window
+terminal emulator (VT102)
+console
+xorg, gnome-terminal, kworker
+user -- grapical interface -- display server (window manger) -- kernel -- hardware
 current controlling terminal of a process
 termios (API)
 termios (struct)
