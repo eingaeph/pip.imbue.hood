@@ -12,5 +12,7 @@
 
   http://viewsourcecode.org links to a valuable tutorial by jeremy.ruten
   who is working with Sanfilippo's code. Ruten works at a deep level 
-  and renders this work a partial redundancy, but possibly not usable for
-  project purposes. 
+  and renders this work a partial redundancy, but possibly his work is 
+  not directly usable for project purposes. The project goal is describable 
+  as a achieving a primary school understanding of kilo.c whereas Ruten works 
+  at the high school level, at least.

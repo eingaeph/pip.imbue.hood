@@ -1,0 +1,9 @@
+rendering the screen (display) on the console
+keypress handler in canonical mode
+keypress handler in raw mode
+send a sigint signal to the current process
+multiple small writes cause screen flicker 
+escape-sequence to hide cursor
+VT100 console escape-squences actions
+kernel keypress handler
+ 
