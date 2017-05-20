@@ -6,4 +6,6 @@ multiple small writes cause screen flicker
 escape-sequence to hide cursor
 VT100 console escape-squences actions
 kernel keypress handler
- 
+console tty implies direct connection keyboard and display
+X Window System connecting keyboard and display  
+X Windows Supports xterm terminal emulator
