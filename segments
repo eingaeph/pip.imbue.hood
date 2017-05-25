@@ -1,0 +1,42 @@
+lineno 1087 1086 KILO void editorMoveCursor(int key) {
+lineno 111  0110 KILO enum KEY_ACTION{
+lineno 1163 1162 KILO void editorProcessKeypress(int fd) {
+lineno 1232 1231 KILO int editorFileWasModified(void) {
+lineno 1236 1235 KILO void initEditor(void) {
+lineno 1255 1254 KILO int main(int argc, char **argv) {
+lineno 162  0161 KILO char *C_HL_extensions[] = {".c",".cpp",NULL};
+lineno 174  0173 KILO struct editorSyntax HLDB[] = {
+lineno 190  0189 KILO void disableRawMode(int fd) {
+lineno 199  0198 KILO void editorAtExit(void) {
+lineno 204  0203 KILO int enableRawMode(int fd) {
+lineno 239  0238 KILO int editorReadKey(int fd) {
+lineno 293  0292 KILO int getCursorPosition(int ifd, int ofd, int *rows, int *cols) {
+lineno 317  0316 KILO int getWindowSize(int ifd, int ofd, int *rows, int *cols) {
+lineno 352  0351 KILO int is_separator(int c) {
+lineno 359  0358 KILO int editorRowHasOpenComment(erow *row) {
+lineno 368  0367 KILO void editorUpdateSyntax(erow *row) {
+lineno 506  0505 KILO int editorSyntaxToColor(int hl) {
+lineno 521  0520 KILO void editorSelectSyntaxHighlight(char *filename) {
+lineno 542  0541 KILO void editorUpdateRow(erow *row) {
+lineno 570  0569 KILO void editorInsertRow(int at, char *s, size_t len) {
+lineno 591  0590 KILO void editorFreeRow(erow *row) {
+lineno 599  0598 KILO void editorDelRow(int at) {
+lineno 615  0614 KILO char *editorRowsToString(int *buflen) {
+lineno 639  0638 KILO void editorRowInsertChar(erow *row, int at, int c) {
+lineno 662  0661 KILO void editorRowAppendString(erow *row, char *s, size_t len) {
+lineno 672  0671 KILO void editorRowDelChar(erow *row, int at) {
+lineno 681  0680 KILO void editorInsertChar(int c) {
+lineno 703  0702 KILO void editorInsertNewline(void) {
+lineno 739  0738 KILO void editorDelChar() {
+lineno 775  0774 KILO int editorOpen(char *filename) {
+lineno 78   0077 KILO typedef struct erow {
+lineno 806  0805 KILO int editorSave(void) {
+lineno 836  0835 KILO struct abuf {
+lineno 841  0840 KILO #define ABUF_INIT {NULL,0}
+lineno 843  0842 KILO void abAppend(struct abuf *ab, const char *s, int len) {
+lineno 852  0851 KILO void abFree(struct abuf *ab) {
+lineno 858  0857 KILO void editorRefreshScreen(void) {
+lineno 89   0088 KILO typedef struct hlcolor {
+lineno 93   0092 KILO struct editorConfig {
+lineno 978  0977 KILO void editorSetStatusMessage(const char *fmt, ...) {
+lineno 990  0989 KILO void editorFind(int fd) {

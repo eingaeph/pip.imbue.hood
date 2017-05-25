@@ -1,0 +1,119 @@
+
+0857 KILO void editorRefreshScreen(void) {
+0858 KILO     int y;
+0859 KILO     erow *r;
+0860 KILO     char buf[32];
+0861 KILO     struct abuf ab = ABUF_INIT;
+0862 KILO 
+0863 KILO     abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */
+0864 KILO     abAppend(&ab,"\x1b[H",3); /* Go home. */
+0865 KILO     for (y = 0; y < E.screenrows; y++) {
+0866 KILO         int filerow = E.rowoff+y;
+0867 KILO 
+0868 KILO         if (filerow >= E.numrows) {
+0869 KILO             if (E.numrows == 0 && y == E.screenrows/3) {
+0870 KILO                 char welcome[80];
+0871 KILO                 int welcomelen = snprintf(welcome,sizeof(welcome),
+0872 KILO                     "Kilo editor -- verison %s\x1b[0K\r\n", KILO_VERSION);
+0873 KILO                 int padding = (E.screencols-welcomelen)/2;
+0874 KILO                 if (padding) {
+0875 KILO                     abAppend(&ab,"~",1);
+0876 KILO                     padding--;
+0877 KILO                 }
+0878 KILO                 while(padding--) abAppend(&ab," ",1);
+0879 KILO                 abAppend(&ab,welcome,welcomelen);
+0880 KILO             } else {
+0881 KILO                 abAppend(&ab,"~\x1b[0K\r\n",7);
+0882 KILO             }
+0883 KILO             continue;
+0884 KILO         }
+0885 KILO 
+0886 KILO         r = &E.row[filerow];
+0887 KILO 
+0888 KILO         int len = r->rsize - E.coloff;
+0889 KILO         int current_color = -1;
+0890 KILO         if (len > 0) {
+0891 KILO             if (len > E.screencols) len = E.screencols;
+0892 KILO             char *c = r->render+E.coloff;
+0893 KILO             unsigned char *hl = r->hl+E.coloff;
+0894 KILO             int j;
+0895 KILO             for (j = 0; j < len; j++) {
+0896 KILO                 if (hl[j] == HL_NONPRINT) {
+0897 KILO                     char sym;
+0898 KILO                     abAppend(&ab,"\x1b[7m",4);
+0899 KILO                     if (c[j] <= 26)
+0900 KILO                         sym = '@'+c[j];
+0901 KILO                     else
+0902 KILO                         sym = '?';
+0903 KILO                     abAppend(&ab,&sym,1);
+0904 KILO                     abAppend(&ab,"\x1b[0m",4);
+0905 KILO                 } else if (hl[j] == HL_NORMAL) {
+0906 KILO                     if (current_color != -1) {
+0907 KILO                         abAppend(&ab,"\x1b[39m",5);
+0908 KILO                         current_color = -1;
+0909 KILO                     }
+0910 KILO                     abAppend(&ab,c+j,1);
+0911 KILO                 } else {
+0912 KILO                     int color = editorSyntaxToColor(hl[j]);
+0913 KILO                     if (color != current_color) {
+0914 KILO                         char buf[16];
+0915 KILO                         int clen = snprintf(buf,sizeof(buf),"\x1b[%dm",color);
+0916 KILO                         current_color = color;
+0917 KILO                         abAppend(&ab,buf,clen);
+0918 KILO                     }
+0919 KILO                     abAppend(&ab,c+j,1);
+0920 KILO                 }
+0921 KILO             }
+0922 KILO         }
+0923 KILO         abAppend(&ab,"\x1b[39m",5);
+0924 KILO         abAppend(&ab,"\x1b[0K",4);
+0925 KILO         abAppend(&ab,"\r\n",2);
+0926 KILO     }
+0927 KILO 
+0928 KILO     /* Create a two rows status. First row: */
+0929 KILO     abAppend(&ab,"\x1b[0K",4);
+0930 KILO     abAppend(&ab,"\x1b[7m",4);
+0931 KILO     char status[80], rstatus[80];
+0932 KILO     int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
+0933 KILO         E.filename, E.numrows, E.dirty ? "(modified)" : "");
+0934 KILO     int rlen = snprintf(rstatus, sizeof(rstatus),
+0935 KILO         "%d/%d",E.rowoff+E.cy+1,E.numrows);
+0936 KILO     if (len > E.screencols) len = E.screencols;
+0937 KILO     abAppend(&ab,status,len);
+0938 KILO     while(len < E.screencols) {
+0939 KILO         if (E.screencols - len == rlen) {
+0940 KILO             abAppend(&ab,rstatus,rlen);
+0941 KILO             break;
+0942 KILO         } else {
+0943 KILO             abAppend(&ab," ",1);
+0944 KILO             len++;
+0945 KILO         }
+0946 KILO     }
+0947 KILO     abAppend(&ab,"\x1b[0m\r\n",6);
+0948 KILO 
+0949 KILO     /* Second row depends on E.statusmsg and the status message update time. */
+0950 KILO     abAppend(&ab,"\x1b[0K",4);
+0951 KILO     int msglen = strlen(E.statusmsg);
+0952 KILO     if (msglen && time(NULL)-E.statusmsg_time < 5)
+0953 KILO         abAppend(&ab,E.statusmsg,msglen <= E.screencols ? msglen : E.screencols);
+0954 KILO 
+0955 KILO     /* Put cursor at its current position. Note that the horizontal position
+0956 KILO      * at which the cursor is displayed may be different compared to 'E.cx'
+0957 KILO      * because of TABs. */
+0958 KILO     int j;
+0959 KILO     int cx = 1;
+0960 KILO     int filerow = E.rowoff+E.cy;
+0961 KILO     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
+0962 KILO     if (row) {
+0963 KILO         for (j = E.coloff; j < (E.cx+E.coloff); j++) {
+0964 KILO             if (j < row->size && row->chars[j] == TAB) cx += 7-((cx)%8);
+0965 KILO             cx++;
+0966 KILO         }
+0967 KILO     }
+0968 KILO     snprintf(buf,sizeof(buf),"\x1b[%d;%dH",E.cy+1,cx);
+0969 KILO     abAppend(&ab,buf,strlen(buf));
+0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
+0971 KILO     write(STDOUT_FILENO,ab.b,ab.len);
+0972 KILO     abFree(&ab);
+0973 KILO }
+
