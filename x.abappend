@@ -1,0 +1,9 @@
+0842 KILO void abAppend(struct abuf *ab, const char *s, int len) {
+0843 KILO     char *new = realloc(ab->b,ab->len+len);
+0844 KILO 
+0845 KILO     if (new == NULL) return;
+0846 KILO     memcpy(new+ab->len,s,len);
+0847 KILO     ab->b = new;
+0848 KILO     ab->len += len;
+0849 KILO }
+

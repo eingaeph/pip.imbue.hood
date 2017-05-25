@@ -1,72 +1,38 @@
 *************************************************
-selected lines executed in order
+selected soure executible lines in order executed
 *************************************************
 
-    initEditor(); 
+1267 @     initEditor(); 
 
-    editorSelectSyntaxHighlight(argv[1]); 
+1268 @     editorSelectSyntaxHighlight(argv[1]); 
 
-    editorOpen(argv[1]); 
+1269 @     editorOpen(argv[1]); 
 
-       E.filename = strdup(filename); 
+ 785 @     E.filename = strdup(filename); 
 
-       fp = fopen(filename,"r"); 
+ 787 @     fp = fopen(filename,"r"); 
 
-       fclose(fp); 
+ 805 @     fclose(fp); 
 
-    enableRawMode(STDIN_FILENO); 
+1270 @     enableRawMode(STDIN_FILENO); 
 
-       raw = orig_termios;  /* modify the original mode */  
+ 217 @     raw = orig_termios;  /* modify the original mode */ 
 
-       /* put terminal in raw mode after flushing */ 
+ 232 @     /* put terminal in raw mode after flushing */  
 
-       if (tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal; 
+ 233 @     if (tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal; 
 
-       return 0; 
+ 235 @     return 0; 
 
-    editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"); 
+1271 @     editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"); 
 
-        vsnprintf(E.statusmsg,sizeof(E.statusmsg),fmt,ap); 
+ 986 @     vsnprintf(E.statusmsg,sizeof(E.statusmsg),fmt,ap); 
 
-        editorRefreshScreen(); 
+1273 @         editorRefreshScreen(); 
 
-           abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */ 
+ 869 @     abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */ 
 
-           abAppend(&ab,"\x1b[H",3); /* Go home. */ 
+ 870 @     abAppend(&ab,"\x1b[H",3); /* Go home. */ 
 
-           write(STDOUT_FILENO,ab.b,ab.len); 
+ 977 @     write(STDOUT_FILENO,ab.b,ab.len); 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    editorOpen(argv[1]); 
-
-    fp = fopen(filename,"r"); 
-
-        editorInsertRow(E.numrows,line,linelen); 
-
-        editorInsertRow(E.numrows,line,linelen); 
-
-    enableRawMode(STDIN_FILENO); 
-
-    if (E.rawmode) return 0; /* Already enabled. */ 
-
-    raw = orig_termios;  /* modify the original mode */ 
-
-(s.d fails here after terminal is raw mode)
