@@ -1,6 +1,59 @@
 *************************************************
-selected lines executed (editing a two line file)
+selected lines executed in order
 *************************************************
+
+    initEditor(); 
+
+    editorSelectSyntaxHighlight(argv[1]); 
+
+    editorOpen(argv[1]); 
+
+       E.filename = strdup(filename); 
+
+       fp = fopen(filename,"r"); 
+
+       fclose(fp); 
+
+    enableRawMode(STDIN_FILENO); 
+
+       raw = orig_termios;  /* modify the original mode */  
+
+       /* put terminal in raw mode after flushing */ 
+
+       if (tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal; 
+
+       return 0; 
+
+    editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"); 
+
+        vsnprintf(E.statusmsg,sizeof(E.statusmsg),fmt,ap); 
+
+        editorRefreshScreen(); 
+
+           abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */ 
+
+           abAppend(&ab,"\x1b[H",3); /* Go home. */ 
+
+           write(STDOUT_FILENO,ab.b,ab.len); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     editorOpen(argv[1]); 
 
