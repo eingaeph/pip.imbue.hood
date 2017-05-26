@@ -1,3 +1,9 @@
+ioctl terminal i/o
+ioctl sends request to device driver
+device driver address hardware
+printf, fprintf, sprintf, snprintf, formatted output  
+vprintf, vfprintf, formatted output
+vsprintf, vsnprintf, formatted output  
 tcgetattr (tcsetattr, termios.h)
 tcsetattr (tcgetattr, termios.h)
 baud rate
