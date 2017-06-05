@@ -1,21 +1,27 @@
-0352 KILO     return c == '\0' || isspace(c) || strchr(",.()+-**=~%[];",c) != NULL;
-          /* temporary: correct bad <block> edit */
-1254 KILO int main(int argc, char **argv) {
-1255 KILO     if (argc != 2) {
-1256 KILO         fprintf(stderr,"Usage: kilo <filename>\n");
-1257 KILO         exit(1);
-1258 KILO     }
-1259 KILO
-1260 KILO     initEditor();
-1261 KILO     editorSelectSyntaxHighlight(argv[1]);
-1262 KILO     editorOpen(argv[1]);
-1263 KILO     enableRawMode(STDIN_FILENO);
-1264 KILO /*  editorSetStatusMessage(
-1265 KILO         "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
-1266 KILO     while(1) {
-1267 KILO         editorRefreshScreen();
-1268 KILO         editorProcessKeypress(STDIN_FILENO);
-1269 KILO     }
-          */
-1270 KILO     return 0;
-
+0040 KILO #include <time.h>
+0066 KILO
+$I
+$I int return_value;
+$I int ignore;
+$I static struct termios temp_termios; 
+$I
+$I int inc(){
+$I    static int counterA = 0;
+$I    counterA++;
+$I    return counterA;
+$I }
+$I
+0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
+$I 
+$I FILE *f = fopen("screen.txt", "w");
+$I if (f == NULL)
+$I {
+$I     printf("Error opening file!\n");
+$I     exit(1);
+$I }
+$I 
+$I fprintf(f, "%s", ab.b);
+$I 
+$I fclose(f);
+$I
+0971 KILO     write(STDOUT_FILENO,ab.b,ab.len);
