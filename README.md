@@ -1,10 +1,10 @@
 # Project pip.imbue.hood 
 
-  Derive illustrative code snippets from kilo.c, making minimal 
+  Extract illustrative code snippets from kilo.c, making minimal 
   modifications. Illustrate library function calls sufficient to 
-  display and edit text files without further dependencies. 
-  Incorporate code snippets in explanatory html pages stored in 
-  tutor.zip.
+  display and edit text files without further dependencies (Linux
+  environment). Incorporate illustrative code snippets in 
+  explanatory html pages stored in tutor.zip.
 
   Prototype code kilo.c contains a copyright notice (2016). Code 
   is licensed by Salvatore Sanfilippo under terms which are here 
@@ -17,3 +17,13 @@
   goal may be described as that of achieving a primary school 
   understanding of kilo.c whereas Ruten works at the high school level, 
   at the least.
+
+  Proposed Outline:
+  
+  A. Trace representative source executables to the writing of
+     the first screen
+
+  B. Add coding (UPD format) to count the calls to abAppend
+
+  C. Add coding (UPD format) to file save the character string for the 
+     first screen write.
