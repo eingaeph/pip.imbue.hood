@@ -1,0 +1,38 @@
+0040 KILO #include <time.h>
+
+#include >fcntl.h>
+#include <unistd.h>
+
+0066 KILO
+$I
+$I int return_value;
+$I int ignore;
+$I static struct termios temp_termios;
+$I
+$I int inc(){
+$I    static int counterA = 0;
+$I    counterA++;
+$I    return counterA;
+$I }
+$I
+0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
+$I
+$I   filename="/dev/pts/18";
+$I   int ignore;
+$I
+$I /* unlink filename, if it exists */
+$I
+$I   ignore = unlink(filename);
+$I
+$I /* Create filename anew. Open filename for writing.
+$I   specify append, but this is unnecessary */
+$I
+$I   int fd = open (filename, O_WRONLY | O_CREAT | O_APPEND , 0666);
+$I
+$I   size_t length = ab.len;
+$I   write (fd, ab.b, length);
+$I
+$I   close (fd); return 0; 
+$I   }
+$I
+0971 KILO     write(STDOUT_FILENO,ab.b,ab.len);
