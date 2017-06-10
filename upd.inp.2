@@ -17,22 +17,21 @@ $I }
 $I
 0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
 $I
-$I   filename="new";
+$I   char* filestring ="new";
 $I   int ignore;
 $I
-$I /* unlink filename, if it exists */
+$I /* unlink filestring, if it exists */
 $I
-$I   ignore = unlink(filename);
+$I   ignore = unlink(filestring);
 $I
-$I /* Create filename anew. Open filename for writing.
+$I /* Create filestring anew. Open filestring for writing.
 $I   specify append, but this is unnecessary */
 $I
-$I   int fd = open (filename, O_WRONLY | O_CREAT | O_APPEND , 0666);
+$I   int fd = open (filestring, O_WRONLY | O_CREAT | O_APPEND , 0666);
 $I
 $I   int length = ab.len;
 $I   write (fd, ab.b, length);
 $I
-$I   close (fd); return 0; 
-$I   }
+$I   close (fd); 
 $I
 0971 KILO     write(STDOUT_FILENO,ab.b,ab.len);
