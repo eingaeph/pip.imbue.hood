@@ -17,7 +17,7 @@ $I }
 $I
 0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
 $I
-$I   filename="/dev/pts/18";
+$I   filename="new";
 $I   int ignore;
 $I
 $I /* unlink filename, if it exists */
@@ -29,7 +29,7 @@ $I   specify append, but this is unnecessary */
 $I
 $I   int fd = open (filename, O_WRONLY | O_CREAT | O_APPEND , 0666);
 $I
-$I   size_t length = ab.len;
+$I   int length = ab.len;
 $I   write (fd, ab.b, length);
 $I
 $I   close (fd); return 0; 
