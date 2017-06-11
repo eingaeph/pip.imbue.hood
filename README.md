@@ -11,15 +11,14 @@
   incorporated as LICENSE.md. 
 
   http://viewsourcecode.org links to a valuable tutorial by Jeremy.Ruten
-  who works with Sanfilippo's code http://github/antirez/kilo
+  who works with Sanfilippo's code http://github.com/antirez/kilo
 . Ruten works at a deep level and 
   renders this work a partial redundancy, but possibly his work is 
-  not directly usable for this project's (pip...) purposes. The project 
-  goal may be described as that of achieving a primary school 
-  understanding of kilo.c whereas Ruten works at the high school level, 
-  at the least.
+  not directly usable for the pip.. project's purposes. This project's
+  goal is "achieving a primary school understanding of kilo.c"
+  whereas Ruten works at the high school level, at the least.
 
-  Proposed Outline:
+  Proposed Task Outline:
   
   A. Trace representative source executables to the writing of
      the first screen
