@@ -1,0 +1,57 @@
+0040 KILO #include <time.h>
+
+#include >fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <time.h>
+0066 KILO
+$I
+$I int return_value;
+$I int ignore;
+$I static struct termios temp_termios;
+$I
+$I int inc(){
+$I    static int counterA = 0;
+$I    counterA++;
+$I    return counterA;
+$I }
+$I
+$I int doWait(void)
+$I {
+$I         clock_t ticks1, ticks2;
+$I
+$I         ticks1=clock();
+$I         ticks2=ticks1;
+$I         while((ticks2-ticks1)<101234)
+$I                 ticks2=clock();
+$I 
+$I         return 0;
+$I }
+$I
+0845 KILO     if (new == NULL) return;
+$I write(STDOUT_FILENO,s,len);
+$I doWait();
+0848 KILO     ab->len += len;
+0970 KILO     abAppend(&ab,"\x1b[?25h",6); /* Show cursor. */
+$I
+$I   char* filestring ="new";
+$I
+$I /* unlink filestring, if link exists */
+$I
+$I   ignore = unlink(filestring);
+$I
+$I /* Create filestring anew. Open filestring for writing.
+$I   specify append, but this is unnecessary */
+$I
+$I   int fd = open (filestring, O_WRONLY | O_CREAT | O_APPEND , 0666);
+$I
+$I   int length = ab.len;
+$I   write (fd, ab.b, length);
+$I
+$I   close (fd); 
+$I
+$I        tcgetattr (STDIN_FILENO, &temp_termios);
+$I        tcsetattr (STDIN_FILENO, TCSANOW, &orig_termios);
+$I        tcsetattr (STDIN_FILENO, TCSANOW, &temp_termios);
+$I
+0971 KILO     write(STDOUT_FILENO,ab.b,ab.len);
