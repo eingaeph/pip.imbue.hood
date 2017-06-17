@@ -1,0 +1,9 @@
+0103 KILO     char statusmsg[80];
+
+0951 KILO     int msglen = strlen(E.statusmsg);
+
+0953 KILO         abAppend(&ab,E.statusmsg,msglen <= E.screencols ? msglen : E.screencols);
+
+0980 KILO     vsnprintf(E.statusmsg,sizeof(E.statusmsg),fmt,ap);
+
+msglen <= E.screen.cols ? msglen : E.screencols
