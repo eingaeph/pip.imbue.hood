@@ -43,6 +43,8 @@ $I    int carriageReturn=13; putchar(carriageReturn);
 $I    return 0;
 $I }
 $I
+0241 KILO     while ((nread = read(fd,&c,1)) == 0);
+$I  printf("Enter Ctrl-Q to quit");
 0845 KILO     if (new == NULL) return;
 $I write(STDOUT_FILENO,s,len);
 $I doWait();
