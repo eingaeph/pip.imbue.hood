@@ -10,6 +10,9 @@
   is licensed by Salvatore Sanfilippo under terms which are here 
   incorporated as LICENSE.md. 
 
+  Vigliag has forked https://github.com/vigliag/kilo Sanfilippo's code 
+  adding comments explaining coding decisions etc.
+
   Lausler's code https://github.com/pklausler/aoeui is an alternative
   prototype built to very similar specifications of length and
   dependencies.
