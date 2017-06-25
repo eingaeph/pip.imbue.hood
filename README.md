@@ -10,6 +10,10 @@
   is licensed by Salvatore Sanfilippo under terms which are here 
   incorporated as LICENSE.md. 
 
+  Lausler's code https://github.com/pklausler/aoeui is an alternative
+  prototype built to very similar specifications of length and
+  dependencies.
+
   http://viewsourcecode.org links to a valuable tutorial by Jeremy.Ruten
   who works with Sanfilippo's code http://github.com/antirez/kilo
 . Ruten works at a deep level and 
