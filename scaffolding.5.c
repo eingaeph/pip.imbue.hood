@@ -8,7 +8,7 @@
 static struct termios orig_termios; /* Save original struct termios */
 
 void disableRawMode() {
-       
+
      tcsetattr(STDOUT_FILENO, TCSAFLUSH, &orig_termios);
      return;
 }
@@ -31,7 +31,8 @@ int enableRawMode(int fd) {
     raw.c_cc[VMIN] = 0; /* Return each byte, or zero for timeout. */
     raw.c_cc[VTIME] = 1; /* 100 ms timeout (unit is tens of second). */
 
-    tcsetattr(fd,TCSAFLUSH,&raw);
+    tcgetattr(STDOUT_FILENO, &orig_termios);
+    tcsetattr(fd,TCSAFLUSH,&raw); 
 
     return 0;
 
@@ -67,10 +68,10 @@ int
 main()
     {
 
-     enableRawMode(STDIN_FILENO);     
+     enableRawMode(STDIN_FILENO);
      size_t size = strlen(CursorToMaxForwardMaxDown);
      write(STDOUT_FILENO,&CursorToMaxForwardMaxDown, size);
      disableRawMode();
-                     
+
 return 0;
 }
