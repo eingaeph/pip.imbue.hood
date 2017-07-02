@@ -5,12 +5,12 @@
 
 /* ======================= Low level terminal handling ====================== */
 
-static struct termios orig_termios; /* In order to restore at exit.*/
+static struct termios orig_termios; /* Save original struct termios */
 
-void disableRawMode(int fd) {
-/*        tcsetattr(fd,TCSAFLUSH,&orig_termios); */
-        tcsetattr (STDIN_FILENO, TCSANOW, &orig_termios);
-
+void disableRawMode() {
+       
+     tcsetattr(STDOUT_FILENO, TCSAFLUSH, &orig_termios);
+     return;
 }
 
 int enableRawMode(int fd) {
@@ -70,7 +70,7 @@ main()
      enableRawMode(STDIN_FILENO);     
      size_t size = strlen(CursorToMaxForwardMaxDown);
      write(STDOUT_FILENO,&CursorToMaxForwardMaxDown, size);
-     disableRawMode(STDIN_FILENO);
+     disableRawMode();
                      
 return 0;
 }
