@@ -11,19 +11,19 @@
 
   Lausler's code https://github.com/pklausler/aoeui is an alternative
   prototype built to very similar specifications of length and
-  dependencies and has been used by the author. 
+  dependencies and has been used by the author for years. 
 
-  The prototype code contains a copyright notice (2016). licensed by 
-  Salvatore Sanfilippo under terms which are here incorporated as 
-  LICENSE.md. 
+  The prototype code contains a copyright notice (2016). It is 
+  licensed by Salvatore Sanfilippo under terms which are here 
+  incorporated as LICENSE.md. 
 
-  Vigliag has forked https://github.com/vigliag/kilo Sanfilippo's code 
+  Vigliag https://github.com/vigliag/kilo has forked Sanfilippo's code 
   adding comments explaining coding decisions etc.
 
   http://viewsourcecode.org links to a valuable tutorial by Jeremy.Ruten
-  who works with Sanfilippo's. Ruten works at a deep level and 
+  who works with Sanfilippo's code. Ruten works at a deep level and 
   renders this work a partial redundancy, but possibly his work is 
-  not directly usable for the pip.. project's purposes. This project's
+  not directly usable for the this project's purposes. The project's
   goal is "achieving a primary school understanding of kilo.c"
   whereas Ruten works at the high school level, at the least.
   
@@ -32,14 +32,14 @@
   A. Describe a Linux terminal as a Linux device consuming character
      strings and emitting keystroke (characters)
 
-  B. Build a Do-See-Say table for the VT100 escape sequences 
-
   Coding Tasks Outline:
+
+  A. Build mods self documenting the VT100 escape sequences 
   
   A. Trace representative source executable statements to the writing of
      the first screen
 
-     Code in UPD format to isolate supplemental edi
+     Code in UPD format to isolate supplemental edits
 
   B. Add coding (UPD format) to count the calls to abAppend
 
