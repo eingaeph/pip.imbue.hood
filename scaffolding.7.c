@@ -78,15 +78,19 @@ main()
     {
 
       FILE *fp;
-      const char filen[]="check.dat";
-      fp = fopen( filen , "w" );
-      size_t len = strlen(ClearScreen);
-      fwrite(ClearScreen, STDOUT_FILENO , len , fp ); 
-      fclose(fp);
-  
-     enableRawMode(STDIN_FILENO);
-     write(STDOUT_FILENO,"Hello",5);
-     disableRawMode();
+      FILE *fout = NULL;
+
+      size_t len;
+      size_t byt;
+
+      enableRawMode(STDIN_FILENO);
+      fout = stdout;
+      len = strlen(ClearScreen);
+      byt = 1;
+      fwrite(ClearScreen, byt , len , fout );
+      len = strlen(CursorToTopLeft);
+      fwrite(CursorToTopLeft , byt , len , fout );
+      disableRawMode();
 
 return 0;
 }
