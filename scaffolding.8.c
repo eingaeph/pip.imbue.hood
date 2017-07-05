@@ -42,10 +42,11 @@ int enableRawMode(int fd) {
 
 /* VT100 Display Control Escape Sequences */
 
-char ClearScreen[15]=                          "\x1b[2J";
-char CursorToTopLeft[15] =                     "\x1b[H";
-char TildeReturnNewline[15] =                  "~\r\n";
-char ReturnNewline[15] =                       "\r\n";
+char ClearScreen[]=                          "\x1b[2J";
+char CursorToTopLeft[] =                     "\x1b[H";
+char TildeReturnNewline[] =                  "~\r\n";
+
+char ReturnNewline[] =                       "\r\n";
 
 /*
 two sequences
@@ -54,16 +55,16 @@ B is cursor down, but don't exit the screen
 999 is a large enough maximum number of steps
 */
 
-char CursorToMaxForwardMaxDown[15]=           "\x1b[999C\x1b[999B";
-char GetCursorPosition[15] =                  "\x1b[6n";
+char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
+char GetCursorPosition[] =                  "\x1b[6n";
 
 /*
 the terminal reply to GetCursorPosition   "24;80R" or similar
 */
 
-char CursorHide[15]=                          "\x1b[?25l";
-char CursorDisplay[15]=                       "\x1b[?25h";
-char ClearCurrentLine[15]=                    "\x1b[K";
+char CursorHide[]=                          "\x1b[?25l";
+char CursorDisplay[]=                       "\x1b[?25h";
+char ClearCurrentLine[]=                    "\x1b[K";
 
 void funy(const char ara[] )
 {
@@ -80,9 +81,14 @@ int
 main()
     {
 
+int i;
       enableRawMode(STDIN_FILENO);
-      funy(ClearScreen);
-      funy(CursorToTopLeft);
+
+      funy(                  ClearScreen       );
+      funy(                  CursorToTopLeft   );
+for (i=1; i<25; i++) {funy(  TildeReturnNewline);}
+      funy(                  CursorToTopLeft   );
+
       disableRawMode();
 
 return 0;
