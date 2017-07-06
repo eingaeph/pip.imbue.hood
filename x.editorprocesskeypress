@@ -1,0 +1,99 @@
+
+lineno 111 0110 KILO enum KEY_ACTION{
+lineno 112 0111 KILO         KEY_NULL = 0,       /* NULL */
+lineno 113 0112 KILO         CTRL_C = 3,         /* Ctrl-c */
+lineno 114 0113 KILO         CTRL_D = 4,         /* Ctrl-d */
+lineno 115 0114 KILO         CTRL_F = 6,         /* Ctrl-f */
+lineno 116 0115 KILO         CTRL_H = 8,         /* Ctrl-h */
+lineno 117 0116 KILO         TAB = 9,            /* Tab */
+lineno 118 0117 KILO         CTRL_L = 12,        /* Ctrl+l */
+lineno 119 0118 KILO         ENTER = 13,         /* Enter */
+lineno 120 0119 KILO         CTRL_Q = 17,        /* Ctrl-q */
+lineno 121 0120 KILO         CTRL_S = 19,        /* Ctrl-s */
+lineno 122 0121 KILO         CTRL_U = 21,        /* Ctrl-u */
+lineno 123 0122 KILO         ESC = 27,           /* Escape */
+lineno 124 0123 KILO         BACKSPACE =  127,   /* Backspace */
+lineno 125 0124 KILO         /* The following are just soft codes, not really reported by the
+lineno 126 0125 KILO          * terminal directly. */
+lineno 127 0126 KILO         ARROW_LEFT = 1000,
+lineno 128 0127 KILO         ARROW_RIGHT,
+lineno 129 0128 KILO         ARROW_UP,
+lineno 130 0129 KILO         ARROW_DOWN,
+lineno 131 0130 KILO         DEL_KEY,
+lineno 132 0131 KILO         HOME_KEY,
+lineno 133 0132 KILO         END_KEY,
+lineno 134 0133 KILO         PAGE_UP,
+lineno 135 0134 KILO         PAGE_DOWN
+lineno 136 0135 KILO };
+
+
+lineno 1163 1162 KILO void editorProcessKeypress(int fd) {
+lineno 1164 1163 KILO     /* When the file is modified, requires Ctrl-q to be pressed N times
+lineno 1165 1164 KILO      * before actually quitting. */
+lineno 1166 1165 KILO     static int quit_times = KILO_QUIT_TIMES;
+lineno 1167 1166 KILO 
+lineno 1168 1167 KILO     int c = editorReadKey(fd);
+lineno 1169 1168 KILO     switch(c) {
+lineno 1170 1169 KILO     case ENTER:         /* Enter */
+lineno 1171 1170 KILO         editorInsertNewline();
+lineno 1172 1171 KILO         break;
+lineno 1173 1172 KILO     case CTRL_C:        /* Ctrl-c */
+lineno 1174 1173 KILO         /* We ignore ctrl-c, it can't be so simple to lose the changes
+lineno 1175 1174 KILO          * to the edited file. */
+lineno 1176 1175 KILO         break;
+lineno 1177 1176 KILO     case CTRL_Q:        /* Ctrl-q */
+lineno 1178 1177 KILO         /* Quit if the file was already saved. */
+lineno 1179 1178 KILO         if (E.dirty && quit_times) {
+lineno 1180 1179 KILO             editorSetStatusMessage("WARNING!!! File has unsaved changes. "
+lineno 1181 1180 KILO                 "Press Ctrl-Q %d more times to quit.", quit_times);
+lineno 1182 1181 KILO             quit_times--;
+lineno 1183 1182 KILO             return;
+lineno 1184 1183 KILO         }
+lineno 1185 1184 KILO         exit(0);
+lineno 1186 1185 KILO         break;
+lineno 1187 1186 KILO     case CTRL_S:        /* Ctrl-s */
+lineno 1188 1187 KILO         editorSave();
+lineno 1189 1188 KILO         break;
+lineno 1190 1189 KILO     case CTRL_F:
+lineno 1191 1190 KILO         editorFind(fd);
+lineno 1192 1191 KILO         break;
+lineno 1193 1192 KILO     case BACKSPACE:     /* Backspace */
+lineno 1194 1193 KILO     case CTRL_H:        /* Ctrl-h */
+lineno 1195 1194 KILO     case DEL_KEY:
+lineno 1196 1195 KILO         editorDelChar();
+lineno 1197 1196 KILO         break;
+lineno 1198 1197 KILO     case PAGE_UP:
+lineno 1199 1198 KILO     case PAGE_DOWN:
+lineno 1200 1199 KILO         if (c == PAGE_UP && E.cy != 0)
+lineno 1201 1200 KILO             E.cy = 0;
+lineno 1202 1201 KILO         else if (c == PAGE_DOWN && E.cy != E.screenrows-1)
+lineno 1203 1202 KILO             E.cy = E.screenrows-1;
+lineno 1204 1203 KILO         {
+lineno 1205 1204 KILO         int times = E.screenrows;
+lineno 1206 1205 KILO         while(times--)
+lineno 1207 1206 KILO             editorMoveCursor(c == PAGE_UP ? ARROW_UP:
+lineno 1208 1207 KILO                                             ARROW_DOWN);
+lineno 1209 1208 KILO         }
+lineno 1210 1209 KILO         break;
+lineno 1211 1210 KILO 
+lineno 1212 1211 KILO     case ARROW_UP:
+lineno 1213 1212 KILO     case ARROW_DOWN:
+lineno 1214 1213 KILO     case ARROW_LEFT:
+lineno 1215 1214 KILO     case ARROW_RIGHT:
+lineno 1216 1215 KILO         editorMoveCursor(c);
+lineno 1217 1216 KILO         break;
+lineno 1218 1217 KILO     case CTRL_L: /* ctrl+l, clear screen */
+lineno 1219 1218 KILO         /* Just refresht the line as side effect. */
+lineno 1220 1219 KILO         break;
+lineno 1221 1220 KILO     case ESC:
+lineno 1222 1221 KILO         /* Nothing to do for ESC in this mode. */
+lineno 1223 1222 KILO         break;
+lineno 1224 1223 KILO     default:
+lineno 1225 1224 KILO         editorInsertChar(c);
+lineno 1226 1225 KILO         break;
+lineno 1227 1226 KILO     }
+lineno 1228 1227 KILO 
+lineno 1229 1228 KILO     quit_times = KILO_QUIT_TIMES; /* Reset it to the original value. */
+lineno 1230 1229 KILO }
+
+
