@@ -21,32 +21,35 @@
   adding comments explaining coding decisions etc.
 
   http://viewsourcecode.org links to a valuable tutorial by Jeremy.Ruten
-  who works with Sanfilippo's code. Ruten works at a deep level and 
-  renders this work a partial redundancy, but possibly his work is 
-  not directly usable for the this project's purposes. The project's
+  who works with Sanfilippo's code. Ruten works at a deeper level and 
+  renders this work a partial redundancy. But possibly his work is 
+  not directly usable for the this project. The project's
   goal is "achieving a primary school understanding of kilo.c"
   whereas Ruten works at the high school level, at the least.
   
   Tutorial Tasks Outline:
 
   A. Describe a Linux terminal as a Linux device consuming character
-     strings and emitting keystroke (characters)
+     strings and emitting keystroke (characters) and status strings
+     describing the display state.
+
+  B. Document the coding style used by kilo for reads and writes.
 
   Coding Tasks Outline:
 
-  A. Build mods self documenting the VT100 escape sequences 
+  Code in UPD style to reduce the temptation to rewrite.
+
+  A. Build snippets self documenting the VT100 escape sequences 
   
-  A. Trace representative source executable statements to the writing of
-     the first screen
+  B. Trace representative source executable statements as tasks are
+     carried out
 
-     Code in UPD format to isolate supplemental edits
+  C. Add coding (UPD format) to count the calls to abAppend
 
-  B. Add coding (UPD format) to count the calls to abAppend
-
-  C. Add coding (UPD format) to file save the character string for the 
+  D. Add coding (UPD format) to file save the character string for the 
      first screen write.
 
-  D. Add coding to write the first screen incrementally, ie after each
+  E. Add coding to write the first screen incrementally, ie after each
      call to to abAppend. Insert a variable delay to allow a human to 
      see and follow what is going on. 
 
