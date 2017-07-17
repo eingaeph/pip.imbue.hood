@@ -11,7 +11,8 @@
 
   Lausler's code https://github.com/pklausler/aoeui is an alternative
   prototype built to very similar specifications of length and
-  dependencies and has been used by the author for years. 
+  dependencies and has been used been proven useful (by the author)
+   for years. 
 
   The prototype code contains a copyright notice (2016). It is 
   licensed by Salvatore Sanfilippo under terms which are here 
@@ -25,28 +26,39 @@
   renders this work a partial redundancy. But possibly his work is 
   not directly usable for the this project. The project's
   goal is "achieving a primary school understanding of kilo.c"
-  whereas Ruten works at the high school level, at the least.
+  whereas Ruten, at the least, works at the high school level.
   
+  Code modifications to kilo in UPD format to reduce the temptation to 
+  rewrite.
+
   Tutorial Tasks Outline:
 
   A. Describe a Linux terminal as a Linux device consuming character
-     strings and emitting keystroke (characters) and status strings
-     describing the display state.
+     strings and emitting keystroke (characters) and display state 
+     status strings.
 
   B. Document the coding style used by kilo for reads and writes.
 
-  Coding Tasks Outline:
+  Lessons: Stand alone code
 
-  Code in UPD style to reduce the temptation to rewrite.
+  A. Read keypresses, write characters and and integers to the display.
 
-  A. Build snippets self documenting the VT100 escape sequences 
+  B. Copy a file to another, character by character
+
+  C. Copy a string to the display, file save the string for later 
+     examination and use. 
+
+  D. Clear the screen, etc. using the VT100 escape sequences in self 
+     documenting code. 
+
+  Modifications to Kilo (UPD format)
   
   B. Trace representative source executable statements as tasks are
      carried out
 
-  C. Add coding (UPD format) to count the calls to abAppend
+  C. Add coding to count the calls to abAppend
 
-  D. Add coding (UPD format) to file save the character string for the 
+  D. Add coding to file save the character string for the 
      first screen write.
 
   E. Add coding to write the first screen incrementally, ie after each
