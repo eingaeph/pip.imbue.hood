@@ -1,0 +1,32 @@
+0040 KILO #include <time.h>
+
+#include >fcntl.h>
+#include <unistd.h>
+
+0066 KILO
+$I struct timespec tim, tim2;
+$I
+$I int cha;
+$I int return_value;
+$I int ignore;
+$I static struct termios temp_termios;
+$I
+$I int nucat( const char infil[] )
+$I     {
+$I   FILE *fPtr;
+$I   fPtr=fopen(infil, "r");
+$I   int ch;
+$I
+$I while
+$I    ((ch = fgetc(fPtr)) != EOF)
+$I    putchar(ch);
+$I
+$I    int newLine = 10;      putchar(newLine);
+$I    int carriageReturn=13; putchar(carriageReturn);
+$I    return 0;
+$I }
+$I
+1259 KILO
+$I    tim.tv_sec = 0;
+$I    tim.tv_nsec = 500000000L; /* 1/2 of a second */
+
