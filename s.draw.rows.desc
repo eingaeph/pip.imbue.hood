@@ -1,0 +1,84 @@
+
+void editorDrawRows(struct abuf *ab) {
+  int y;
+  for (y = 0; y < E.screenrows; y++) {
+    if (y >= E.numrows) {
+      if (y == E.screenrows / 3) {
+
+        char welcome[80];
+        int welcomelen = snprintf(welcome, sizeof(welcome),
+          "Kilo editor -- version %s", KILO_VERSION);
+        if (welcomelen > E.screencols) welcomelen = E.screencols;
+        int padding = (E.screencols - welcomelen) / 2;
+        if (padding) {
+          abAppend(ab, "~", 1);
+          padding--;
+        }
+        while (padding--) abAppend(ab, " ", 1);
+        abAppend(ab, welcome, welcomelen);
+      } else {
+        abAppend(ab, "~", 1);
+      }
+    } else {
+
+      int len = E.row.size;
+      if (len > E.screencols) len = E.screencols;
+      abAppend(ab, E.row.chars, len);
+    }
+
+    abAppend(ab, "\x1b[K", 3);
+    if (y < E.screenrows - 1) {
+      abAppend(ab, "\r\n", 2);
+    }
+  }
+}
+
+typedef struct erow {
+  int size;
+  char *chars;
+} erow;
+
+struct editorConfig {
+  int cx, cy;
+  int screenrows;
+  int screencols;
+  int numrows;
+  erow row;
+  struct termios orig_termios;
+};
+
+E. is a data type for storing (a) row(s) of text
+
+struct editorConfig E;
+
+enter editorDrawRows
+
+  E.screenrows
+  E.numrows
+  E.row.size       integer
+  E.screencols
+  E.row.chars      pointer 
+  E.screenrows
+
+  E.row.size = linelen;
+  E.row.chars = malloc(linelen + 1);
+  memcpy(E.row.chars, line, linelen);
+  E.row.chars[linelen] = '\0';
+
+We wrap our previous row-drawing code in an if statement 
+that checks whether we are currently drawing a row that is part of the text buffer, 
+or a row that comes after the end of the text buffer.
+
+To draw a row that’s part of the text buffer, 
+we simply write out the chars field of the erow. 
+But first, we take care to truncate the rendered line 
+if it would go past the end of the screen.
+
+Then
+
+ abAppend(ab, E.row.chars, len);
+
+void editorRefreshScreen() 
+
+  write(STDOUT_FILENO, ab.b, ab.len);
+  abFree(&ab);
