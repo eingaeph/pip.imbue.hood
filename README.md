@@ -37,20 +37,35 @@
      strings and emitting keystroke (characters) and display state 
      status strings.
 
-  B. Document the coding style used by kilo for reads and writes.
+  B. Document the coding style used by kilo: example screen reads 
+     and writes.
 
-  Lessons: Stand alone code
+  Lessons: Build around stand alone (scaffolding) code, chosen to be 
+           readable in one sitting,so as to encourage the student to
+           proceed reading kilo.c without mastering all the details. 
+           To this end, insofar as possible. code in kilo.c style
 
-  A. Read keypresses, write characters and and integers to the display.
+  A. "KEY PRESSES"
+     KEYP: Set terminal in raw mode, read keypresses, write 
+     annotations to the display. Use kilo.c enum style to deal
+     with keyboard emitted escape sequences
 
-  B. Copy a file to another, character by character
+  B. "DISPLAY"
+     DISP: Starting with a simple hard coded string based on VT100 
+     escape sequences, copy the string to the display, clear the 
+     screen, write a message, position the cursor.
 
-  C. Copy a string to the display, file save the string for later 
-     examination and use. 
+  C. "BUILD E STRUCT"
+     BEST: Build struct E in kilo.c style, that is a struct containing
+     an array of structs, each element array elemtnt describing a line
+     ultimately . 
 
-  D. Clear the screen, etc. using the VT100 escape sequences in self 
-     documenting code. 
+  D. "SCROLL THE DISPLAY": SCROL
+     Scroll the display with coding in kilo.c E struct style
 
+  E. "FILE TO E": FELT 
+     read a text file, store in an E struct
+     
   Modifications to Kilo (UPD format)
   
   B. Trace representative source executable statements as tasks are
@@ -58,8 +73,7 @@
 
   C. Add coding to count the calls to abAppend
 
-  D. Add coding to file save the character string for the 
-     first screen write.
+  D. Add coding to file save the character string for later examination.
 
   E. Add coding to write the first screen incrementally, ie after each
      call to to abAppend. Insert a variable delay to allow a human to 
