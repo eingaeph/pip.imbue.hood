@@ -1,14 +1,14 @@
 
 SCAFFOLD 
 
-  Executable code snippets to point out and make readable Kilo.c 
-  idioms. 
+  Executable code snippets invoking tcc by a shebang to point out 
+  and make readable important kilo.c idioms. 
 
   Snippet IDs:
 
    BASC  --  Build a screen (alias DISP display)
    DCOD  --  Decode (parse) keyboard input stream
-   REAF  --  Read a file
+   REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
 
 
@@ -22,9 +22,10 @@ SCAFFOLD
      and writes.
 
   Lessons: Build around stand alone (scaffolding) code, chosen to be 
-           readable in one sitting,so as to encourage the student to
-           proceed reading kilo.c without mastering all the details. 
-           To this end, insofar as possible. code in kilo.c style
+           readable in one sitting, so as to encourage the student to
+           confindently continue reading kilo.c without mastering all 
+           the details. To this end, insofar as possible. code in 
+           kilo.c style
 
   A. "KEY PRESSES"
      KEYP: Set terminal in raw mode, read keypresses, write 

@@ -39,8 +39,10 @@ int readAline(void)
 
 int main(int arc, char** argv)
 {
-    char *filename = "reaf.dat"; fp = fopen(filename,"r");
+    char *filename = "qwik.inp"; fp = fopen(filename,"r");
     int numb; int retval; int lastline;
+
+    printf("REAF executing\n");
 
     line.count = 0;
     for (numb = 0 ; numb < 10; numb++) 
