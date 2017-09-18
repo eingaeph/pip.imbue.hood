@@ -1,10 +1,13 @@
 # Project pip.imbue.hood 
 
-  As necessary build illustrative code snippets to support 
-  minimal readability mods to kilo.c. Illustrate library function 
-  calls sufficient to display and edit text files without further 
-  dependencies in a Linux environment. Construct explanatory html
-  pages stored in tutor.zip.
+  Buuild illustrative code snippets to highlight a subset of idioms
+  used in Kilo.c  Illustrate library calls sufficient to display 
+  and edit text files without further dependencies in a Linux 
+  environment. Construct explanatory html pages stored in tutor.zip.
+
+  The present work is not an attempt to fork kilo.c but is
+  intended to support a first reading of kilo.c, while skipping past 
+  some details.
 
   Prototype code kilo.c by Salvatore Sanfilippo is hosted at
   http://github.com/antirez/kilo.
@@ -12,7 +15,7 @@
   Lausler's code https://github.com/pklausler/aoeui is an alternative
   prototype built to very similar specifications of length and
   dependencies and has been used been proven useful (by the author)
-   for years. 
+  for years. 
 
   The prototype code contains a copyright notice (2016). It is 
   licensed by Salvatore Sanfilippo under terms which are here 
