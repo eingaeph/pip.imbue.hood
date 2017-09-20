@@ -1,16 +1,27 @@
 
 SCAFFOLD 
 
-  Executable code snippets invoking tcc by a shebang to point out 
+  Executable code snippets invoking tcc by a shebang. Point out 
   and make readable important kilo.c idioms. 
 
   Snippet IDs:
 
-   BASC  --  Build a screen (alias DISP display)
+   BASC  --  Build a screen (alias DISP display a screen)
    DCOD  --  Decode (parse) keyboard input stream
    REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
 
+  Titles: 
+
+   kilo.c             An Open Source Editor
+                       for the Linux OS
+                   With No (Other) Dependencies
+
+   idiom MOCU          Move the Cursor
+
+   idiom WIND     Scroll (Window) The Display 
+                             of
+                       The Text Buffer
 
   Tutorial Tasks Outline:
 

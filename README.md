@@ -1,13 +1,14 @@
 # Project pip.imbue.hood 
 
   Buuild illustrative code snippets to highlight a subset of idioms
-  used in Kilo.c  Illustrate library calls sufficient to display 
-  and edit text files without further dependencies in a Linux 
-  environment. Construct explanatory html pages stored in tutor.zip.
+  used in kilo.c  Illustrate GNU/Linux library calls sufficient to 
+  display and edit text files without further dependencies. Construct 
+  explanatory html pages stored in tutor.zip.
 
-  The present work is not an attempt to fork kilo.c but is
+  The present work is explicitly not an attempt to fork kilo.c but is
   intended to support a first reading of kilo.c, while skipping past 
-  some details.
+  some details. The project wishes to support kilo.c as a preliminary
+  archive of working C idioms. 
 
   Prototype code kilo.c by Salvatore Sanfilippo is hosted at
   http://github.com/antirez/kilo.
@@ -27,16 +28,16 @@
   http://viewsourcecode.org links to a valuable tutorial by Jeremy.Ruten
   who works with Sanfilippo's code. Ruten works at a deeper level and 
   renders this work a partial redundancy. But possibly his work is 
-  not directly usable for the this project. The project's
-  goal is "achieving a primary school understanding of kilo.c"
+  not directly usable for the this project. This project's
+  goal is "achieving a teachable primary school understanding of kilo.c"
   whereas Ruten, at the least, works at the high school level.
   
-  Code modifications to Kilo in UPD format to reduce the temptation to 
+  Code modifications to kilo.c in UPD format to reduce the temptation to 
   rewrite.
 
   Scaffold Code Snippets (SCAFFOLD.md)
 
-  Modifications to Kilo (UPD format)
+  Modifications to kilo.c (UPD format)
   
   B. Trace representative source executable statements as tasks are
      carried out
