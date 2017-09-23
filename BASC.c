@@ -5,6 +5,7 @@
 #include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 /* We define a very simple "append buffer" structure, that is an heap
  * allocated string where we can append to. This is useful in order to
@@ -65,6 +66,15 @@ int enableRawMode(int fd) {
 
 }
 
+/*  wrapper for abAppend */
+
+void wrapa(struct abuf *ab, const char *s) 
+{
+    printf("wrappa processing <%s>\n",s);
+    int len; len = (int) strlen(s);
+    printf("length <%d>\n",len);
+    abAppend(ab, s, len);   
+}
 
 /* VT100 Display Control Escape Sequences */
 
@@ -92,37 +102,46 @@ char CursorHide[]=                          "\x1b[?25l";
 char CursorDisplay[]=                       "\x1b[?25h";
 char ClearCurrentLine[]=                    "\x1b[K";
 
-void funy(const char ara[] )
-{
-      FILE *fout = stdout;
-      size_t len = strlen(ara);
-      size_t byt = 1;
-
-      fwrite(ara , byt , len , fout );
-
-   return;
-}
+/* function main */
 
 int
 main()
     {
-
-int i;
+      int i;
       enableRawMode(STDIN_FILENO);
 
       struct abuf ab = ABUF_INIT;
 
-int len; len = (int) strlen(ClearScreen);
-      abAppend(&ab,ClearScreen,(int) strlen(ClearScreen)); 
-      abAppend(&ab,CursorToTopLeft,(int) strlen(CursorToTopLeft));
-for (i=1; i<25; i++) {
-      abAppend(&ab,TildeReturnNewline,(int) strlen(TildeReturnNewline));}
-      abAppend(&ab,CursorToTopLeft,(int) strlen(CursorToTopLeft));
+      wrapa(&ab,ClearScreen); 
+      wrapa(&ab,CursorToTopLeft);
 
-      funy(ab.b);
+for (i=1; i<25; i++) 
+{
+      wrapa(&ab,TildeReturnNewline);
+}
 
+      wrapa(&ab,CursorToTopLeft);
+
+      char* filestring ="new";
+
+ /* unlink filestring, if link exists */
+
+      int ignore = unlink(filestring);
+
+ /* Create filestring anew. Open filestring for writing.
+   specify append, but this is unnecessary */
+
+      int fd = open (filestring, O_WRONLY | O_CREAT | O_APPEND , 0666);
+
+      int length = ab.len;
+      write (fd, ab.b, length);
+
+      close (fd);
+        
+      fwrite(ab.b , 1 , ab.len , stdout);
+    
       abFree(&ab);
       disableRawMode();
 
-return 0;
+      return 0;
 }
