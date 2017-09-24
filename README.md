@@ -5,10 +5,12 @@
   display and edit text files without further dependencies. Construct 
   explanatory html pages stored in tutor.zip.
 
-  The present work is explicitly not an attempt to fork kilo.c but is
-  intended to support a first reading of kilo.c, while skipping past 
-  some details. The project wishes to support kilo.c as a preliminary
-  archive of working C idioms. 
+  The project wishes to support kilo.c as a preliminary archive of 
+  working C idioms. The present work is explicitly not an attempt to 
+  fork kilo.c but is intended to support a first reading of kilo.c, 
+  while allowing skipping past some details. The idea arises from
+  the realization that mastering all the details in xterm, etc., is
+  very unwise, not at all laudable. 
 
   Prototype code kilo.c by Salvatore Sanfilippo is hosted at
   http://github.com/antirez/kilo.

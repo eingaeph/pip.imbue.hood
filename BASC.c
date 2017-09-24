@@ -101,9 +101,10 @@ the terminal reply to GetCursorPosition   "24;80R" or similar
 char CursorHide[]=                          "\x1b[?25l";
 char CursorDisplay[]=                       "\x1b[?25h";
 char ClearCurrentLine[]=                    "\x1b[K";
+char CursorToCenter[]=                      "\x1b[12;30f";
 
 /* function main */
-
+//Force Cursor Position	<ESC>[{ROW};{COLUMN}f
 int
 main()
     {
@@ -113,6 +114,8 @@ main()
       struct abuf ab = ABUF_INIT;
 
       wrapa(&ab,ClearScreen); 
+      wrapa(&ab,CursorToCenter);
+      wrapa(&ab,"Hello world!");
       wrapa(&ab,CursorToTopLeft);
 
 for (i=1; i<25; i++) 
