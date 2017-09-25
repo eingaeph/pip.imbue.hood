@@ -2,15 +2,16 @@
 
   Buuild illustrative code snippets to highlight a subset of idioms
   used in kilo.c  Illustrate GNU/Linux library calls sufficient to 
-  display and edit text files without further dependencies. Construct 
-  explanatory html pages stored in tutor.zip.
+  display and edit text files without dependencies beyond the choice 
+  of terminal emulator (gnome-terminal tested). Construct explanatory 
+  html pages stored in tutor.zip.
 
   The project wishes to support kilo.c as a preliminary archive of 
   working C idioms. The present work is explicitly not an attempt to 
   fork kilo.c but is intended to support a first reading of kilo.c, 
-  while allowing skipping past some details. The idea arises from
+  while allowing skipping past many details. The idea arises from
   the realization that mastering all the details in xterm, etc., is
-  very unwise, not at all laudable. 
+  very unwise, is not at all laudable. 
 
   Prototype code kilo.c by Salvatore Sanfilippo is hosted at
   http://github.com/antirez/kilo.
@@ -28,7 +29,7 @@
   adding comments explaining coding decisions etc.
 
   http://viewsourcecode.org links to a valuable tutorial by Jeremy.Ruten
-  who works with Sanfilippo's code. Ruten works at a deeper level and 
+  who works with Sanfilippo's code. Ruten works at a deep level and 
   renders this work a partial redundancy. But possibly his work is 
   not directly usable for the this project. This project's
   goal is "achieving a teachable primary school understanding of kilo.c"
