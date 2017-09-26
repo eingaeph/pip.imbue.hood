@@ -27,6 +27,15 @@ char c2 = ' ';
 char c3 = ' ';
 char c4 = ' ';
 
+int test(char c) {
+   c4=c3;        c3=c2;        c2=c1;        c1=c;
+   int t4 = 27;  int t3 = 91;  int t2 = 50;  int t1 = 126;
+   char s4 = t4; char s3 = t3; char s2 = t2; char s1 = t1;
+
+   int test = (c4==s4) && (c3==s3) && (c2==s2) && (c1==s1);
+   return test;
+}
+
 int main() {
   enableRawMode();
 
@@ -37,10 +46,9 @@ int main() {
     } else {
       printf("%d ('%c')\n", c, c);
     }
-   c4=c3; c3=c2; c2=c1; c1=c;
-   int t4 = 27; int t3 = 91; int t2 = 50; int t1 = 126;
-   char s4 = t4; char s3 = t3; char s2 = t2; char s1 = t1;
-  if ((c4 == s4) && (c3==s3) && (c2 == s2) && (c1 == s1)) {printf("insert\n");}
+
+  if (test(c)) {printf("insert\n");}
+
   }
 
   return 0;
