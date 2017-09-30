@@ -42,17 +42,11 @@ int main(void) {
     text[3] = line;
 
     printf("text[3].row = %s\n",text[3].row);
-
-    old = text;
     
     int j;
 
-    for (j = 0; j < 10; j++) {old[j] = text[j];}
-    printf("old[1].row = %s\n",old[1].row);
-    printf("old[3].row = %s\n",old[3].row);
-
     slot newline;
-    ptr = "hello world";
+    ptr = "Hello world!";
     newline.row = ptr;
     newline.size = strlen(ptr);
 
