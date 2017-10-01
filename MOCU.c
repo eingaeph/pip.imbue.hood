@@ -1,3 +1,4 @@
+#! /usr/bin/tcc -run
 
 #include <string.h>
 #include <unistd.h>
