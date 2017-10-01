@@ -11,6 +11,10 @@ SCAFFOLD
    REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
 
+  Derivative IDs:
+
+   107   --  Built from REAF, ADAL 
+
   Titles: 
 
    kilo.c             An Open Source Editor
@@ -22,6 +26,11 @@ SCAFFOLD
    idiom WIND     Scroll (Window) The Display 
                              of
                        The Text Buffer
+
+   idiom BASC     Write a String to the Screen
+                      Clear the Screen
+                     Position the Cursor
+                    Display "Hello World!"
 
   Tutorial Tasks Outline:
 
@@ -44,7 +53,7 @@ SCAFFOLD
      with keyboard emitted escape sequences
 
   B. "DISPLAY"
-     DISP: Starting with a simple hard coded string based on VT100 
+     DISP: Starting with a hard coded strings comprising  VT100 
      escape sequences, copy the string to the display, clear the 
      screen, write a message, position the cursor.
 
@@ -56,5 +65,5 @@ SCAFFOLD
   D. "SCROLL THE DISPLAY": SCROL
      Scroll the display with coding in kilo.c E struct style
 
-  E. "FILE TO E": FELT 
-     read a text file, store in an E struct
+  E. "FILE TO T": FELT 
+     read a text file, store in an t (text) structure 

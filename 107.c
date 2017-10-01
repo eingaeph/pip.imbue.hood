@@ -32,7 +32,8 @@ void replaceAline(int inpt, int lastline)
     int j;
     for (j = 0; j < lastline; j++) 
       {if (j != inpt) {new[j] = old[j];}
-       else           {new[j] = newline;
+       else           {
+                       new[j] = newline;
                        if (old[j].row != NULL)  free(old[j].row);                                               
                       }
       }
