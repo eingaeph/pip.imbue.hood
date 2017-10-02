@@ -1,5 +1,4 @@
 #! /usr/bin/tcc -run
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -16,31 +15,34 @@ typedef struct slot
 
     slot line;
     slot *text;
-    slot *old;
-    slot *new;
 
-    char *ptr;
-
-void replaceAline(int inpt, int lastline)
+void replaceAline(void)
 {
 
+    slot *old  = (slot *)malloc(10*sizeof(slot));
+    slot *new  = (slot *)malloc(10*sizeof(slot));
+
     slot newline;
-    ptr = "Hello world!\n";
+    char *ptr = "Hello World!\n";
     newline.row = ptr;
     newline.size = strlen(ptr);
-    
-    int j;
-    for (j = 0; j < lastline; j++) 
-      {if (j != inpt) {new[j] = old[j];}
-       else           {
-                       new[j] = newline;
-                       if (old[j].row != NULL)  free(old[j].row);                                               
-                      }
+
+    old = text;
+
+
+    int i,j,k; i = 0; j = 0; k = 0;
+    for (i = 0; i < 10; i++) 
+      {if (i != 3) {new[j] = old[k]; j++; k++;}
+       else        {new[j] = newline;j++; k++;}
       }
 
+    free(text);
+    text = (slot *)malloc(10*sizeof(slot));
+    text = new;
+
+    free(old); free(new);
     return;
 }
-
 int readAline(void)
 {
     line.row = NULL; linecap = 0;
@@ -48,17 +50,18 @@ int readAline(void)
 
     if (line.size == -1) {return line.size;}
 
-    if((line.count == 0)) {text = malloc(sizeof(slot));}
-    else {text = realloc(text,(1+line.count)*sizeof(slot));}
+    if((line.count == 0)) 
+         { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}
+    else { text = (slot *)realloc(text,(1+line.count)*sizeof(slot));}
 
     char * ptr = malloc(line.size*sizeof(char));
     text[line.count].row = ptr  ;
     text[line.count].size = line.size;
     memcpy(ptr,line.row,line.size);
 
-//    printf("at text[%d].row:  %.*s",
-//    line.count,
+//    printf("the string at text[].row:  %.*s", 
 //    text[line.count].size, text[line.count].row);  
+
     line.count++; 
     return 0;
 }
@@ -68,37 +71,29 @@ int main(int arc, char** argv)
     char *filename = "qwik.inp"; fp = fopen(filename,"r");
     int numb; int retval; int lastline;
 
-    printf("\n107.c executing\n");
+    printf("107.c executing\n");
 
     line.count = 0;
     for (numb = 0 ; numb < 10; numb++) 
     {
     retval=readAline(); 
     if (retval == -1) {break;}
-    lastline = line.count;
+    lastline = line.count; 
     }
 
-    printf("\n%d lines were read\n\n",lastline);
-    
-    int y;
-    for (y = 0; y < lastline; y++) {
-    printf("text[%d].row:  %.*s", 
-    y,text[y].size, text[y].row);      }
-    
-    old = malloc((1+lastline)*sizeof(slot));
-    new = malloc((1+lastline)*sizeof(slot)); 
-    old = text;
+    printf("%d lines were read\n",lastline);
 
-    replaceAline(4,lastline);
+    int y =3;
+    printf("the string at text[%d].row:  %.*s",
+    y,text[y].size, text[y].row); 
 
-    printf("\n");
-    printf("the string at new[3].row:  %.*s", 
-    new[3].size, new[3].row); 
+    replaceAline();
 
-    printf("the string at new[4].row:  %.*s", 
-    new[4].size, new[4].row); 
+    y =3;
+    printf("the string at text[%d].row:  %.*s",
+    y,text[y].size, text[y].row); 
 
     if (fp != NULL) {fclose(fp);}
-    printf("\n"); return 0;
+    return 0;
  }
 
