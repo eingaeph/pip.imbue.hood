@@ -20,15 +20,14 @@ typedef struct slot
 
 int main(void) {
 
-    text = malloc(10*sizeof(slot));
-    old  = malloc(10*sizeof(slot));
-    new  = malloc(10*sizeof(slot));
+    slot *text = (slot *)malloc(10*sizeof(slot));
+    slot *old  = (slot *)malloc(10*sizeof(slot));
+    slot *new  = (slot *)malloc(10*sizeof(slot));
    
     ptr = "this is my story";
     line.row = ptr;
     line.size = strlen(ptr);
     text[0] = line;
-
 
     ptr = "this is my song";
     line.row = ptr;
@@ -42,7 +41,7 @@ int main(void) {
     text[3] = line;
 
     printf("text[3].row = %s\n",text[3].row);
-    
+   
     int j;
 
     slot newline;
@@ -54,10 +53,10 @@ int main(void) {
       {if (j != 3) {old[j] = text[j];}
        else        {old[j] = newline;}
       }
+
     printf("\n");
     printf("old[3].row = %s\n",old[3].row);
     printf("old[1].row = %s\n",old[1].row);
-
 
 
     return 0;
