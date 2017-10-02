@@ -16,11 +16,17 @@ typedef struct slot
     slot line;
     slot *text;
 
+void etxt(int maxndx)
+{
+    printf("%d is the maxiumum index\n",maxndx);
+    return;
+}
+
 void replaceAline(void)
 {
 
-    slot *old  = (slot *)malloc(10*sizeof(slot));
-    slot *new  = (slot *)malloc(10*sizeof(slot));
+    slot *old  = (slot *)malloc(20*sizeof(slot));
+    slot *new  = (slot *)malloc(20*sizeof(slot));
 
     slot newline;
     char *ptr = "Hello World!\n";
@@ -29,18 +35,24 @@ void replaceAline(void)
 
     old = text;
 
-
+printf("%s",ptr);
     int i,j,k; i = 0; j = 0; k = 0;
     for (i = 0; i < 10; i++) 
       {if (i != 3) {new[j] = old[k]; j++; k++;}
        else        {new[j] = newline;j++; k++;}
       }
 
+printf("getting ready for text = new\n");
     free(text);
-    text = (slot *)malloc(10*sizeof(slot));
-    text = new;
+printf("is free the problem\n");
 
-    free(old); free(new);
+    text = (slot *)malloc(20*sizeof(slot));
+printf("did the second call to malloc for text ...\n");
+    text = new;
+printf("did the assignment cause the problem\n");
+//    free(old); free(new);
+printf("did these calls to free fail\n");
+printf("leaving replaceAline\n");
     return;
 }
 int readAline(void)
@@ -57,10 +69,7 @@ int readAline(void)
     char * ptr = malloc(line.size*sizeof(char));
     text[line.count].row = ptr  ;
     text[line.count].size = line.size;
-    memcpy(ptr,line.row,line.size);
-
-//    printf("the string at text[].row:  %.*s", 
-//    text[line.count].size, text[line.count].row);  
+    memcpy(ptr,line.row,line.size);  
 
     line.count++; 
     return 0;
@@ -87,7 +96,11 @@ int main(int arc, char** argv)
     printf("the string at text[%d].row:  %.*s",
     y,text[y].size, text[y].row); 
 
+    int maxndx = lastline - 1;
+    etxt(maxndx);
     replaceAline();
+    maxndx = lastline -1;
+    etxt(maxndx);
 
     y =3;
     printf("the string at text[%d].row:  %.*s",
