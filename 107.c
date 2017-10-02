@@ -18,14 +18,23 @@ typedef struct slot
 
 void etxt(int maxndx)
 {
-    printf("%d is the maxiumum index\n",maxndx);
+    printf("\n");
+
+    int i;
+    for (i = 0; i < maxndx + 1; i++)
+    printf("the string at text[%d].row:  %.*s",
+    i,text[i].size, text[i].row); 
+
+    printf("\n"); 
     return;
 }
 
-void replaceAline(void)
-{
+// replaceAline should have one call to malloc and one call to free
 
-    slot *old  = (slot *)malloc(20*sizeof(slot));
+void replaceAline(int nsrt,int maxndx)
+{
+    printf("the start value of <text> pointer is %p\n", (void *)text);
+
     slot *new  = (slot *)malloc(20*sizeof(slot));
 
     slot newline;
@@ -33,28 +42,20 @@ void replaceAline(void)
     newline.row = ptr;
     newline.size = strlen(ptr);
 
-    old = text;
+    slot *old = text; 
 
-printf("%s",ptr);
     int i,j,k; i = 0; j = 0; k = 0;
-    for (i = 0; i < 10; i++) 
-      {if (i != 3) {new[j] = old[k]; j++; k++;}
-       else        {new[j] = newline;j++; k++;}
+    for (i = 0 ; i < maxndx + 1 ; i++) 
+      {if (i != nsrt) {new[j] = old[k]; j++; k++;}
+       else           {new[j] = newline;j++; k++;}
       }
 
-printf("getting ready for text = new\n");
-    free(text);
-printf("is free the problem\n");
+    free(text); text = new;  
+    printf("the end   value of <text> pointer is %p\n", (void *)text);
 
-    text = (slot *)malloc(20*sizeof(slot));
-printf("did the second call to malloc for text ...\n");
-    text = new;
-printf("did the assignment cause the problem\n");
-//    free(old); free(new);
-printf("did these calls to free fail\n");
-printf("leaving replaceAline\n");
     return;
 }
+
 int readAline(void)
 {
     line.row = NULL; linecap = 0;
@@ -92,19 +93,10 @@ int main(int arc, char** argv)
 
     printf("%d lines were read\n",lastline);
 
-    int y =3;
-    printf("the string at text[%d].row:  %.*s",
-    y,text[y].size, text[y].row); 
-
     int maxndx = lastline - 1;
     etxt(maxndx);
-    replaceAline();
-    maxndx = lastline -1;
+    replaceAline(5,maxndx);
     etxt(maxndx);
-
-    y =3;
-    printf("the string at text[%d].row:  %.*s",
-    y,text[y].size, text[y].row); 
 
     if (fp != NULL) {fclose(fp);}
     return 0;
