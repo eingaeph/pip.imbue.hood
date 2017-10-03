@@ -2,18 +2,25 @@
 SCAFFOLD 
 
   Executable code snippets invoking tcc by a shebang. Point out 
-  and make readable important kilo.c idioms. 
+  and make readable important kilo.c idioms.
 
-  Snippet IDs:
+  Scaffoldings are Snippets and Derivatives of Snippets:
+   Snippets are short an easily debugged.
+   Derivatives are more diffuclt the Snippets to debug, but are hopefully
+     still quickly debugged. 
 
+  Snippet IDs: (demonstrated idioms, which are singular manners of speaking)
+
+   ADAL  --  Replace a line in text (an array of slot structs)
    BASC  --  Build a screen (alias DISP display a screen)
    DCOD  --  Decode (parse) keyboard input stream
    REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
 
-  Derivative IDs:
+  Derivative IDs: (invocations, 
+                   which are combinations of idioms summoning many demons)
 
-   107   --  Built from REAF, ADAL 
+   107   --  Built from bases REAF, ADAL. 
 
   Titles: 
 
