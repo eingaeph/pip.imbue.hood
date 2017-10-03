@@ -23,15 +23,17 @@ void etxt(int maxndx)
 
     int i;
     for (i = 0; i < maxndx + 1; i++)
-    printf("the string at text[%d].row:  %.*s",
+    printf("text[%d].row:  %.*s",
     i,text[i].size, text[i].row); 
 
     printf("\n"); 
     return;
 }
 
-// replaceAline should have one call to malloc and one call to free
-// plus a free(text[nsrt].row 
+// function replaceAline 
+// makes one call to malloc for replacement text  
+// plus  one call to free text[nsrt].row (the replaced element)
+// plus  one call to free text (the entire replaced document)
 
 void replaceAline(int nsrt,int maxndx)
 {
