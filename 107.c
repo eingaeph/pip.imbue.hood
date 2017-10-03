@@ -1,4 +1,5 @@
 #! /usr/bin/tcc -run
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -39,8 +40,10 @@ void replaceAline(int nsrt,int maxndx)
 
     slot newline;
     char *ptr = "Hello World!\n";
-    newline.row = ptr;
     newline.size = strlen(ptr);
+    char *qtr = (char *)malloc(strlen(ptr));
+    memcpy(qtr,ptr,strlen(ptr)); 
+    newline.row = qtr;
 
     slot *old = text; 
 
