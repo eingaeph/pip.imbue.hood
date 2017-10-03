@@ -17,7 +17,39 @@ typedef struct slot
     slot line;
     slot *text;
 
-void deleteAline(int omit,int maxndx)
+int addAline(int here,int maxndx)
+
+{
+    printf("the start value of <text> pointer is %p\n", (void *)text);
+
+    slot *new  = (slot *)malloc(20*sizeof(slot));
+
+    slot newline;
+    char *ptr = "Yes, I am a new line!\n";
+    newline.size = strlen(ptr);
+    char *qtr = (char *)malloc(strlen(ptr));
+    memcpy(qtr,ptr,strlen(ptr)); 
+    newline.row = qtr;
+
+    slot *old = text; 
+
+    int i,j,k; i = 0; j = 0; k = 0;
+    for (i = 0 ; i < maxndx + 1 ; i++) 
+      {if (i != here) {new[j] = old[k]; j++; k++;}
+       else           {new[j] = old[k]; j++; k++;
+                       new[j] = newline;     j++;}
+      }
+
+
+    free(text); text = new;  
+
+    printf("the end   value of <text> pointer is %p\n", (void *)text);
+   
+    maxndx++;
+    return maxndx;
+}
+
+int deleteAline(int omit,int maxndx)
 {
     printf("the start value of <text> pointer is %p\n", (void *)text);
 
@@ -35,7 +67,8 @@ void deleteAline(int omit,int maxndx)
     free(text); text = new;  
     printf("the end   value of <text> pointer is %p\n", (void *)text);
 
-    return;
+    maxndx--;
+    return maxndx;
 }
 
 void etxt(int maxndx)
@@ -56,14 +89,14 @@ void etxt(int maxndx)
 // plus  one call to free text[nsrt].row (the replaced element)
 // plus  one call to free text (the entire replaced document)
 
-void replaceAline(int nsrt,int maxndx)
+int replaceAline(int nsrt,int maxndx)
 {
     printf("the start value of <text> pointer is %p\n", (void *)text);
 
     slot *new  = (slot *)malloc(20*sizeof(slot));
 
     slot newline;
-    char *ptr = "Hello World!\n";
+    char *ptr = "Hello World! I am a replacement line.\n";
     newline.size = strlen(ptr);
     char *qtr = (char *)malloc(strlen(ptr));
     memcpy(qtr,ptr,strlen(ptr)); 
@@ -81,7 +114,7 @@ void replaceAline(int nsrt,int maxndx)
     free(text); text = new;  
     printf("the end   value of <text> pointer is %p\n", (void *)text);
 
-    return;
+    return maxndx;
 }
 
 int readAline(void)
@@ -123,10 +156,12 @@ int main(int arc, char** argv)
 
     int maxndx = lastline - 1;
     etxt(maxndx);
-    replaceAline(5,maxndx);
+    maxndx = replaceAline(5,maxndx);
     etxt(maxndx);
-    deleteAline(7,maxndx);
-    maxndx--; etxt(maxndx);
+    maxndx = deleteAline(7,maxndx);
+    etxt(maxndx);
+    maxndx = addAline(2,maxndx);
+    etxt(maxndx);
 
     if (fp != NULL) {fclose(fp);}
     return 0;
