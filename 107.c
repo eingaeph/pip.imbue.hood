@@ -31,6 +31,7 @@ void etxt(int maxndx)
 }
 
 // replaceAline should have one call to malloc and one call to free
+// plus a free(text[nsrt].row 
 
 void replaceAline(int nsrt,int maxndx)
 {
@@ -53,6 +54,7 @@ void replaceAline(int nsrt,int maxndx)
        else           {new[j] = newline;j++; k++;}
       }
 
+    free(text[nsrt].row);
     free(text); text = new;  
     printf("the end   value of <text> pointer is %p\n", (void *)text);
 
