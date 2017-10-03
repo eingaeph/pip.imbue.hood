@@ -17,6 +17,27 @@ typedef struct slot
     slot line;
     slot *text;
 
+void deleteAline(int omit,int maxndx)
+{
+    printf("the start value of <text> pointer is %p\n", (void *)text);
+
+    slot *new  = (slot *)malloc(20*sizeof(slot));
+
+    slot *old = text; 
+
+    int i,j,k; i = 0; j = 0; k = 0;
+    for (i = 0 ; i < maxndx + 1 ; i++) 
+      {if (i != omit) {new[j] = old[k]; j++; k++;}
+       else           {                      k++;}
+      }
+
+    free(text[omit].row);
+    free(text); text = new;  
+    printf("the end   value of <text> pointer is %p\n", (void *)text);
+
+    return;
+}
+
 void etxt(int maxndx)
 {
     printf("\n");
@@ -104,6 +125,8 @@ int main(int arc, char** argv)
     etxt(maxndx);
     replaceAline(5,maxndx);
     etxt(maxndx);
+    deleteAline(7,maxndx);
+    maxndx--; etxt(maxndx);
 
     if (fp != NULL) {fclose(fp);}
     return 0;
