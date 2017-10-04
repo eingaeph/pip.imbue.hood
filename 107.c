@@ -22,7 +22,8 @@ int addAline(int here,int maxndx)
 {
     printf("the start value of <text> pointer is %p\n", (void *)text);
 
-    slot *new  = (slot *)malloc(20*sizeof(slot));
+    int newlen = maxndx + 1 + 1;
+    slot *new  = (slot *)malloc(newlen*sizeof(slot));
 
     slot newline;
     char *ptr = "Yes, I am a new line!\n";
@@ -53,7 +54,8 @@ int deleteAline(int omit,int maxndx)
 {
     printf("the start value of <text> pointer is %p\n", (void *)text);
 
-    slot *new  = (slot *)malloc(20*sizeof(slot));
+    int newlen = maxndx + 1 - 1;
+    slot *new  = (slot *)malloc(newlen*sizeof(slot));
 
     slot *old = text; 
 
@@ -93,7 +95,8 @@ int replaceAline(int nsrt,int maxndx)
 {
     printf("the start value of <text> pointer is %p\n", (void *)text);
 
-    slot *new  = (slot *)malloc(20*sizeof(slot));
+    int newlen = maxndx + 1 + 0;
+    slot *new  = (slot *)malloc(newlen*sizeof(slot));
 
     slot newline;
     char *ptr = "Hello World! I am a replacement line.\n";
@@ -145,7 +148,7 @@ int main(int arc, char** argv)
     printf("107.c executing\n");
 
     line.count = 0;
-    for (numb = 0 ; numb < 10; numb++) 
+    for (numb = 0 ; numb < 100; numb++) 
     {
     retval=readAline(); 
     if (retval == -1) {break;}
