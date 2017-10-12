@@ -32,8 +32,9 @@ int umin,umax,vmin,vmax;   /* window endges in screen coordinates */
 void arrow_right()
 {
 
-  if (S.ix < S.xmax  & S.cu < S.umax) S.cu++;
-  if (S.ix < S.xmax)                  S.ix++; 
+  printf("arrow right\n");
+  if (S.ix == S.xmax || S.cu == S.umax) return;
+  S.cu++; S.ix++; 
 
 }
 
@@ -112,6 +113,25 @@ int main(int arc, char** argv)
 
     int lastline = readAfile(filename);
     printf("%d lines were read\n",lastline);
+
+/*  x,y  text coordinates, charno, lineno */
+    S.ix=0;
+    S.iy=0;
+    S.xmin=0;
+    S.xmax=79;
+    S.ymin=0;
+    S.ymax=lastline;
+/*  int u,v; screen char no, line no */
+    S.cu=0;
+    S.cv=0;
+    S.umin=0;
+    S.umax=79;
+    S.vmin=0;
+    S.vmax=79; 
+
+    printf("cu = %d",S.cu);printf("  ix = %d\n",S.ix); 
+    arrow_right(); 
+    printf("cu = %d",S.cu);printf("  ix = %d\n",S.ix); 
 
     wind(8,40,2,8);
  

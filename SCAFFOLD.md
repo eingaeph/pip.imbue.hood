@@ -5,7 +5,7 @@ SCAFFOLD
   and make readable important kilo.c idioms.
 
   Scaffoldings are Snippets and Derivatives of Snippets:
-   Snippets are short an easily debugged.
+   Snippets are short and easily debugged.
    Derivatives are more diffuclt the Snippets to debug, but are hopefully
      still quickly debugged. 
 
@@ -16,6 +16,7 @@ SCAFFOLD
    DCOD  --  Decode (parse) keyboard input stream
    REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
+   INSP  --  Insertion point, cursor position
 
   Derivative IDs: (invocations, 
                    which are combinations of idioms summoning many demons)
@@ -29,6 +30,8 @@ SCAFFOLD
                    With No (Other) Dependencies
 
    idiom MOCU          Move the Cursor
+
+   idiom INSP     Insertion Point, Cursor Position, Arrow Key
 
    idiom WIND     Scroll (Window) The Display 
                              of
