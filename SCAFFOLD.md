@@ -1,8 +1,8 @@
 
 SCAFFOLD 
 
-  Executable code snippets invoking tcc by a shebang. Point out 
-  and make readable important kilo.c idioms.
+  Construct small executable code snippets (invoke tcc with a shebang). The purpose
+  is to point out and make readable important kilo.c idioms.
 
   Scaffoldings are Snippets and Derivatives of Snippets:
    Snippets are short and easily debugged.
@@ -31,7 +31,9 @@ SCAFFOLD
 
    idiom MOCU          Move the Cursor
 
-   idiom INSP     Insertion Point, Cursor Position, Arrow Key
+   idiom INSP     Control the Insertion Point and Cursor Position
+                                   Using
+                               Arrow Keys, Etc.
 
    idiom WIND     Scroll (Window) The Display 
                              of
