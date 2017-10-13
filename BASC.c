@@ -114,8 +114,13 @@ main()
       struct abuf ab = ABUF_INIT;
 
       wrapa(&ab,ClearScreen); 
-      wrapa(&ab,CursorToCenter);
+      char mocu[32]; int iter;
+      for(iter = 8; iter < 16; iter ++) 
+{
+      snprintf(mocu,32,"\x1b[%d;%df",iter,30); wrapa(&ab,mocu);
+                //wrapa(&ab,CursorToCenter);
       wrapa(&ab,"Hello world!");
+}                                        
       wrapa(&ab,CursorToTopLeft);
 
 for (i=1; i<25; i++) 
