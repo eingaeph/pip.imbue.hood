@@ -32,12 +32,28 @@ int umin,umax,vmin,vmax;   /* window endges in screen coordinates */
 void arrow_right()
 {
 
-  printf("arrow right\n");
+  printf("inpu arrow right cu = %d",S.cu);printf("  ix = %d\n",S.ix);  
   if (S.ix == S.xmax || S.cu == S.umax) return;
   S.cu++; S.ix++; 
+  printf("outp arrow right cu = %d",S.cu);printf("  ix = %d\n",S.ix);
 
 }
 
+void arrow_left()
+{
+  printf("inpu arrow left  cu = %d",S.cu);printf("  ix = %d\n",S.ix);  
+  if (S.ix == S.xmin || S.cu == S.umin) return;
+  S.cu--; S.ix--; 
+  printf("outp arrow left  cu = %d",S.cu);printf("  ix = %d\n",S.ix);
+}
+
+void switcher(int code)
+{
+    switch(code) {
+                    case ARROW_RIGHT: { arrow_right(); break;}
+                    case ARROW_LEFT:  { arrow_left();  break;}
+                 }
+}
     size_t linecap;
     FILE *fp;
 
@@ -121,7 +137,7 @@ int main(int arc, char** argv)
     S.xmax=79;
     S.ymin=0;
     S.ymax=lastline;
-/*  int u,v; screen char no, line no */
+/*  int u,v; screen coordinates, char no, line no */
     S.cu=0;
     S.cv=0;
     S.umin=0;
@@ -129,11 +145,14 @@ int main(int arc, char** argv)
     S.vmin=0;
     S.vmax=79; 
 
-    printf("cu = %d",S.cu);printf("  ix = %d\n",S.ix); 
-    arrow_right(); 
-    printf("cu = %d",S.cu);printf("  ix = %d\n",S.ix); 
+    int code = ARROW_RIGHT; switcher(code);
+        code = ARROW_RIGHT; switcher(code);
+        code = ARROW_LEFT;  switcher(code);
+        code = ARROW_LEFT;  switcher(code);
+        code = ARROW_LEFT;  switcher(code);
+        code = ARROW_LEFT;  switcher(code);
 
-    wind(8,40,2,8);
+    wind(7,40,2,8);
  
     if (fp != NULL) {fclose(fp);}
     return 0;
