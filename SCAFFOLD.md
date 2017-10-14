@@ -1,19 +1,22 @@
 
 SCAFFOLD 
 
-  Construct small executable code snippets (invoke tcc with a shebang). The purpose
-  is to point out and make readable important kilo.c idioms.
+  Construct small executable code snippets (invoke tcc with a shebang). A snippet 
+  of source length in the hundreds of statements compiles, executes and displays
+  output effectively instantaneously. (A tenth of a second delay is not noticable.)
+  Speedy testing and small codes greatly reduces the debugging cost.
 
-  Scaffoldings are Snippets and Derivatives of Snippets:
-   Snippets are short and easily debugged.
-   Derivatives are more diffuclt the Snippets to debug, but are hopefully
-     still quickly debugged. 
+  The purpose of all this is to point out and make readable important kilo.c idioms. 
 
-  Snippet IDs: (demonstrated idioms, which are singular manners of speaking)
+  Scaffoldings consists Snippets and Derivatives of Snippets:
+   Derivatives are more difficult to debug than Snippets to debug.
+
+  Snippet IDs: (demonstrated idioms, idioms are singular, often used, manners of 
+                speaking)
 
    ADAL  --  Replace a line in text (an array of slot structs)
    BASC  --  Build a screen (alias DISP display a screen)
-   DCOD  --  Decode (parse) keyboard input stream
+   DCOD  --  Decode (parse) the keyboard input stream
    REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
    INSP  --  Insertion point, cursor position
