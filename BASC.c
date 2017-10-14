@@ -66,11 +66,26 @@ int enableRawMode(int fd) {
 
 }
 
+void wrapb(struct abuf *ab, const char *s, int i, int j)
+{
+    printf("wrapb processing <%s>\n",s);
+    char mocu[32];
+    snprintf(mocu,32,"\x1b[%d;%df",i,j); 
+     
+    int len; len = (int) strlen(mocu);
+    printf("length <%d>\n",len);
+    abAppend(ab, mocu, len); 
+                
+    len = (int) strlen(s);
+    printf("length <%d>\n",len);
+    abAppend(ab, s, len);   
+}
+
 /*  wrapper for abAppend */
 
 void wrapa(struct abuf *ab, const char *s) 
 {
-    printf("wrappa processing <%s>\n",s);
+    printf("wrapa processing <%s>\n",s);
     int len; len = (int) strlen(s);
     printf("length <%d>\n",len);
     abAppend(ab, s, len);   
@@ -103,7 +118,6 @@ char CursorDisplay[]=                       "\x1b[?25h";
 char ClearCurrentLine[]=                    "\x1b[K";
 char CursorToCenter[]=                      "\x1b[12;30f";
 
-/* function main */
 //Force Cursor Position	<ESC>[{ROW};{COLUMN}f
 int
 main()
@@ -117,9 +131,7 @@ main()
       char mocu[32]; int iter;
       for(iter = 8; iter < 16; iter ++) 
 {
-      snprintf(mocu,32,"\x1b[%d;%df",iter,30); wrapa(&ab,mocu);
-                //wrapa(&ab,CursorToCenter);
-      wrapa(&ab,"Hello world!");
+      wrapb(&ab,"Hello world!",iter,30);
 }                                        
       wrapa(&ab,CursorToTopLeft);
 
