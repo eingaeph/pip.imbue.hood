@@ -7,10 +7,11 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-/* We define a very simple "append buffer" structure, that is an heap
- * allocated string where we can append to. This is useful in order to
- * write all the escape sequences in a buffer and flush them to the standard
- * output in a single call, to avoid flickering effects. */
+/* Define an "append buffer" structure, a heap allocated string (buffer)
+ * constructed by succesive appendings. This in order to write the escape 
+ * sequences to the buffer and then to flush them to the standard output by
+ * a single call, this to avoid flickering effects.
+ */
 
 struct abuf {
     char *b;
@@ -18,6 +19,8 @@ struct abuf {
 };
 
 #define ABUF_INIT {NULL,0}
+
+    struct abuf ab = ABUF_INIT; //global structure
 
 void abAppend(struct abuf *ab, const char *s, int len) {
     char *new = realloc(ab->b,ab->len+len);
@@ -118,24 +121,17 @@ char CursorDisplay[]=                       "\x1b[?25h";
 char ClearCurrentLine[]=                    "\x1b[K";
 char CursorToCenter[]=                      "\x1b[12;30f";
 
-//Force Cursor Position	<ESC>[{ROW};{COLUMN}f
-int
-main()
-    {
-      int i;
-      enableRawMode(STDIN_FILENO);
-
-      struct abuf ab = ABUF_INIT;
-
-/* firs */
+void firs()
+{
       wrapa(&ab,ClearScreen); 
-      char mocu[32]; int iter;
+      int iter;
       for(iter = 8; iter < 16; iter ++) 
 {
       wrapb(&ab,"Hello world!",iter,30);
 }                                        
       wrapa(&ab,CursorToTopLeft);
 
+      int i;
 for (i=1; i<25; i++) 
 {
       wrapa(&ab,TildeReturnNewline);
@@ -143,9 +139,10 @@ for (i=1; i<25; i++)
 
       wrapa(&ab,CursorToTopLeft);
 
-      abFree(&ab);
+}
 
-/* seco */
+void seco()
+{
 
       ab.b = NULL;
       ab.len = 0;
@@ -156,6 +153,17 @@ for (i=1; i<25; i++)
       wrapb(&ab,"Hello world!",2,1);
       wrapb(&ab,"Hello world!",3,1);
       wrapb(&ab,"Hello World!",0,3);
+
+}
+
+int
+main()
+    {
+     
+      enableRawMode(STDIN_FILENO);
+
+//      firs();
+      seco();
 
       char* filestring ="new";
 
