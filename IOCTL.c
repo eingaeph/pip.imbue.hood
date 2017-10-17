@@ -14,7 +14,7 @@ enum KEY_ACTION{
 
 };
 
-#include "IOCTL.my"
+#include "ioctl.my"
 
 int main(){
     printf("Hello World!\n");
