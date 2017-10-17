@@ -20,6 +20,7 @@ SCAFFOLD
    REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
    INSP  --  Insertion point, cursor position
+   IOCTL --  Determine rows cols of current screen
 
   Derivative IDs: (invocations, 
                    which are combinations of idioms summoning many demons)
