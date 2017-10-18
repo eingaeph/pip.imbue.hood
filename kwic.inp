@@ -1,0 +1,23 @@
+line buffer, slot
+
+text buffer, an array of slots
+
+display buffer, an array of slots
+
+int addAline(int here,int maxndx)
+
+int deleteAline (int omit,int maxndx)
+
+int replaceAline(int nsrt,int maxndx)
+
+edit text buffer void etxt(int maxndx)
+
+int replaceAline(int nsrt,int maxndx)
+
+int readAline(void)
+
+int getCursorPosition(int ifd, int ofd, int *rows, int *cols) 
+
+int getWindowSize    (int ifd, int ofd, int *rows, int *cols)
+
+
