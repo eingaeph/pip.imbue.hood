@@ -20,4 +20,8 @@ int getCursorPosition(int ifd, int ofd, int *rows, int *cols)
 
 int getWindowSize    (int ifd, int ofd, int *rows, int *cols)
 
+  snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy + 1, E.cx + 1);
 
+STST.c  snprintf(mocu,32,"\x1b[%d;%df",i,j);
+
+RefreshScreen.my int clen = snprintf(buf,sizeof(buf),"\x1b[%dm",color);
