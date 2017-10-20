@@ -25,3 +25,20 @@ int getWindowSize    (int ifd, int ofd, int *rows, int *cols)
 STST.c  snprintf(mocu,32,"\x1b[%d;%df",i,j);
 
 RefreshScreen.my int clen = snprintf(buf,sizeof(buf),"\x1b[%dm",color);
+
+keypress handler in canonical mode
+
+keypress handler in raw mode
+
+send a sigint signal to the current process
+
+multiple small writes cause screen flicker 
+
+escape-sequence to hide cursor
+
+VT100 console escape-squences actions
+
+X Window System connecting keyboard and display  
+
+X Windows Supports xterm terminal emulator
+
