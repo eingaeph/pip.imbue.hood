@@ -42,3 +42,48 @@ X Window System connecting keyboard and display
 
 X Windows Supports xterm terminal emulator
 
+ioctl terminal i/o
+ioctl sends request to device driver
+device driver address hardware
+printf, fprintf, sprintf, snprintf, formatted output  
+vprintf, vfprintf, formatted output
+vsprintf, vsnprintf, formatted output  
+tcgetattr (tcsetattr, termios.h)
+tcsetattr (tcgetattr, termios.h)
+baud rate
+cols (screen)
+console
+console_codes - Linux console escape and control sequences (man page)
+cooked mode (terminal)
+current controlling terminal of a process
+cursor (horizontal position)
+cursor (vertical position)
+device name
+echoing
+escape codes (terminal driver)
+escape sequence (terminal driver)
+file handle
+ioctl.h
+keyboard device
+raw mode (terminal)
+rows (screen)
+serial device
+serial device (tty)
+Stty
+terminal 
+terminal attributes (terminal flags)
+terminal (distinguish from) shell
+terminal driver 
+terminal (emulator)
+terminal emulator running under X Window
+terminal emulator (VT102)
+terminal flag
+terminal window
+termios (API)
+termios flags (there are 60 termios flags)
+termios (struct)
+termios.h (define values for struct termios)
+tty (serial device)
+user -- grapical interface -- display server (window manger) -- kernel -- hardware
+window size
+xorg, gnome-terminal
