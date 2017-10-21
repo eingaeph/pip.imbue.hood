@@ -1,0 +1,53 @@
+pkeyp    process key press
+
+  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q')
+
+basc     build a screen
+
+    printf("wrapb processing <%s>\n",s);
+    char mocu[32];
+    snprintf(mocu,32,"\x1b[%d;%df",i,j); 
+     
+    int len; len = (int) strlen(mocu);
+    printf("length <%d>\n",len);
+    abAppend(ab, mocu, len); 
+                
+    len = (int) strlen(s);
+    printf("length <%d>\n",len);
+    abAppend(ab, s, len);   
+
+VT100    display control escape sequences
+
+    char ClearScreen[]=                         "\x1b[2J";
+    char CursorToTopLeft[] =                    "\x1b[H";
+    char TildeReturnNewline[] =                 "~\r\n";
+    char ReturnNewline[] =                      "\r\n";
+
+    char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
+    char GetCursorPosition[] =                  "\x1b[6n";
+
+    char CursorHide[]=                          "\x1b[?25l";
+    char CursorDisplay[]=                       "\x1b[?25h";
+    char ClearCurrentLine[]=                    "\x1b[K";
+    char CursorToCenter[]=                      "\x1b[12;30f";
+
+adal     add a line to the text buffer
+
+    for (j = 0; j < 10; j++) 
+      {if (j != 3) {old[j] = text[j];}
+       else        {old[j] = newline;}
+      }
+
+107      delete a line from the text buffer
+
+   slot *new  = (slot *)malloc(newlen*sizeof(slot));
+
+    slot *old = text; 
+
+    int i,j,k; i = 0; j = 0; k = 0;
+    for (i = 0 ; i < maxndx + 1 ; i++) 
+      {if (i != omit) {new[j] = old[k]; j++; k++;}
+       else           {                      k++;}
+      }
+
+
