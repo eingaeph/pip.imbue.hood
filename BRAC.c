@@ -47,9 +47,9 @@ void parser(int y)
     if (*s == '\n')       {break;};
     int testa = (*s == '{');
     int testb = (*s == '}');
-    int testc = (*s != ' ');
     if (testa) braceno ++;
     if (testb) braceno --;
+    int testc = (*s != ' ' && braceno != 0);
     if (testc) printf("%d",braceno); 
     else       printf(" ");
     s++;
