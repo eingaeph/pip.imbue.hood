@@ -11,7 +11,7 @@
   fork kilo.c but is intended to support a first reading of kilo.c, 
   while allowing skipping past many details. The idea arises from
   the realization that mastering all the details in xterm, etc., is
-  very unwise, is not at all laudable. 
+  very unwise and counterproductive. 
 
   Prototype code kilo.c by Salvatore Sanfilippo is hosted at
   http://github.com/antirez/kilo.
@@ -40,7 +40,7 @@
 
   Scaffold Code Snippets (SCAFFOLD.md)
 
-  Modifications to kilo.c (UPD format)
+  Modifications to kilo.c (UPD format) to support executing tracing.
   
   B. Trace representative source executable statements as tasks are
      carried out
@@ -52,4 +52,8 @@
   E. Add coding to write the first screen incrementally, ie after each
      call to to abAppend. Insert a variable delay to allow a human to 
      see and follow what is going on. 
+
+  As a final step, add function and variable prototypes to support creation of
+  separate compilation units and an ar archive to support stepwise recompilation
+  by gcc.
 

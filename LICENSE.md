@@ -1,5 +1,6 @@
 
 Copyright (c) 2016, Salvatore Sanfilippo <antirez at gmail dot com>
+Copyright (c) 2017, Contributor: github.com/eingaeph
 
 All rights reserved.
 
