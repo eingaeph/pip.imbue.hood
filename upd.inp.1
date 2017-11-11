@@ -1,33 +1,32 @@
+0000 KILO #! /usr/bin/tcc -run 
+$I /* Kilo -- A very simple editor in less than 1-kilo lines of code (as counted
 0040 KILO #include <time.h>
-
-#include >fcntl.h>
-#include <unistd.h>
-
 0066 KILO
-$I struct timespec tim, tim2;
-$I
-$I int cha;
-$I int return_value;
+$I FILE *fStream;
 $I int ignore;
-$I static struct termios temp_termios;
 $I
-$I int nucat( const char infil[] )
-$I     {
-$I   FILE *fPtr;
-$I   fPtr=fopen(infil, "r");
-$I   int ch;
-$I
-$I while
-$I    ((ch = fgetc(fPtr)) != EOF)
-$I    putchar(ch);
-$I
-$I    int newLine = 10;      putchar(newLine);
-$I    int carriageReturn=13; putchar(carriageReturn);
-$I    return 0;
+$I void init(void)
+$I {
+$I     fStream = fopen("/dev/pts/18", "w+");
+$I     int ignore = 0;
 $I }
 $I
+$I int nucat( const char infil[] )
+$I    {
+$I     FILE *fPtr;
+$I      fPtr=fopen(infil, "r");
+$I      char ClearScreen[] = "\x1b[2J";
+$I        fwrite(&ClearScreen,1,5,fStream);
+$I
+$I      int ch;
+$I while
+$I      ((ch = fgetc(fPtr)) != EOF)
+$I         fwrite(&ch,1,1,fStream);   
+$I 
+$I      fclose(fPtr);
+$I      return 0;
+$I }
 1184 KILO         exit(0);  /* The sole no-error return from kilo */
-1259 KILO
-$I   tim.tv_sec = 0;
-$I   tim.tv_nsec = 500000000L; /* 1/2 of a second */
+1260 KILO    init():     
+$I    initEditor();
 
