@@ -1,7 +1,10 @@
 # Project pip.imbue.hood 
 
-  Buuild illustrative code snippets to highlight a subset of idioms
-  used in kilo.c  Illustrate GNU/Linux library calls sufficient to 
+  Build illustrative code snippets to highlight a subset of idioms
+  used in kilo.c. Snippet codes should execute without warnings and
+  should be of a size readable in hour.  
+
+  Illustrate GNU/Linux library calls sufficient to 
   display and edit text files without dependencies beyond the choice 
   of terminal emulator (gnome-terminal tested). Construct explanatory 
   html pages stored in tutor.zip.
@@ -29,7 +32,7 @@
   adding comments explaining coding decisions etc.
 
   http://viewsourcecode.org links to a valuable tutorial by Jeremy.Ruten
-  who works with Sanfilippo's code. Ruten works at a deep level and 
+  who works with Sanfilippo's code. Ruten works at an informative level and 
   renders this work a partial redundancy. But possibly his work is 
   not directly usable for the this project. This project's
   goal is "achieving a teachable primary school understanding of kilo.c"
@@ -42,16 +45,10 @@
 
   Modifications to kilo.c (UPD format) to support executing tracing.
   
-  B. Trace representative source executable statements as tasks are
-     carried out
+  A. Trace representative source executable statements as tasks are
+     carried out.
 
-  C. Add coding to count the calls to abAppend
-
-  D. Add coding to file save the character string for later examination.
-
-  E. Add coding to write the first screen incrementally, ie after each
-     call to to abAppend. Insert a variable delay to allow a human to 
-     see and follow what is going on. 
+  B. Add coding to file save the character string for later examination. 
 
   As a final step, add function and variable prototypes to support creation of
   separate compilation units and an ar archive to support stepwise recompilation
