@@ -1,6 +1,7 @@
 #! /usr/bin/tcc -run
 
 /* 
+   C parser
    edit emphasized brace open_s and close_s
 */
 
@@ -118,7 +119,7 @@ int readAfile(char *filename)
 
 int main(int arc, char** argv)
 {
-    char *filename = "bacin.dat";
+    char *filename = "bracin.dat";
 
     int lastline = readAfile(filename);
     printf("%d lines were read\n",lastline);
