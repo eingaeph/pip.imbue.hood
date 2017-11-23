@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Add (insert) a Line (in)to a text structure*/
 
 typedef struct slot
 {

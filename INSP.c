@@ -1,5 +1,7 @@
 #! /usr/bin/tcc -run
 
+/* Change insertion point */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

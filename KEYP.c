@@ -1,5 +1,7 @@
 #! /usr/bin/tcc -run 
 
+/* a simple keypress decoder */
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,5 +1,7 @@
 #! /usr/bin/tcc -run
 
+/* Move cursor */
+
 #include <string.h>
 #include <unistd.h>
 

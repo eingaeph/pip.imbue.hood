@@ -1,5 +1,7 @@
 #! /usr/bin/tcc -run 
 
+/* Decode multiple character codes */
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

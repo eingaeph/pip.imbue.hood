@@ -1,5 +1,7 @@
 #! /usr/bin/tcc -run
 
+/* Build a screen */ 
+
 #include <string.h>
 #include <unistd.h>
 #include <termios.h>
