@@ -1,5 +1,10 @@
 #! /usr/bin/tcc -run
 
+//  input file into text structure
+//  access characters by x,y 
+//  y = 0,1,2 ... (first line, second line, ...)
+//  x = 0,1,2 ... (first character in line y, ...) 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
