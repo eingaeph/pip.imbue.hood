@@ -1,3 +1,14 @@
+ndex     retrieve character by x y index
+
+    char fetc(int x, int y)
+    {
+    char *ps; 
+    ps = text[y].row;  // the address of an array of characters
+    char ch = ps[x];   // the x_th character in the array ps
+    return ch;
+    }
+
+
 key1     Ruten's first process key press
 
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q')
