@@ -2,63 +2,74 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-void wrap(char **ps, char ***pps, int y, int x)
+    size_t linecap;
+    FILE *fp;
+
+typedef struct slot
 {
+    ssize_t size;
+    char *row;
+    int count;
+}   slot;
 
-    *ps = x + *(*pps + y); 
+    slot line;
+    slot *text;
 
+int readAline(void)
+{
+    line.row = NULL; linecap = 0;
+    line.size = getline (&line.row, &linecap, fp); 
+
+    if (line.size == -1) {return line.size;}
+
+    if((line.count == 0)) 
+         { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}
+    else { text = (slot *)realloc(text,(1+line.count)*sizeof(slot));}
+
+    char * ptr = malloc(line.size*sizeof(char));
+    text[line.count].row = ptr  ;
+    text[line.count].size = line.size;
+    memcpy(ptr,line.row,line.size);  
+
+    line.count++; 
+    return 0;
+}
+
+char fetc(int x, int y)
+{
+    char *ps; 
+    ps = text[y].row;  // the address of an array of characters
+    char ch = ps[x];   // the x_th character in the array ps
+    return ch;
 }
 
 int main(int arc, char** argv)
 {
-    int MAX = 4;
-    char** row = malloc(MAX*sizeof(char*));
-    row[0] = "this is my story";
-    row[1] = "this is my song";
-    row[2] = "i sing my story";
-    row[3] = "all day long";
+    char *filename = "NDEX.dat"; fp = fopen(filename,"r");
+    int numb; int retval; int lastline;
 
-    MAX = MAX + 1;
-    row = (char **) realloc(row,MAX*sizeof(char*));
-    row[MAX - 1] = "Play it again, Sam";
+    printf("NDEX.c executing\n\n");
 
-    MAX = MAX + 1;
-    row = (char **) realloc(row,MAX*sizeof(char*));
-    row[MAX - 1] = "Do it for me";
+    line.count = 0;
+    for (numb = 0 ; numb < 100; numb++) 
+    {
+    retval=readAline(); 
+    if (retval == -1) {break;}
+    lastline = line.count; 
+    }
 
-    MAX = MAX + 1;
-    row = (char **) realloc(row,MAX*sizeof(char*));
-    row[MAX - 1] = "0123456789";
+//    printf("%d lines were read\n",lastline);
 
-    char *ps;
-    char **pps;
-   
-    pps = row;
-    ps = *pps;
+    for (int y = 0; y < lastline;      y++)
+   {
+    for (int x = 0; x < text[y].size;  x++)
+    {char ch = fetc(x,y);    printf("%c",ch);}
+   }
+    
 
-    int y = 0;
-    int x = 0;
-    wrap(&ps,&pps,y,x);
-    printf("%s\n",ps);
+}
 
-    y = 1;
-    x = 0;
-    wrap(&ps,&pps,y,x);
-    printf("%s\n",ps);
-
-    y = 6;
-    x = 0;
-    wrap(&ps,&pps,y,x);
-    printf("%s\n",ps);
-
-    y = 6;
-    x = 5;
-    wrap(&ps,&pps,y,x);
-    printf("%s\n",ps);
-
-   
-    return 0;
- }
 
 
