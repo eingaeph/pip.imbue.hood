@@ -1,5 +1,7 @@
 #! /usr/bin/tcc -run
 
+// Screen Test, build screen writer strings
+
 #include <string.h>
 #include <unistd.h>
 #include <termios.h>
