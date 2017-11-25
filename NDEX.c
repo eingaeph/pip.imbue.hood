@@ -42,37 +42,21 @@ int readAline(void)
     return 0;
 }
 
-char fetc(int x, int y)
-{
-    char *ps; 
-    ps = text[y].row;  // the address of an array of characters
-    char ch = ps[x];   // the x_th character in the array ps
-    return ch;
-}
-
 int main(int arc, char** argv)
 {
-    char *filename = "NDEX.dat"; fp = fopen(filename,"r");
-    int numb; int retval; int lastline;
+    printf("\n%s executing\n\n",argv[0]);
 
-    printf("NDEX.c executing\n\n");
+    char *filename = "NDEX.dat"; fp = fopen(filename,"r");
+    int lastline;
 
     line.count = 0;
-    for (numb = 0 ; numb < 100; numb++) 
-    {
-    retval=readAline(); 
-    if (retval == -1) {break;}
-    lastline = line.count; 
-    }
-
-//    printf("%d lines were read\n",lastline);
+    while((readAline() != -1)) {lastline = line.count;}
 
     for (int y = 0; y < lastline;      y++)
    {
     for (int x = 0; x < text[y].size;  x++)
-    {char ch = fetc(x,y);    printf("%c",ch);}
+    {char ch = text[y].row[x];    printf("%c",ch);}
    }
-    
 
 }
 
