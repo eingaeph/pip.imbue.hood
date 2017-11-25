@@ -17,6 +17,7 @@ SCAFFOLD
    ADAL  --  Replace a line in text (an array of slot structs)
    BASC  --  Build a screen (alias DISP display a screen)
    DCOD  --  Decode (parse) the keyboard input stream
+   NDEX  --  Retrieve a character at (x,y)
    REAF  --  Read a file into a dynamically dimensioned text buffer 
    WIND  --  Scrolled (windowed) view of text buffer
    INSP  --  Insertion point, cursor position
@@ -83,3 +84,8 @@ SCAFFOLD
 
   E. "FILE TO T": FELT 
      read a text file, store in an t (text) structure 
+
+  F. "Retrieve the Character at x,y": fgetc
+
+  G. "Add/Delete Characters in a Line"
+
