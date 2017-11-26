@@ -13,6 +13,34 @@
 #include <termios.h>
 #include <unistd.h>
 
+/* VT100 Display Control Escape Sequences */
+
+char ClearScreen[]=                          "\x1b[2J";
+char CursorToTopLeft[] =                     "\x1b[H";
+char TildeReturnNewline[] =                  "~\r\n";
+
+char ReturnNewline[] =                       "\r\n";
+
+/*
+two sequences
+C is cursor foward, but don't exit the screen
+B is cursor down, but don't exit the screen
+999 is a large enough maximum number of steps
+*/
+
+char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
+char GetCursorPosition[] =                  "\x1b[6n";
+
+/*
+the terminal reply to GetCursorPosition   "24;80R" or similar
+*/
+
+char CursorHide[]=                          "\x1b[?25l";
+char CursorDisplay[]=                       "\x1b[?25h";
+char ClearCurrentLine[]=                    "\x1b[K";
+char CursorToCenter[]=                      "\x1b[12;30f";
+
+//Force Cursor Position	<ESC>[{ROW};{COLUMN}f
 struct termios orig_termios;
 
 /*** terminal ***/
@@ -45,32 +73,49 @@ void enableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
-int ReadKey() 
+char ReadKey() 
 {
   int nread;
   char c; 
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
- {if (nread == -1 && errno != EAGAIN) die("read");}
-  
+ {
+  if (nread == -1 && errno != EAGAIN) die("read");
+ }
+
+  if (c == 'q') exit(0);
+//char buf[] = "abcdefghijklmnopqrstuvwxyz";
+  char buf[] = "                          ";
+  snprintf(buf,15,"\r\nnread = %d",nread); 
+  write(STDOUT_FILENO,buf,15);
+
+  char test = 27;
+  if (c != test) return c; 
+
+  snprintf(buf,20,"\r\nescape = %d",c); 
+  write(STDOUT_FILENO,buf,20);
+
+
   char seq[3]; int count = 1;
  
   if (read(STDIN_FILENO, &seq[0], 1) == 1) {count++;}
   if (read(STDIN_FILENO, &seq[1], 1) == 1) {count++;}
   if (read(STDIN_FILENO, &seq[2], 1) == 1) {count++;}
 
- 
-  if (c == 'q') exit(0);
-  if (count > 1) printf("count = %d\n",count);
-  return;
+  if (count > 1) printf("\r\ncount = %d\n",count);
+  return c;
 }
 
 int main() {
 
   enableRawMode();
 
-  while (1) {
-    ReadKey();
-  }
+  while (1) 
+{
+    char c = ReadKey();
+    write (STDOUT_FILENO, "*", 1); 
+//    if (iscntrl(c)) {printf("%d\n", c);} 
+//    else            {printf("%d ('%c')\n", c, c);}
+}
 
   return 0;
 }
