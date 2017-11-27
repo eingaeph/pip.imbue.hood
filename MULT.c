@@ -1,6 +1,6 @@
 #! /usr/bin/tcc -run
 
-/* MULT.c Pare MULTiple character keystroke codes */
+/* MULT.c Parse MULT iple character keystroke codes */
 
 /*** includes ***/
 
@@ -13,7 +13,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-/* VT100 Display Control Escape Sequences */
+/*** VT100 Display Control Escape Sequences ***/
 
 char ClearScreen[]=                          "\x1b[2J";
 char CursorToTopLeft[] =                     "\x1b[H";
@@ -73,16 +73,25 @@ void enableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
+/*** write (to the screen) ***/
+
+void writeDigit(int digit)
+{
+//char buf[] = "abcdefghijklmnopqrstuvwxyz";
+  char buf[] = "                          ";
+   snprintf(buf,4,"%d",digit);
+   write(STDOUT_FILENO,buf,4);
+   return;
+}
 char ReadKey() 
 {
-  int nread;
-  char c; 
+  char c; int nread;
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
- {
   if (nread == -1 && errno != EAGAIN) die("read");
- }
 
-  if (c == 'q') exit(0);
+  if (c == 17) write(STDOUT_FILENO,"\r\n",2);
+  if (c == 17) exit(0);
+
 //char buf[] = "abcdefghijklmnopqrstuvwxyz";
   char buf[] = "                          ";
   snprintf(buf,15,"\r\nnread = %d",nread); 
@@ -101,7 +110,7 @@ char ReadKey()
   if (read(STDIN_FILENO, &seq[1], 1) == 1) {count++;}
   if (read(STDIN_FILENO, &seq[2], 1) == 1) {count++;}
 
-  if (count > 1) printf("\r\ncount = %d\n",count);
+  if (count > 1) printf("\r\ncount = %d",count);
   return c;
 }
 
@@ -112,7 +121,8 @@ int main() {
   while (1) 
 {
     char c = ReadKey();
-    write (STDOUT_FILENO, "*", 1); 
+    write (STDOUT_FILENO, "\r\nc = ", 6);
+    writeDigit(c); 
 //    if (iscntrl(c)) {printf("%d\n", c);} 
 //    else            {printf("%d ('%c')\n", c, c);}
 }
