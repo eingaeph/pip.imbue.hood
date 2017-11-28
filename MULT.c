@@ -110,7 +110,9 @@ char ReadKey()
   if (read(STDIN_FILENO, &seq[1], 1) == 1) {count++;}
   if (read(STDIN_FILENO, &seq[2], 1) == 1) {count++;}
 
-  if (count > 1) printf("\r\ncount = %d",count);
+  char ReturnNewline[] =                       "\r\n";
+  write(STDOUT_FILENO,"\r\ncount = ",10);
+  writeDigit(count);
   return c;
 }
 
