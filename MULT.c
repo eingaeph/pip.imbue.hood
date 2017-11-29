@@ -92,17 +92,12 @@ char ReadKey()
   if (c == 17) write(STDOUT_FILENO,"\r\n",2);
   if (c == 17) exit(0);
 
-//char buf[] = "abcdefghijklmnopqrstuvwxyz";
-  char buf[] = "                          ";
-  snprintf(buf,15,"\r\nnread = %d",nread); 
-  write(STDOUT_FILENO,buf,15);
-
   char test = 27;
   if (c != test) return c; 
 
-  snprintf(buf,20,"\r\nescape = %d",c); 
-  write(STDOUT_FILENO,buf,20);
-
+  write(STDOUT_FILENO,"escape = ",9);
+  writeDigit(c);
+  write (STDOUT_FILENO,"\r\n",2);
 
   char seq[3]; int count = 1;
  
@@ -110,9 +105,10 @@ char ReadKey()
   if (read(STDIN_FILENO, &seq[1], 1) == 1) {count++;}
   if (read(STDIN_FILENO, &seq[2], 1) == 1) {count++;}
 
-  char ReturnNewline[] =                       "\r\n";
-  write(STDOUT_FILENO,"\r\ncount = ",10);
+  write (STDOUT_FILENO,"count = ",9);
   writeDigit(count);
+  write (STDOUT_FILENO,"\r\n",2);
+
   return c;
 }
 
@@ -123,10 +119,11 @@ int main() {
   while (1) 
 {
     char c = ReadKey();
-    write (STDOUT_FILENO, "\r\nc = ", 6);
+    write (STDOUT_FILENO, "c = ", 4);
     writeDigit(c); 
-//    if (iscntrl(c)) {printf("%d\n", c);} 
-//    else            {printf("%d ('%c')\n", c, c);}
+    write (STDOUT_FILENO, "\r\n",2);
+    if ( (c > 31) && (c < 127) ) 
+    { write(STDOUT_FILENO, "printable character\r\n",21);}
 }
 
   return 0;
