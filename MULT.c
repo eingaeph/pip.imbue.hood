@@ -123,7 +123,10 @@ int main() {
     writeDigit(c); 
     write (STDOUT_FILENO, "\r\n",2);
     if ( (c > 31) && (c < 127) ) 
-    { write(STDOUT_FILENO, "printable character\r\n",21);}
+    { write(STDOUT_FILENO, "printable character\r\n",21); }
+
+    if ( (c > 0) && (c < 27) )
+    { write(STDOUT_FILENO, "CTRL + letter\r\n",16); }
 }
 
   return 0;
