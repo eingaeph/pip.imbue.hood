@@ -24,17 +24,17 @@ typedef struct slot
 
 void screenBuffer(int star, int stop)
 {
-    printf("%s","entering screenBuffer\n");
+    printf("%s","screenBuffer at work\n");
     slot* display = (slot *) malloc(     (25)*sizeof(slot));
-    for (int i=0; i<25; i++) {display[i].size  =   1;
-                              display[i].row   = "~";
+    for (int i=0; i<25; i++) {display[i].size  =   3;
+                              display[i].row   = "~\r\n";
                               display[i].count =   0;}
     int i; int dy = -1; 
     for (int i = star; i<(stop+1); i++)
          {dy++ ; display[dy] = text[i];}
 
     dy = -1 ;
-    for (int i = star; i<(stop+1); i++)
+    for (int i = 0; i< 23; i++)
          {
           dy++ ;
           int stringLength = display[dy].size;
