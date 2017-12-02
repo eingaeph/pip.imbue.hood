@@ -29,7 +29,18 @@ void screenBuffer(int star, int stop)
     for (int i=0; i<25; i++) {display[i].size  =   3;
                               display[i].row   = "~\r\n";
                               display[i].count =   0;}
-    int i; int dy = -1; 
+
+    int dy = 0;
+    display[dy].row  = "kilo.c welcomes you\n";
+    display[dy].count = 0;
+    display[dy].size = strlen(display[dy].row);
+
+    dy++;
+    display[dy].row  = "kilo.c\n";
+    display[dy].count = 0;
+    display[dy].size = strlen(display[dy].row);   
+
+    int i;  
     for (int i = star; i<(stop+1); i++)
          {dy++ ; display[dy] = text[i];}
 
