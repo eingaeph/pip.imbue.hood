@@ -40,6 +40,7 @@ enum KEY_ACTION
         ARROW_RIGHT,
         ARROW_UP,
         ARROW_DOWN,
+        INSERT_KEY,
         DEL_KEY,
         HOME_KEY,
         END_KEY,
@@ -68,28 +69,11 @@ char encode (int count, char* seq)
   int testb = ( (count < 4 ) );
   int testc = ( (seq[2] == '~') );
 
-  if (testa) write(1,"testa = TRUE\n\r",14);
-  if (testb) write(1,"testb = TRUE\n\r",14);
-  if (testc) write(1,"testc = TRUE\n\r",14);
-
   if (count < 3 ) return ESC;  // this is unusual
-
-//  int testa = ( (seq[0] == '['));   
+   
   if (!testa)     return ESC;
 
-//  int testb = ( (count < 4 ) );
-
   if (testb) {
-     switch(seq[1]) 
-                    {
-        case '3': return DEL_KEY;
-        case '5': return PAGE_UP;
-        case '6': return PAGE_DOWN;
-                    }
-             } // else return ESC;   // this is unusual
-                                
-//  int testc = ( (seq[2] == '~') );
-  if (testc) {
      switch(seq[1]) {
         case 'A': return ARROW_UP;
         case 'B': return ARROW_DOWN;
@@ -99,6 +83,15 @@ char encode (int count, char* seq)
         case 'F': return END_KEY;                            }
               }
 
+  if (testc) {
+     switch(seq[1]) {
+        case '2': return INSERT_KEY;
+        case '3': return DEL_KEY;
+        case '5': return PAGE_UP;
+        case '6': return PAGE_DOWN;
+                    }
+             } // else return ESC;  
+     
   return ESC; // this is unusual 
 }
     
@@ -166,10 +159,9 @@ void enableRawMode() {
 
 void writeDigit(int digit)
 {
-//char buf[] = "abcdefghijklmnopqrstuvwxyz";
-  char buf[] = "                          ";
-   snprintf(buf,4,"%d",digit);
-   write(STDOUT_FILENO,buf,4);
+  char buf[] = "      ";
+   snprintf(buf,6,"%d",digit);
+   write(STDOUT_FILENO,buf,strlen(buf));
    return;
 }
 char ReadKey() 
@@ -184,21 +176,15 @@ char ReadKey()
   char test = 27;
   if (c != test) return c; 
 
-//  write(STDOUT_FILENO,"escape = ",9);
-//  writeDigit(c);
-//  write (STDOUT_FILENO,"\r\n",2);
-
   char seq[3]={' ',' ',' '}; int count = 1;
  
   if (read(STDIN_FILENO, &seq[0], 1) == 1) {count++;}
   if (read(STDIN_FILENO, &seq[1], 1) == 1) {count++;}
   if (read(STDIN_FILENO, &seq[2], 1) == 1) {count++;}
 
-//  write (STDOUT_FILENO,"count = ",9);
-//  writeDigit(count);
-//  write (STDOUT_FILENO,"\r\n",2);
-
-  if (count > 1) {c = encode(count,seq);}
+  if (count > 1) {
+                  c = encode(count,seq);
+                 }
 
   return c;
 }
@@ -213,6 +199,7 @@ int main() {
     write (STDOUT_FILENO, "c = ", 4);
     writeDigit(c); 
     write (STDOUT_FILENO, "\r\n",2);
+
     if ( (c > 31) && (c < 127) ) 
     { write(STDOUT_FILENO, "printable character\r\n",21); }
 
