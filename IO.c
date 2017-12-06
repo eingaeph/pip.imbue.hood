@@ -18,6 +18,15 @@
 #include <termios.h>
 #include <unistd.h>
 
+/***  formatted printing ***/
+
+void writeDigit(int digit)
+{
+  char buf[] = "      ";
+   snprintf(buf,6,"%d",digit);
+   write(STDOUT_FILENO,buf,strlen(buf));
+   return;
+}
 
 /*** terminal ***/
 
@@ -57,10 +66,23 @@ void enableRawMode() {
 int main() {
 
  enableRawMode();
+ char line[100];    //
+ char* s = &line[0];
  int fd = open("test.dat",O_RDONLY);
- char buf;
- int ignore = read(fd,&buf,1);
- write(1,&buf,sizeof(buf));
+
+ int count; int numb = 0;
+// for (count = 0; count < 40; count++)
+while(read(fd,s,1)==1)
+{
+// int ignore = read(fd,s,1);
+
+ if (*s == '\n') {
+                  writeDigit(numb);numb = 0;
+                  continue;
+                 }
+ write(1,s,sizeof(*s));
+ s++; numb++;
+}
  write(1,"\n\r",2);
  close(fd);
  exit(0);
