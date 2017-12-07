@@ -65,27 +65,34 @@ void enableRawMode() {
 
 int main() {
 
- enableRawMode();
- char line[100];    //
- char* s = &line[0];
- int fd = open("test.dat",O_RDONLY);
+  enableRawMode();
+  char line[160];     // sets maximum linesize
+  char* s = &line[0]; // s and line are near duplicate symbols
+  char* ptr;
+  int linesize;
+  int fd = open("test.dat",O_RDONLY);
 
- int count; int numb = 0;
-// for (count = 0; count < 40; count++)
-while(read(fd,s,1)==1)
-{
-// int ignore = read(fd,s,1);
+  linesize = 0; s = &line[0];
+  while(read(fd,s,1)==1)
+  {
 
- if (*s == '\n') {
-                  writeDigit(numb);numb = 0;
+  if (*s == '\n') {
+//                  writeDigit(linesize);
+                  if (linesize != 0) ptr = malloc(linesize*sizeof(char));
+                  if (linesize != 0) memcpy(ptr,line,linesize);
+                  if (linesize != 0) write(1,ptr,linesize);
+                  if (linesize != 0) write(1,"\n\r",2);
+                  if (linesize != 0) free(ptr);
+                  s = &line[0]; linesize = 0;
                   continue;
-                 }
- write(1,s,sizeof(*s));
- s++; numb++;
-}
- write(1,"\n\r",2);
- close(fd);
- exit(0);
+                  }
+//  write(1,s,sizeof(*s));
+  s++; linesize++;
+  }
+//  write(1,"\n\r",2);
+
+  close(fd);
+  exit(0);
 }
 
 
