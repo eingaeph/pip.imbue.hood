@@ -2,22 +2,22 @@
 
 #include <unistd.h>   //write, read
 #include <stdlib.h>   //malloc
-#include <string.h>   //memcpy
+#include <string.h>   //memcpy, strlen
 #include <sys/stat.h> //open,close per Kerrisk page 72
-#include <fcntl.h>    //open,close 
+#include <fcntl.h>    //open,close per Kerrisk page 72
 
-//  GETR.c  getline replacement
+//  GTUR.c  getline replacement
 //  using multiple indirection to pass a char array 
 
-int funy(char **qtr)
+int fd;
+
+int getr(char **qtr)
 {
-  char line[160];     // sets maximum linesize at three times reasonable
+  char line[240];     // sets maximum linesize at three times reasonable
   char* s = &line[0]; // s and line are nearly each other's  alias
   int linesize;
   char* ptr;
   int nread;
-
-  int fd = open("test.dat",O_RDONLY);
 
   linesize = 0; s = &line[0];
   while((nread = read(fd,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
@@ -32,13 +32,18 @@ int funy(char **qtr)
   *qtr = ptr;
   return linesize;
 }
-int main()
+int main(int argc, char* argv[])
 {
+
+    write(1,argv[0],strlen(argv[0])); write(1,"\n\r",2);
+    if(argc == 1) return 0;
+    fd = open(argv[1],O_RDONLY); //input file
+
     int linesize;
     char*  ptr;
     char** qtr = &ptr;
 
-    linesize = funy(qtr);   //sets ptr
+    linesize = getr(qtr);   //sets ptr
 
     write(1,ptr,linesize); write(1,"\n\r",2);
 }
