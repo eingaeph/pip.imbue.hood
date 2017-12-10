@@ -8,7 +8,8 @@
 #include <fcntl.h>    //open,close 
 
     size_t linecap;
-    int fp; int nread;
+    int nread;
+    struct { int fp; int nread; } nput;
 
 typedef struct slot
 {
@@ -20,17 +21,15 @@ typedef struct slot
     slot line;
     slot *text;
 
-//  getc  getline replacement
-
-int getr(char **qtr)
+int getr(char **qtr) // getline replacement
 {
-  char line[160];     // sets maximum linesize at three times reasonable
+  char line[240];     // sets maximum linesize at three times reasonable
   char* s = &line[0]; // s and line are nearly each other's  alias
   int linesize;
   char* ptr;
 
   linesize = 0; s = &line[0];
-  while((nread = read(fp,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
+  while((nread = read(nput.fp,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
    
 /***
   here nread = EOF 0,ERROR 1 
@@ -46,15 +45,13 @@ int getr(char **qtr)
 int addAline(int here,int maxndx)
 
 {
-//    printf("the start value of <text> pointer is %p\n", (void *)text);
-
     int newlen = maxndx + 1 + 1;
     slot *new  = (slot *)malloc(newlen*sizeof(slot));
 
     slot newline;
     char *ptr = "Yes, I am a new line!\n";
-    newline.size = strlen(ptr);
-    char *qtr = (char *)malloc(strlen(ptr));
+    newline.size = strlen(ptr)-1;
+    char *qtr = (char *)malloc(strlen(ptr)-1);
     memcpy(qtr,ptr,strlen(ptr)); 
     newline.row = qtr;
 
@@ -69,8 +66,6 @@ int addAline(int here,int maxndx)
 
 
     free(text); text = new;  
-
-//  printf("the end   value of <text> pointer is %p\n", (void *)text);
    
     maxndx++;
     return maxndx;
@@ -78,8 +73,6 @@ int addAline(int here,int maxndx)
 
 int deleteAline(int omit,int maxndx)
 {
-//  printf("the start value of <text> pointer is %p\n", (void *)text);
-
     int newlen = maxndx + 1 - 1;
     slot *new  = (slot *)malloc(newlen*sizeof(slot));
 
@@ -93,7 +86,6 @@ int deleteAline(int omit,int maxndx)
 
     free(text[omit].row);
     free(text); text = new;  
-//  printf("the end   value of <text> pointer is %p\n", (void *)text);
 
     maxndx--;
     return maxndx;
@@ -111,9 +103,7 @@ void etxt(int maxndx)
        snprintf(buf,3,"%2d",i);
        write(1,buf,2);
        write(1,"].row: ",7);
-       write(1,text[i].row,text[i].size);
-//  printf("text[%d].row:  %.*s",
-//  i,text[i].size, text[i].row); 
+       write(1,text[i].row,text[i].size); 
        write(1,"\n\r",2);
       } 
     return;
@@ -126,15 +116,13 @@ void etxt(int maxndx)
 
 int replaceAline(int nsrt,int maxndx)
 {
-//  printf("the start value of <text> pointer is %p\n", (void *)text);
-
     int newlen = maxndx + 1 + 0;
     slot *new  = (slot *)malloc(newlen*sizeof(slot));
 
     slot newline;
     char *ptr = "Hello World! I am a replacement line.\n";
-    newline.size = strlen(ptr);
-    char *qtr = (char *)malloc(strlen(ptr));
+    newline.size = strlen(ptr)-1;
+    char *qtr = (char *)malloc(strlen(ptr)-1);
     memcpy(qtr,ptr,strlen(ptr)); 
     newline.row = qtr;
 
@@ -148,7 +136,6 @@ int replaceAline(int nsrt,int maxndx)
 
     free(text[nsrt].row);
     free(text); text = new;  
-//  printf("the end   value of <text> pointer is %p\n", (void *)text);
 
     return maxndx;
 }
@@ -156,7 +143,7 @@ int replaceAline(int nsrt,int maxndx)
 int readAline(void)
 {
     line.row = 0; linecap = 0;
-//  line.size = getline (&line.row, &linecap, fp); 
+//  line.size = getline (&line.row, &linecap,nput.fp); 
     line.size = getr(&line.row);    
 
     if (line.size == -1) {return line.size;}
@@ -184,7 +171,7 @@ int main(int argc, char** argv)
     write(1,argv[1],strlen(argv[1]));
     write(1,"\r\n",2);
 
-    fp = open(filename,O_RDONLY);
+    nput.fp = open(filename,O_RDONLY);
 
     line.count = 0;
     for (numb = 0 ; numb < 100; numb++) 
@@ -195,23 +182,18 @@ int main(int argc, char** argv)
     }
 
     char buf[8];
-//int snprintf(char *str, size_t size, const char *format, ...);
-    snprintf(buf,8,"%d",lastline);
+    snprintf(buf,8,"%d\n",lastline);
     write(1,buf,strlen(buf));
     write(1," lines were read\n\r",17);
 
-    int maxndx = lastline - 1;
-    etxt(maxndx);
+    int maxndx = lastline - 1; etxt(maxndx);
 
-    maxndx = replaceAline(5,maxndx);
-    etxt(maxndx);
-/**
-    maxndx = deleteAline(7,maxndx);
-    etxt(maxndx);
-    maxndx = addAline(2,maxndx);
-    etxt(maxndx);
-**/
-    close(fp);
+    maxndx = replaceAline(5,maxndx); etxt(maxndx);
+
+    maxndx = deleteAline(7,maxndx); etxt(maxndx);
+
+    maxndx = addAline(2,maxndx); etxt(maxndx);
+    close(nput.fp);
     return 0;
  }
 
