@@ -12,13 +12,9 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 
-/***
-    REAF, ADAL, NCOD
-***/
+/*** REAF, IO, ADAL, NCOD ***/
 
-/***
-    global variables
-***/
+/*** global variables ***/
 
     size_t linecap;
     int nread;
@@ -36,9 +32,7 @@ typedef struct slot
 
 struct termios orig_termios;
 
-/***
-   function declarations
-***/
+/*** function declarations ***/
 
 int encode (int count, char* seq);
 
@@ -465,7 +459,6 @@ int main(int argc, char** argv)
 }
 
 ***/
-
 
     return 0;
  }
