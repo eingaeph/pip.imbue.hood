@@ -13,8 +13,13 @@
 #include <termios.h>
 
 /***
-   REAF, ADAL, NCOD
+    REAF, ADAL, NCOD
 ***/
+
+/***
+    global variables
+***/
+
     size_t linecap;
     int nread;
     struct { int fp; int nread; } nput;
@@ -31,7 +36,33 @@ typedef struct slot
 
 struct termios orig_termios;
 
+/***
+   function declarations
+***/
+
+int encode (int count, char* seq);
+
+void die(const char *s);
+
+void disableRawMode();
+
+void enableRawMode();
+
 void writeDigit(int digit);
+
+char ReadKey();
+
+int getr(char **qtr);
+
+int addAline(int here,int maxndx);
+
+int deleteAline(int omit,int maxndx);
+
+void etxt(int maxndx);
+
+int replaceAline(int nsrt,int maxndx);
+
+int readAline(void);
 
 /*** Numeric Codes for Escape Sequences ***/
 
@@ -64,7 +95,6 @@ enum KEY_ACTION
         PAGE_UP,
         PAGE_DOWN
 };
-
 
 /*** handle escape sequences. ***/
 
@@ -241,8 +271,6 @@ char ReadKey()
 
   return c;
 }
-
-
 
 
 int getr(char **qtr) // getline replacement
