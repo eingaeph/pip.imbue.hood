@@ -1,3 +1,4 @@
+140 lines (104 sloc) 3.63 KB
 ndex     retrieve character by x y index
 
     char fetc(int x, int y)
