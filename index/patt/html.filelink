@@ -1,0 +1,3 @@
+<a href="file://filename">blurb</a>
+#undef filename
+#undef blurb

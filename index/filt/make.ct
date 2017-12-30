@@ -1,0 +1,52 @@
+#!/usr/bin/rexx
+i=0
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/107.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/127.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/ADAL.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/BASC.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/BRAC.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/DCOD.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/GTUR.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/INSP.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/IO.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/IOCTL.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/KEYP.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/kilo.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/MOCU.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/MULT.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/NCOD.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/NDEX.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/NSRT.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/REAF.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/SBUF.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/STST.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/WIND.c'
+
+numb = i /* SAY 'found' numb 'c files for processing' */
+
+prefix = '/home/ubuntu/git/repo.1/index/'
+
+DO i = 1 TO numb
+string = REVERSE(store.i)
+PARSE VALUE string WITH word  '/' . ; word = REVERSE(word)
+
+firs = 'cat' prefix||'patt/snip.head'
+firs = firs '>' prefix 
+firs = firs||word||'t'
+
+midl = 'cat' store.i "| tr '\074\076' '\176\176' "
+midl = midl '>>' prefix
+midl = midl||word||'t'
+
+last = 'cat' prefix||'patt/snip.foot'
+last = last '>>' prefix
+last = last||word||'t'
+
+SAY firs
+SAY midl
+SAY last
+SAY
+
+END 
+
+

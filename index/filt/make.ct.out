@@ -1,0 +1,84 @@
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/107.ct
+cat /home/ubuntu/git/repo.1/107.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/107.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/107.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/127.ct
+cat /home/ubuntu/git/repo.1/127.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/127.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/127.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/ADAL.ct
+cat /home/ubuntu/git/repo.1/ADAL.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/ADAL.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/ADAL.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/BASC.ct
+cat /home/ubuntu/git/repo.1/BASC.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/BASC.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/BASC.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/BRAC.ct
+cat /home/ubuntu/git/repo.1/BRAC.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/BRAC.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/BRAC.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/DCOD.ct
+cat /home/ubuntu/git/repo.1/DCOD.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/DCOD.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/DCOD.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/GTUR.ct
+cat /home/ubuntu/git/repo.1/GTUR.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/GTUR.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/GTUR.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/INSP.ct
+cat /home/ubuntu/git/repo.1/INSP.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/INSP.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/INSP.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/IO.ct
+cat /home/ubuntu/git/repo.1/IO.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/IO.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/IO.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/IOCTL.ct
+cat /home/ubuntu/git/repo.1/IOCTL.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/IOCTL.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/IOCTL.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/KEYP.ct
+cat /home/ubuntu/git/repo.1/KEYP.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/KEYP.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/KEYP.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/kilo.ct
+cat /home/ubuntu/git/repo.1/kilo.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/kilo.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/kilo.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/MOCU.ct
+cat /home/ubuntu/git/repo.1/MOCU.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/MOCU.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/MOCU.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/MULT.ct
+cat /home/ubuntu/git/repo.1/MULT.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/MULT.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/MULT.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/NCOD.ct
+cat /home/ubuntu/git/repo.1/NCOD.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/NCOD.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/NCOD.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/NDEX.ct
+cat /home/ubuntu/git/repo.1/NDEX.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/NDEX.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/NDEX.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/NSRT.ct
+cat /home/ubuntu/git/repo.1/NSRT.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/NSRT.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/NSRT.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/REAF.ct
+cat /home/ubuntu/git/repo.1/REAF.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/REAF.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/REAF.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/SBUF.ct
+cat /home/ubuntu/git/repo.1/SBUF.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/SBUF.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/SBUF.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/STST.ct
+cat /home/ubuntu/git/repo.1/STST.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/STST.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/STST.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/WIND.ct
+cat /home/ubuntu/git/repo.1/WIND.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/WIND.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/WIND.ct
+
