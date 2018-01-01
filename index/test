@@ -62,6 +62,15 @@
 <p>line.row = ptr;
 </br></br>
 
+<p><a href="file:///home/ubuntu/git/repo.1/index/DCOD.ct">DCOD.c</a>
+&nbsp &nbsp Decode multiple character keypress return codes 
+<p>int uncode(char c) 
+<p>if ((c != 27) && (decode.seqno == 0 )) 
+<p>int testa = (c==72)||(c==70);                   // home, end
+<p>int testb = (c==65)||(c==66)||(c==67)||(c==68); // arrow up, down, right, left
+<p>int testc = (c==50)||(c==51)||(c==53)||(c==54); // page up, page down, insert, delete
+</br></br>
+
 
 </BODY>
 
