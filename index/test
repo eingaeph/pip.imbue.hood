@@ -71,7 +71,12 @@
 <p>int testc = (c==50)||(c==51)||(c==53)||(c==54); // page up, page down, insert, delete
 </br></br>
 
-
+<p><a href="file:///home/ubuntu/git/repo.1/index/BASC.ct">BASC.c</a>
+&nbsp &nbsp Build a screen in a single write
+<p>char *new = realloc(ab-~b,ab-~len+len);
+<p>void abAppend(struct abuf *ab, const char *s, int len)
+<p>fwrite(ab.b , 1 , ab.len , stdout); // from <stdio.h>
+</br></br>
 </BODY>
 
 </HTML>
