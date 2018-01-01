@@ -13,7 +13,7 @@
 
 <H1>Kilo.c Index</H1>
 
-<H2>Idioms and Executables</H2>
+<H2>Executables and Associated Idioms</H2>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/IO.ct">IO.c</a>
 &nbsp &nbsp Demonstrate IO primitives from <unistd.h>
@@ -37,6 +37,32 @@
 <p>&nbsp &nbsp else {text = realloc(text,(1+line.count)*sizeof(slot));}
 <p>char *filename = "qwik.inp"; fp = fopen(filename,"r");
 </br></br>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/GTUR.ct">GTUR.c</a>
+&nbsp &nbsp getline replacement
+<p>use mulltiple indirection to pass a character string
+<p>while((nread = read(fd,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
+<p>fd = open(argv[1],O_RDONLY); //input file
+<p>linesize = getr(qtr);   //sets ptr
+</br></br>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/NDEX.ct">NDEX.c</a>
+&nbsp &nbsp Access characters in text buffer by buffer coordinates x y
+<p>y = 0,1,2 ... (first line, second line, ...)
+<p>x = 0,1,2 ... (first character in line y, ...) 
+<p>char ch = text[y].row[x]
+<p>main(int arc, char** argv)
+</br></br>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/ADAL.ct">ADAL.c</a>
+&nbsp &nbsp Overwrite a line in the text buffer (text structure)
+<p>{if (j != 3) {old[j] = text[j];}
+<p>&nbsp &nbsp else        {old[j] = newline;}
+<p>ptr = "tell me your song";
+<p>line.row = ptr;
+</br></br>
+
+
 </BODY>
 
 </HTML>
