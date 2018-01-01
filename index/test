@@ -4,7 +4,6 @@
 
 <TITLE>Kilo.c: A Starting Point</TITLE>
 
-
 </HEAD>
 
 <BODY BGCOLOR="FFFFFF">
@@ -12,97 +11,32 @@
 <HR>
 
 
-<H1>Kilo.c At the Beginning </H1>
+<H1>Kilo.c Index</H1>
 
-<H2>Introduction</H2>
+<H2>Idioms and Executables</H2>
 
-Envision a counterfactual: What was today has vanished
-because 50 years have passed. You are eight, are in
-second grade, and are finishing 3 years of education,
-including many classes in C. Today adults know the
-rudiments of C and children will learn those rudiments
-as they learn to read elementary school vocabulary
-words.
+<p><a href="file:///home/ubuntu/git/repo.1/index/IO.ct">IO.c</a>
+&nbsp &nbsp Demonstrate IO primitives from <unistd.h>
+<p>int fd = open("test.dat",O_RDONLY);
+<p>while(read(fd,s,1)==1) 
+</br></br>
 
-Because you are in second grade, the teacher
-is leading your first introduction to  the famous
-program kilo.c, the first executable
-taught in grade school. By the sixth grade
-you will have mastered the code in depth, much of it
-by statement number.
+<p><a href="file:///home/ubuntu/git/repo.1/index/KEYP.ct">KEYP.c</a>
+&nbsp &nbsp Process multiple character return keypresses
+<p>while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') 
+<p>iscntrl(c) // returns true when c is a control character 
+</br></br>
 
-All your second grade friends are familiar with the
-command line, and are accustomed to typing on their
-desktop keyboard while watching their attached desk
-console. They know the nursery rhymes about the OS
-input/output model. When the teacher asks "which command
-displays the terminial device file", a dozen hands shoot
-up.
-
-
-<H2>Introduction: Kilo.c is Small</H2>
-
-Why kilo.c? Because Kilo.c is small, hundreds of 
-executable source statements, no more.
-Furthermore when editing a test one line file, Kilo.c
-executes only a few dozen distinct (excutable) C source
-statements before writing the first screen. Even when
-all loops are unrolled kilo.c still uses only a couple
-hundred of (repeated) C source statements before the first
-screen. Kilo.c is certainly small.
-
-<P>
-In counterfactual world, What does the teacher cover
-first in the introductory kilo.c lessons?
-
-<H2>Kilo.c Unrolled</H2>
-<P>
-
-Begin with the kilo.c source listing with statement
-numbers appended. Next display an informative short 
-unrolled list of executed instructions in the 
-startup execution path.
-
-<a href="file:///home/ubuntu/build.html/.stor/trac.txt">Initial Program Steps</a>
-
-showing the path taken when opening a file, and putting
-the first display on the screen.
-
-<H2>VT100 Display Control Character Sequences</H2>
-
-<p>
-Examination of the just presented highlighted instructions 
-reveals the use of some
-arbitrary looking command statements, exampled by 
-statement 869, commented as "Hide Cursor". These oddities
-are VT100 Display Control sequences, used by kilo.c. 
-The following code snippet demonstrates their use.
-
-<a href="file:///home/ubuntu/build.html/vt100.html">Snippet Code</a>
-<p>
-The control sequences are used to build the terminal screens
-displays. 
-<a href="file:///home/ubuntu/build.html/first.screen">First Screen Characters</a>
-Kilo.c spends a great deal of time building these character
-strings.
-<H2>Reading and Writing</H2>
-
-<p>
-A code snippet
-<a href="file:///home/ubuntu/build.html/reader">Reading From the Keyboard</a>
-shows the coding style kilo.c uses to read keystrokes
-from the keyboard.
-
-<p>
-A code snippet 
-<a href="file:///home/ubuntu/build.html/writing">First Screen Characters</a>
-shows the coding style kilo.c uses to write characters to the screen.
-
-<p>
-A code snippet 
-<a href="file:///home/ubuntu/git/repo.1/index/KEYP.ct">KEYP.c</a>
-This is the demonstration of the protocol.
-
+<p><a href="file:///home/ubuntu/git/repo.1/index/REAF.ct">REAF.c</a>
+&nbsp &nbsp Read the entire file into the text buffer
+<p>typedef struct slot
+<p>slot line;
+<p>slot *text
+<p>line.size = getline (&line.row, &linecap, fp);
+<p>if((line.count == 0)) {text = malloc(sizeof(slot));}
+<p>&nbsp &nbsp else {text = realloc(text,(1+line.count)*sizeof(slot));}
+<p>char *filename = "qwik.inp"; fp = fopen(filename,"r");
+</br></br>
 </BODY>
 
 </HTML>
