@@ -1,0 +1,10 @@
+rm *.o *.a
+gcc -Wall -c -o encode.o encode.c
+ar rcs lib127.a encode.o
+ar t            lib127.a
+gcc -Wall -c -o getr.o   getr.c
+ar r   lib127.a getr.o
+ar t            lib127.a
+
+
+

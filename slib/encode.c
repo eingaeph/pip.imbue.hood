@@ -1,5 +1,10 @@
 /*** handle escape sequences. ***/
 
+#include <unistd.h>
+#include <termios.h>
+#include "globvars.h"
+#include "proto.h"
+
 int encode (int count, char* seq)
 {
   write(1,"encode at work  ",16);
@@ -72,4 +77,4 @@ int encode (int count, char* seq)
     }
 }
 
-
+*/
