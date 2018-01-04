@@ -1,0 +1,1 @@
+gcc -Wall test.c /home/ubuntu/git/repo.1/slib/lib127.a -o test

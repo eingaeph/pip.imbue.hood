@@ -1,7 +1,0 @@
-rm *.o *.a
-gcc -Wall -c -o replaceAline.o   replaceAline.c
-ar r   lib127.a replaceAline.o
-ar t            lib127.a
-
-
-

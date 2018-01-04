@@ -2,32 +2,32 @@ rm *.o *.a
 gcc -Wall -c -o encode.o encode.c
 ar rcs lib127.a encode.o
 
-gcc -Wall -c -o getr.o   getr.c
-ar r   lib127.a getr.o
+#gcc -Wall -c -o getr.o   getr.c
+#ar r   lib127.a getr.o
 
-gcc -Wall -c -o ReadKey.o   ReadKey.c
-ar r   lib127.a ReadKey.o
+#gcc -Wall -c -o ReadKey.o   ReadKey.c
+#ar r   lib127.a ReadKey.o
 
-gcc -Wall -c -o enableRawMode.o   enableRawMode.c
-ar r   lib127.a enableRawMode.o
+#gcc -Wall -c -o enableRawMode.o   enableRawMode.c
+#ar r   lib127.a enableRawMode.o
 
-gcc -Wall -c -o readAline.o   readAline.c
-ar r   lib127.a readAline.o
+#gcc -Wall -c -o readAline.o   readAline.c
+#ar r   lib127.a readAline.o
 
-gcc -Wall -c -o deleteAline.o   deleteAline.c
-ar r   lib127.a deleteAline.o
+#gcc -Wall -c -o deleteAline.o   deleteAline.c
+#ar r   lib127.a deleteAline.o
 
-gcc -Wall -c -o addAline.o   addAline.c
-ar r   lib127.a addAline.o
+#gcc -Wall -c -o addAline.o   addAline.c
+#ar r   lib127.a addAline.o
 
-gcc -Wall -c -o etxt.o   etxt.c
-ar r   lib127.a etxt.o
+#gcc -Wall -c -o etxt.o   etxt.c
+#ar r   lib127.a etxt.o
 
-gcc -Wall -c -o writeDigit.o   writeDigit.c
-ar r   lib127.a writeDigit.o
+#gcc -Wall -c -o writeDigit.o   writeDigit.c
+#ar r   lib127.a writeDigit.o
 
-gcc -Wall -c -o replaceAline.o   replaceAline.c
-ar r   lib127.a replaceAline.o
+#gcc -Wall -c -o replaceAline.o   replaceAline.c
+#ar r   lib127.a replaceAline.o
 
 ar t            lib127.a
 

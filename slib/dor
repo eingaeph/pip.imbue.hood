@@ -1,0 +1,2 @@
+/usr/bin/tcc -run -L/home/ubuntu/git/repo.1/slib -l127 test.c test.dat
+
