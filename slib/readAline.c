@@ -1,3 +1,14 @@
+
+/* Read a line into text buffer */
+
+#include <unistd.h>
+#include <termios.h>
+#include <string.h>
+//#include <stdio.h>
+#include <stdlib.h>
+#include "globvars.h"
+#include "proto.h"
+
 int readAline(void)
 {
     line.row = 0; linecap = 0;

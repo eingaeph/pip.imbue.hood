@@ -1,3 +1,13 @@
+
+/* Read Key Press , call encode */
+
+#include <unistd.h>
+#include <termios.h>
+#include <errno.h>
+#include <stdlib.h>
+#include "globvars.h"
+#include "proto.h"
+
 char ReadKey() 
 {
   char c; int nread;
@@ -24,7 +34,7 @@ char ReadKey()
 //  writeDigit(count);
 //  write (STDOUT_FILENO,"\r\n",2);
 
-  if (count > 1) {int ignore = encode(count,seq);}
+  if (count > 1) {encode(count,seq);}
 
   return c;
 }
