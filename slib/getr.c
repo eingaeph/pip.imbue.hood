@@ -14,10 +14,9 @@ int getr(char **qtr) // getline replacement
   int linesize;
   char* ptr;
 
-  linesize = 0; s = &line[0]; int nread; 
-  while((nread = read(nput.fp,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
-
-  if (nread !=1 ) {nread = nread;}
+  linesize = 0; s = &line[0];
+  while((nput.nread = read(nput.fp,s,1))==1) 
+     {if (*s != '\n') {s++; linesize++;} else break;}
    
 /***
   here nread = EOF 0,ERROR 1 

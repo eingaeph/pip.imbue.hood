@@ -1,3 +1,6 @@
+//#! /usr/bin/tcc -run -L/home/ubuntu/git/repo.1/slib -l127 test.dat
+
+// `-lxxx' Link your program with static library libxxx.a. 
 
 #include <unistd.h>   //read,write
 #include <stdio.h>
@@ -10,6 +13,8 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+
+#include "vt100.h"
 
 /*** REAF, IO, ADAL, NCOD ***/
 
@@ -31,21 +36,14 @@ typedef struct slot
 
 struct termios orig_termios;
 
-/*** function declarations ***/
+/*** function declarations used in main ***/
 
-int encode (int count, char* seq);
-
-void die(const char *s);
-
-void disableRawMode();
 
 void enableRawMode();
 
 void writeDigit(int digit);
 
 char ReadKey();
-
-int getr(char **qtr);
 
 int addAline(int here,int maxndx);
 
@@ -56,248 +54,8 @@ void etxt(int maxndx);
 int replaceAline(int nsrt,int maxndx);
 
 int readAline(void);
-            
 
-/*** VT100 Display Control Escape Sequences ***/
-
-char ClearScreen[]=                          "\x1b[2J";
-char CursorToTopLeft[] =                     "\x1b[H";
-char TildeReturnNewline[] =                  "~\r\n";
-
-char ReturnNewline[] =                       "\r\n";
-
-/*
-two sequences
-C is cursor foward, but don't exit the screen
-B is cursor down, but don't exit the screen
-999 is a large enough maximum number of steps
-*/
-
-char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
-char GetCursorPosition[] =                  "\x1b[6n";
-
-/*
-the terminal reply to GetCursorPosition   "24;80R" or similar
-*/
-
-char CursorHide[]=                          "\x1b[?25l";
-char CursorDisplay[]=                       "\x1b[?25h";
-char ClearCurrentLine[]=                    "\x1b[K";
-char CursorToCenter[]=                      "\x1b[12;30f";
-
-//Force Cursor Position	<ESC>[{ROW};{COLUMN}f
-
-/*** terminal ***/
-
-void die(const char *s) {
-  write(STDOUT_FILENO, "\x1b[2J", 4);
-  write(STDOUT_FILENO, "\x1b[H", 3);
-
-  perror(s);
-  exit(1);
-}
-
-void disableRawMode() {
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
-    die("tcsetattr");
-}
-
-void enableRawMode() {
-  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
-  atexit(disableRawMode);
-
-  struct termios raw = orig_termios;
-  raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-  raw.c_oflag &= ~(OPOST);
-  raw.c_cflag |= (CS8);
-  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-  raw.c_cc[VMIN] = 0;
-  raw.c_cc[VTIME] = 1;
-
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
-}
-
-/*** write (to the screen) ***/
-
-void writeDigit(int digit)
-{
-//char buf[] = "abcdefghijklmnopqrstuvwxyz";
-  char buf[] = "                          ";
-   snprintf(buf,4,"%d",digit);
-   write(STDOUT_FILENO,buf,4);
-   return;
-}
-char ReadKey() 
-{
-  char c; int nread;
-  while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
-  if (nread == -1 && errno != EAGAIN) die("read");
-
-  if (c == 17) write(STDOUT_FILENO,"\r\n",2);
-  if (c == 17) exit(0);
-
-  char test = 27;
-  if (c != test) return c; 
-
-//  write(STDOUT_FILENO,"escape = ",9);
-//  writeDigit(c);
-//  write (STDOUT_FILENO,"\r\n",2);
-
-  char seq[3]={' ',' ',' '}; int count = 1;
- 
-  if (read(STDIN_FILENO, &seq[0], 1) == 1) {count++;}
-  if (read(STDIN_FILENO, &seq[1], 1) == 1) {count++;}
-  if (read(STDIN_FILENO, &seq[2], 1) == 1) {count++;}
-
-//  write (STDOUT_FILENO,"count = ",9);
-//  writeDigit(count);
-//  write (STDOUT_FILENO,"\r\n",2);
-
-  if (count > 1) {int ignore = encode(count,seq);}
-
-  return c;
-}
-
-
-int getr(char **qtr) // getline replacement
-{
-  char line[240];     // sets maximum linesize at three times reasonable
-  char* s = &line[0]; // s and line are nearly each other's  alias
-  int linesize;
-  char* ptr;
-
-  linesize = 0; s = &line[0];
-  while((nread = read(nput.fp,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
-   
-/***
-  here nread = EOF 0,ERROR 1 
-       linesize is posibly zero, possibly greater than zero
-***/
-
-  if (linesize != 0) {ptr = malloc(linesize*sizeof(char));}
-  if (linesize != 0) memcpy(ptr,line,linesize);
-  if (linesize != 0) *qtr = ptr;
-  return linesize;
-}
-
-int addAline(int here,int maxndx)
-
-{
-    int newlen = maxndx + 1 + 1;
-    slot *new  = (slot *)malloc(newlen*sizeof(slot));
-
-    slot newline;
-    char *ptr = "Yes, I am a new line!\n";
-    newline.size = strlen(ptr)-1;
-    char *qtr = (char *)malloc(strlen(ptr)-1);
-    memcpy(qtr,ptr,strlen(ptr)); 
-    newline.row = qtr;
-
-    slot *old = text; 
-
-    int i,j,k; i = 0; j = 0; k = 0;
-    for (i = 0 ; i < maxndx + 1 ; i++) 
-      {if (i != here) {new[j] = old[k]; j++; k++;}
-       else           {new[j] = old[k]; j++; k++;
-                       new[j] = newline;     j++;}
-      }
-
-
-    free(text); text = new;  
-   
-    maxndx++;
-    return maxndx;
-}
-
-int deleteAline(int omit,int maxndx)
-{
-    int newlen = maxndx + 1 - 1;
-    slot *new  = (slot *)malloc(newlen*sizeof(slot));
-
-    slot *old = text; 
-
-    int i,j,k; i = 0; j = 0; k = 0;
-    for (i = 0 ; i < maxndx + 1 ; i++) 
-      {if (i != omit) {new[j] = old[k]; j++; k++;}
-       else           {                      k++;}
-      }
-
-    free(text[omit].row);
-    free(text); text = new;  
-
-    maxndx--;
-    return maxndx;
-}
-
-void etxt(int maxndx)
-{
-    write(1,"\n",1);
-
-    int i;
-    for (i = 0; i < maxndx + 1; i++)
-      {
-       write(1,"text[",5);
-       char buf[7];
-       snprintf(buf,3,"%2d",i);
-       write(1,buf,2);
-       write(1,"].row: ",7);
-       write(1,text[i].row,text[i].size); 
-       write(1,"\n\r",2);
-      } 
-    return;
-}
-
-// function replaceAline 
-// makes one call to malloc for replacement text  
-// plus  one call to free text[nsrt].row (the replaced element)
-// plus  one call to free text (the entire replaced document)
-
-int replaceAline(int nsrt,int maxndx)
-{
-    int newlen = maxndx + 1 + 0;
-    slot *new  = (slot *)malloc(newlen*sizeof(slot));
-
-    slot newline;
-    char *ptr = "Hello World! I am a replacement line.\n";
-    newline.size = strlen(ptr)-1;
-    char *qtr = (char *)malloc(strlen(ptr)-1);
-    memcpy(qtr,ptr,strlen(ptr)); 
-    newline.row = qtr;
-
-    slot *old = text; 
-
-    int i,j,k; i = 0; j = 0; k = 0;
-    for (i = 0 ; i < maxndx + 1 ; i++) 
-      {if (i != nsrt) {new[j] = old[k]; j++; k++;}
-       else           {new[j] = newline;j++; k++;}
-      }
-
-    free(text[nsrt].row);
-    free(text); text = new;  
-
-    return maxndx;
-}
-
-int readAline(void)
-{
-    line.row = 0; linecap = 0;
-//  line.size = getline (&line.row, &linecap,nput.fp); 
-    line.size = getr(&line.row);    
-
-    if (line.size == -1) {return line.size;}
-
-    if((line.count == 0)) 
-         { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}
-    else { text = (slot *)realloc(text,(1+line.count)*sizeof(slot));}
-
-    char * ptr = malloc(line.size*sizeof(char));
-    text[line.count].row = ptr  ;
-    text[line.count].size = line.size;
-    memcpy(ptr,line.row,line.size);  
-
-    line.count++; 
-    return 0;
-}
+/* main (sets off the linkage chain) */ 
 
 int main(int argc, char** argv)
 {
@@ -315,7 +73,7 @@ int main(int argc, char** argv)
     for (numb = 0 ; numb < 100; numb++) 
     {
     retval=readAline(); 
-    if (nread == 0) {break;}
+    if (nput.nread < 1) {break;}
     lastline = line.count; 
     }
     
