@@ -1,1 +1,0 @@
-gcc -Wall test.c /home/ubuntu/work/lib127.a -o test
