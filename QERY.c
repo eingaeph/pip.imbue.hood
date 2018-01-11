@@ -95,6 +95,11 @@ int main() {
 
     printf("x = %d , y = %d \n", x,y);
 
+char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
+char GetCursorPosition[] =                  "\x1b[6n";
+     size_t size = strlen(CursorToMaxForwardMaxDown);
+     write(STDOUT_FILENO,&CursorToMaxForwardMaxDown, size);
+
   }
 
   return 0;
