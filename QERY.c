@@ -130,34 +130,10 @@ int main() {
 
   if (test(c)) {printf("insert\n");}
 
-  char buf[32];
-  unsigned int i = 0;
-
  /* Query screen for cursor location */
 
-    if (write(1, "\x1b[6n", 4) != 4) return 0;
-
-    while (i < sizeof(buf)-1) 
-    {
-        if (read(0,buf+i,1) != 1) break;
-        if (buf[i] == 'R') break;
-        i++;
-    }
-
-    buf[i] = '\0';
-
-    
-    if (buf[0] != 27 || buf[1] != '[') return -1;
-                              
-    int x; int y;
-    if (sscanf(buf+2,"%d;%d",&x,&y) != 2) return -1;
-
-    printf("x = %d , y = %d \n", x,y);
-
-char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
-char GetCursorPosition[] =                  "\x1b[6n";
-     size_t size = strlen(CursorToMaxForwardMaxDown);
-     write(STDOUT_FILENO,&CursorToMaxForwardMaxDown, size);
+  int x ; int y; getCursorPosition(&y, &x);
+  printf("x = %d, y = %d\n",x,y);
 
   }
 
