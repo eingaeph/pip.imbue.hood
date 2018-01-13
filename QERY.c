@@ -11,6 +11,65 @@
 
 struct termios orig_termios;
 
+typedef struct slot
+{
+    ssize_t size;
+    char *row;
+    int count;
+}   slot;
+
+    slot line;
+    slot *text;
+
+struct 
+{
+
+    int x,y;                   /* char no, line no, text coordinates */
+    int ix,iy;                 /* insertion point, text coordinates */
+
+    int xmin,xmax,ymin,ymax;   /* window edges in text coordinates  */ 
+
+    int u,v;                   /* char no, line no */
+    int cu,cv;                 /* cursor position in screen coordinates */
+
+    int umin,umax,vmin,vmax;   /* window endges in screen coordinates */
+
+} cord;
+
+void screenBuffer(int star, int stop)
+{
+    printf("%s","screenBuffer at work\n");
+    slot* display = (slot *) malloc(     (25)*sizeof(slot));
+    for (int i=0; i<25; i++) {display[i].size  =   3;
+                              display[i].row   = "~\r\n";
+                              display[i].count =   0;}
+
+    int dy = 0;
+    display[dy].row  = "kilo.c welcomes you\n";
+    display[dy].count = 0;
+    display[dy].size = strlen(display[dy].row);
+
+    dy++;
+    display[dy].row  = "kilo.c\n";
+    display[dy].count = 0;
+    display[dy].size = strlen(display[dy].row);   
+
+    int i;  
+    for (int i = star; i<(stop+1); i++)
+         {dy++ ; display[dy] = text[i];}
+
+    dy = -1 ;
+    for (int i = 0; i< 23; i++)
+         {
+          dy++ ;
+          int stringLength = display[dy].size;
+          char* pointerToString = display[dy].row;
+          printf("%.*s", stringLength, pointerToString);
+         }
+
+}
+
+
 int getCursorPosition(int *rows, int *cols) {
   char buf[32];
   unsigned int i = 0;
