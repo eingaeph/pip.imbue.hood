@@ -1,9 +1,15 @@
 #! /usr/bin/tcc -run 
 
-/* a simple keypress decoder
+/*** 
+
+   keypress decoder
+   readAline
    getCursorPosition
-   
- */
+   screenBuffer   
+
+***/
+
+/*** includes ***/
 
 #include <ctype.h>
 #include <stdio.h>
@@ -14,12 +20,11 @@
 #include <sys/stat.h> //open,close per Kerrisk page 72
 #include <fcntl.h>    //open,close 
 
+/*** global symbols ***/
 
 struct termios orig_termios;
 
-    size_t linecap;
-    int nread;
-    struct { int fp; int nread; } nput;
+struct { int fp; int nread; } nput;
 
 typedef struct slot
 {
@@ -46,17 +51,31 @@ struct
 
 } cord;
 
+/*** function declarations ***/
+
 int readAline(void);
+
+/*** function definitions ***/
+
+void writeDigit(int digit)
+{
+  char buf[] = "                          ";
+   snprintf(buf,4,"%d",digit);
+   write(STDOUT_FILENO,buf,4);
+   return;
+}
 
 void init(int argc, char** argv)
 {
-    char* filename = argv[1];
     int numb; int retval; int lastline;
+    char *outt;
 
-//    if(argc == 1) return 0;
+    if (argc == 1) return;
 
-    write(1,argv[1],strlen(argv[1]));
-    write(1,"\r\n",2);
+    char * filename = argv[1];
+    write(STDOUT_FILENO,filename,strlen(argv[1]));
+    write(1,"\n",1);
+
 
     nput.fp = open(filename,O_RDONLY);
 
@@ -64,39 +83,45 @@ void init(int argc, char** argv)
     for (numb = 0 ; numb < 100; numb++) 
     {
     retval=readAline(); 
-    if (nread == 0) {break;}
+    if (nput.nread == 0) {break;}
     lastline = line.count; 
     }
+   
+    writeDigit(lastline); outt = " lines were read in function init\n";
+    write(STDOUT_FILENO,outt,strlen(outt));
 }
 
-int getr(char **qtr) // getline replacement
+int getl(char **qtr)    // getline replacement
 {
-  char line[240];     // sets maximum linesize at three times reasonable
-  char* s = &line[0]; // s and line are nearly each other's  alias
-  int linesize;
+  char test[1];
+  char inLine[240];     // sets maximum linesize at three times reasonable
   char* ptr;
 
-  linesize = 0; s = &line[0];
-  while((nread = read(nput.fp,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
+  int nread; 
+  int inLineSize = 0; 
+  char *s = &inLine[0];   //s and inLine are each other's alias
+  while((nput.nread = read(nput.fp,s,1))==1) 
+    {if (*s != '\n') {s++; inLineSize++;} else break;}
+
    
 /***
   here nread = EOF 0,ERROR 1 
-       linesize is posibly zero, possibly greater than zero
+       inLineAize is posibly zero, possibly greater than zero
 ***/
 
-  if (linesize != 0) {ptr = malloc(linesize*sizeof(char));}
-  if (linesize != 0) memcpy(ptr,line,linesize);
-  if (linesize != 0) *qtr = ptr;
-  return linesize;
+  if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));
+                        memcpy(ptr,inLine,inLineSize);
+                       *qtr = ptr;}
+  return inLineSize;
 }
 
 int readAline(void)
 {
-    line.row = 0; linecap = 0;
+    line.row = 0; size_t linecap = 0;
 //  line.size = getline (&line.row, &linecap,nput.fp); 
-    line.size = getr(&line.row);    
+    line.size = getl(&line.row);    
 
-    if (line.size == -1) {return line.size;}
+    if (line.size == 0) {return line.size;}
 
     if((line.count == 0)) 
          { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}
@@ -108,7 +133,7 @@ int readAline(void)
     memcpy(ptr,line.row,line.size);  
 
     line.count++; 
-    return 0;
+    return line.size;
 }
 
 void screenBuffer(int star, int stop)
@@ -197,7 +222,12 @@ int test(char c) {
 int main(int argc, char** argv)
 {
 
-//  init(argc, argv);
+// argv is a pointer to a pointer to a character
+// argv[0] is a pointer to a character
+// *argv[0] is a character
+
+   printf(" *argv[0] = <%c>\n",*argv[0]);
+  init(argc, argv);
 
   enableRawMode();
 
