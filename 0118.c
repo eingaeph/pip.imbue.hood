@@ -1,6 +1,9 @@
 #! /usr/bin/tcc -run 
 
-/* a simple keypress decoder */
+/* a simple keypress decoder
+   getCursorPosition
+   
+ */
 
 #include <ctype.h>
 #include <stdio.h>
@@ -8,8 +11,15 @@
 #include <termios.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/stat.h> //open,close per Kerrisk page 72
+#include <fcntl.h>    //open,close 
+
 
 struct termios orig_termios;
+
+    size_t linecap;
+    int nread;
+    struct { int fp; int nread; } nput;
 
 typedef struct slot
 {
@@ -36,12 +46,79 @@ struct
 
 } cord;
 
+int readAline(void);
+
+void init(int argc, char** argv)
+{
+    char* filename = argv[1];
+    int numb; int retval; int lastline;
+
+//    if(argc == 1) return 0;
+
+    write(1,argv[1],strlen(argv[1]));
+    write(1,"\r\n",2);
+
+    nput.fp = open(filename,O_RDONLY);
+
+    line.count = 0;
+    for (numb = 0 ; numb < 100; numb++) 
+    {
+    retval=readAline(); 
+    if (nread == 0) {break;}
+    lastline = line.count; 
+    }
+}
+
+int getr(char **qtr) // getline replacement
+{
+  char line[240];     // sets maximum linesize at three times reasonable
+  char* s = &line[0]; // s and line are nearly each other's  alias
+  int linesize;
+  char* ptr;
+
+  linesize = 0; s = &line[0];
+  while((nread = read(nput.fp,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
+   
+/***
+  here nread = EOF 0,ERROR 1 
+       linesize is posibly zero, possibly greater than zero
+***/
+
+  if (linesize != 0) {ptr = malloc(linesize*sizeof(char));}
+  if (linesize != 0) memcpy(ptr,line,linesize);
+  if (linesize != 0) *qtr = ptr;
+  return linesize;
+}
+
+int readAline(void)
+{
+    line.row = 0; linecap = 0;
+//  line.size = getline (&line.row, &linecap,nput.fp); 
+    line.size = getr(&line.row);    
+
+    if (line.size == -1) {return line.size;}
+
+    if((line.count == 0)) 
+         { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}
+    else { text = (slot *)realloc(text,(1+line.count)*sizeof(slot));}
+
+    char * ptr = malloc(line.size*sizeof(char));
+    text[line.count].row = ptr  ;
+    text[line.count].size = line.size;
+    memcpy(ptr,line.row,line.size);  
+
+    line.count++; 
+    return 0;
+}
+
 void screenBuffer(int star, int stop)
 {
     printf("%s","screenBuffer at work\n");
-    slot* display = (slot *) malloc(     (25)*sizeof(slot));
+
+    slot *display = (slot *) malloc(     (25)*sizeof(slot));
+
     for (int i=0; i<25; i++) {display[i].size  =   3;
-                              display[i].row   = "~\r\n";
+                              display[i].row   = "~\n";
                               display[i].count =   0;}
 
     int dy = 0;
@@ -117,7 +194,11 @@ int test(char c) {
    return test;
 }
 
-int main() {
+int main(int argc, char** argv)
+{
+
+//  init(argc, argv);
+
   enableRawMode();
 
   char c;
