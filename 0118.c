@@ -165,29 +165,26 @@ void buildScreenBuffer(int star, int stop)
                               display[i].row   = "~\n";
                               display[i].count =   0;}
 
-    return;
-
     int dy = 0;
-    display[dy].row  = "kilo.c welcomes you\n";
-    display[dy].count = 0;
-    display[dy].size = strlen(display[dy].row);
+    display[0].row  = "kilo.c welcomes you";
+    display[0].count = 0;
+    display[0].size = strlen(display[0].row);
 
-    dy++;
-    display[dy].row  = "kilo.c\n";
+    dy = 1; int y = 0;
+    display[dy].row  = text[y].row;
     display[dy].count = 0;
     display[dy].size = strlen(display[dy].row);   
 
-    int i;  
+    int i;  dy = 9;
     for (int i = star; i<(stop+1); i++)
          {dy++ ; display[dy] = text[i];}
 
     dy = -1 ;
-    for (int i = 0; i< 23; i++)
+    for (int i = 0; i< 22; i++) // make the limit 23 later
          {
           dy++ ;
-          int stringLength = display[dy].size;
-          char* pointerToString = display[dy].row;
-          printf("%.*s", stringLength, pointerToString);
+          write(STDOUT_FILENO,display[dy].row,display[dy].size);
+          write(STDOUT_FILENO,"\n",1);
          }
 
 }
@@ -265,7 +262,7 @@ int main(int argc, char** argv)
 
  /* Build Screen Buffer */
 
-  buildScreenBuffer(cord.vmin, cord.vmax);
+  buildScreenBuffer(5, 10);
 
 
  /* Query screen for cursor location */
