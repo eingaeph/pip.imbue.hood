@@ -35,6 +35,7 @@ typedef struct slot
 
     slot line;
     slot *text;
+    slot *display;
 
 struct 
 {
@@ -47,7 +48,7 @@ struct
     int u,v;                   /* char no, line no */
     int cu,cv;                 /* cursor position in screen coordinates */
 
-    int umin,umax,vmin,vmax;   /* window endges in screen coordinates */
+    int umin,umax,vmin,vmax;   /* window edges in screen coordinates */
 
 } cord;
 
@@ -73,9 +74,9 @@ void init(int argc, char** argv)
     if (argc == 1) return;
 
     char * filename = argv[1];
-    write(STDOUT_FILENO,filename,strlen(argv[1]));
-    write(1,"\n",1);
+    write(STDOUT_FILENO,filename,strlen(argv[1])); write(1,"\n",1);
 
+    display = malloc(     (60)*sizeof(slot));
 
     nput.fp = open(filename,O_RDONLY);
 
@@ -85,13 +86,33 @@ void init(int argc, char** argv)
     retval=readAline(); 
     if (nput.nread == 0) {break;}
     lastline = line.count; 
+
+
+
     }
    
-    writeDigit(lastline); outt = " lines were read in function init\n";
-    write(STDOUT_FILENO,outt,strlen(outt));
+    cord.ix = 0 ; 
+    cord.iy = 0;    /* insertion point, text coordinates */
+
+    cord.xmin =  0;
+    cord.xmax = 79;
+    cord.ymin =  0;
+    cord.ymax = 23;   
+
+    cord.cu = 0;    /*screen coordinates */
+    cord.cv = 0;
+            
+    cord.umin = 1;
+    cord.umax = 80;
+    cord.vmin = 1;
+    cord.vmax = 24;
+    outt = "lastline = "; write(STDOUT_FILENO,outt,strlen(outt)); 
+    writeDigit(lastline);  write(STDOUT_FILENO,"\n",1);
+
+
 }
 
-int getl(char **qtr)    // getline replacement
+int getl(char **qtr)    // getline work-alike
 {
   char test[1];
   char inLine[240];     // sets maximum linesize at three times reasonable
@@ -99,7 +120,7 @@ int getl(char **qtr)    // getline replacement
 
   int nread; 
   int inLineSize = 0; 
-  char *s = &inLine[0];   //s and inLine are each other's alias
+  char *s = &inLine[0];   //s and inLine are aliases of each other
   while((nput.nread = read(nput.fp,s,1))==1) 
     {if (*s != '\n') {s++; inLineSize++;} else break;}
 
@@ -117,8 +138,8 @@ int getl(char **qtr)    // getline replacement
 
 int readAline(void)
 {
-    line.row = 0; size_t linecap = 0;
-//  line.size = getline (&line.row, &linecap,nput.fp); 
+    line.row = 0; 
+/***line.count (the number of lines read)***/ 
     line.size = getl(&line.row);    
 
     if (line.size == 0) {return line.size;}
@@ -136,15 +157,15 @@ int readAline(void)
     return line.size;
 }
 
-void screenBuffer(int star, int stop)
+void buildScreenBuffer(int star, int stop)
 {
-    printf("%s","screenBuffer at work\n");
+    printf("%s","buildScreenBuffer at work\n");
 
-    slot *display = (slot *) malloc(     (25)*sizeof(slot));
-
-    for (int i=0; i<25; i++) {display[i].size  =   3;
+    for (int i=0; i<24; i++) {display[i].size  =   1;
                               display[i].row   = "~\n";
                               display[i].count =   0;}
+
+    return;
 
     int dy = 0;
     display[dy].row  = "kilo.c welcomes you\n";
@@ -224,9 +245,10 @@ int main(int argc, char** argv)
 
 // argv is a pointer to a pointer to a character
 // argv[0] is a pointer to a character
+// *argv == argv[0]
 // *argv[0] is a character
+// **argv == *argv[0]
 
-   printf(" *argv[0] = <%c>\n",*argv[0]);
   init(argc, argv);
 
   enableRawMode();
@@ -240,6 +262,11 @@ int main(int argc, char** argv)
     }
 
   if (test(c)) {printf("insert\n");}
+
+ /* Build Screen Buffer */
+
+  buildScreenBuffer(cord.vmin, cord.vmax);
+
 
  /* Query screen for cursor location */
 
