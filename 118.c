@@ -24,7 +24,7 @@
 
 struct termios orig_termios;
 
-struct { int fp; int nread; } nput;
+struct { int fp; int nread; int fperr; } nput;
 
 typedef struct slot
 {
@@ -33,7 +33,8 @@ typedef struct slot
     int count;
 }   slot;
 
-    slot line;
+    slot line;  // set in readAline
+    slot buff;  // set in edal
     slot *text;
     slot *display;
 
@@ -64,6 +65,29 @@ void writeDigit(int digit)
    snprintf(buf,4,"%d",digit);
    write(STDOUT_FILENO,buf,4);
    return;
+}
+
+int edal(char c)
+{
+  printf("%c was passed to edal ",c);
+  printf("  ");
+  buff.row = text[0].row;
+  buff.size = text[0].size;
+  write(STDOUT_FILENO,buff.row,buff.size); 
+  write(STDOUT_FILENO,"\n",1);
+  
+//  int fd = open("/dev/pts/3", O_RDWR);
+//  char buf[] = "hi there Gail\n" ;
+//      int len = strlen(buf);
+//      printf("msg length = %d\n",len);
+//      write(fd, buf, len);//
+//      char *cha = "#"; 
+//      char *ignore;
+//      read(fd, ignore, 1); // pause, wait for input 
+//      write(fd, cha, 1);
+
+   return 0;
+
 }
 
 void init(int argc, char** argv)
@@ -159,7 +183,7 @@ int readAline(void)
 
 void buildScreenBuffer(int star, int stop)
 {
-    printf("%s","buildScreenBuffer at work\n");
+//    printf("%s","buildScreenBuffer at work\n");
 
     for (int i=0; i<24; i++) {display[i].size  =   1;
                               display[i].row   = "~\n";
@@ -258,7 +282,7 @@ int main(int argc, char** argv)
       printf("%d ('%c')\n", c, c);
     }
 
-  if (test(c)) {printf("insert\n");}
+  edal(c);
 
  /* Build Screen Buffer */
 
@@ -268,7 +292,7 @@ int main(int argc, char** argv)
  /* Query screen for cursor location */
 
   int x ; int y; getCursorPosition(&y, &x);
-  printf("x = %d, y = %d\n",x,y);
+//  printf("x = %d, y = %d\n",x,y);
 
   }
 
