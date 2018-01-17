@@ -65,24 +65,21 @@ void writeDigit(int digit)
 
 int edal(char c)
 {
-  printf("%c was passed to edal ",c);
-  printf("  ");
-  buff.row = text[0].row;
-  buff.size = text[0].size;
-  write(STDOUT_FILENO,buff.row,buff.size); 
-  write(STDOUT_FILENO,"\n",1);
+  write(iovars.fptra,&c,1);
+  char msg[] = " was passed to eal\n";
+  write(iovars.fptra,msg,strlen(msg));
+
+//  buff.row = text[0].row;
+//  buff.size = text[0].size;
+//  write(iovars.fptra,buff.row,buff.size); 
+//  write(iovars.fptra,"\n",1);
   
-  char buf[] = "hi there Gail\n" ;      
-  int len = strlen(buf);
-  printf("msg length = %d\n",len);
-  write(iovars.fptra, buf, len);//
-  char *cha = "#"; 
-  char *ignore;
-  read(STDIN_FILENO, ignore, 1); // pause, wait for input 
-  write(STDIN_FILENO, cha, 1);
+  int ignore; read(STDIN_FILENO, &ignore, 1); // pause, wait for input 
+
+  char mesy[] = "eal is finished\n";
+  write(iovars.fptra,mesy,strlen(mesy));
 
   return 0;
-
 }
 
 void init(int argc, char** argv)
@@ -98,7 +95,7 @@ void init(int argc, char** argv)
     display = malloc(     (60)*sizeof(slot));
 
     iovars.fpinp = open(filename,O_RDONLY);
-    iovars.fptra = open("/dev/pts/3", O_RDWR);
+    iovars.fptra = open("/dev/pts/18", O_RDWR);
 
     line.count = 0;
     for (numb = 0 ; numb < 100; numb++) 
@@ -143,12 +140,6 @@ int getl(char **qtr)    // getline work-alike
   char *s = &inLine[0];   //s and inLine are aliases of each other
   while((iovars.nread = read(iovars.fpinp,s,1))==1) 
     {if (*s != '\n') {s++; inLineSize++;} else break;}
-
-   
-/***
-  here nread = EOF 0,ERROR 1 
-       inLineAize is posibly zero, possibly greater than zero
-***/
 
   if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));
                         memcpy(ptr,inLine,inLineSize);
@@ -243,29 +234,9 @@ void enableRawMode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
-char c1 = ' ';
-char c2 = ' ';
-char c3 = ' ';
-char c4 = ' ';
-
-int test(char c) {
-   c4=c3;        c3=c2;        c2=c1;        c1=c;
-   int t4 = 27;  int t3 = 91;  int t2 = 50;  int t1 = 126;
-   char s4 = t4; char s3 = t3; char s2 = t2; char s1 = t1;
-
-   int test = (c4==s4) && (c3==s3) && (c2==s2) && (c1==s1);
-   return test;
-}
 
 int main(int argc, char** argv)
 {
-
-// argv is a pointer to a pointer to a character
-// argv[0] is a pointer to a character
-// *argv == argv[0]
-// *argv[0] is a character
-// **argv == *argv[0]
-
   init(argc, argv);
 
   enableRawMode();
