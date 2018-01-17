@@ -1,11 +1,12 @@
-#! /usr/bin/tcc -run 
+#! /usr/bin/tcc -run
 
-/*** 
-
-   keypress decoder
-   readAline
+/***
+   init readAline
+   keypress wait intercept
+   keypress code translater
+   e
    getCursorPosition
-   screenBuffer   
+   buildScreenBuffer
 
 ***/
 
@@ -24,14 +25,9 @@
 
 struct termios orig_termios;
 
-struct { int fp; int nread; int fperr; } nput;
+struct { int fpinp; int nread; int fptra; } iovars;
 
-typedef struct slot
-{
-    ssize_t size;
-    char *row;
-    int count;
-}   slot;
+typedef struct {ssize_t size; char *row; int count;} slot;
 
     slot line;  // set in readAline
     slot buff;  // set in edal
@@ -61,7 +57,7 @@ int readAline(void);
 
 void writeDigit(int digit)
 {
-  char buf[] = "                          ";
+  char buf[20];
    snprintf(buf,4,"%d",digit);
    write(STDOUT_FILENO,buf,4);
    return;
@@ -76,17 +72,16 @@ int edal(char c)
   write(STDOUT_FILENO,buff.row,buff.size); 
   write(STDOUT_FILENO,"\n",1);
   
-//  int fd = open("/dev/pts/3", O_RDWR);
-//  char buf[] = "hi there Gail\n" ;
-//      int len = strlen(buf);
-//      printf("msg length = %d\n",len);
-//      write(fd, buf, len);//
-//      char *cha = "#"; 
-//      char *ignore;
-//      read(fd, ignore, 1); // pause, wait for input 
-//      write(fd, cha, 1);
+  char buf[] = "hi there Gail\n" ;      
+  int len = strlen(buf);
+  printf("msg length = %d\n",len);
+  write(iovars.fptra, buf, len);//
+  char *cha = "#"; 
+  char *ignore;
+  read(STDIN_FILENO, ignore, 1); // pause, wait for input 
+  write(STDIN_FILENO, cha, 1);
 
-   return 0;
+  return 0;
 
 }
 
@@ -102,13 +97,14 @@ void init(int argc, char** argv)
 
     display = malloc(     (60)*sizeof(slot));
 
-    nput.fp = open(filename,O_RDONLY);
+    iovars.fpinp = open(filename,O_RDONLY);
+    iovars.fptra = open("/dev/pts/3", O_RDWR);
 
     line.count = 0;
     for (numb = 0 ; numb < 100; numb++) 
     {
     retval=readAline(); 
-    if (nput.nread == 0) {break;}
+    if (iovars.nread == 0) {break;}
     lastline = line.count; 
 
 
@@ -145,7 +141,7 @@ int getl(char **qtr)    // getline work-alike
   int nread; 
   int inLineSize = 0; 
   char *s = &inLine[0];   //s and inLine are aliases of each other
-  while((nput.nread = read(nput.fp,s,1))==1) 
+  while((iovars.nread = read(iovars.fpinp,s,1))==1) 
     {if (*s != '\n') {s++; inLineSize++;} else break;}
 
    
