@@ -63,21 +63,41 @@ void writeDigit(int digit)
    return;
 }
 
-int edal(char c)
+int edal(char c, int fetch)
 {
   write(iovars.fptra,&c,1);
-  char msg[] = " was passed to eal\n";
+  char msg[] = " was passed to edal\n";
   write(iovars.fptra,msg,strlen(msg));
 
-//  buff.row = text[0].row;
-//  buff.size = text[0].size;
-//  write(iovars.fptra,buff.row,buff.size); 
-//  write(iovars.fptra,"\n",1);
+  buff.row = text[fetch].row;
+  buff.size = text[fetch].size;
+  write(iovars.fptra,buff.row,buff.size); 
+  write(iovars.fptra,"\n",1);
+
+  char ClearScreen[]= "\x1b[2J";
+  write(STDOUT_FILENO,ClearScreen,4);
+  write(iovars.fptra, ClearScreen,4);
+
+// Move the cursor to column 3, row 6 
+// and display the word "Hello", 
+// so that the letter H is in column 3 on row 6. 
+ 
+  printf("\033[6;3HHello\n");
+  char mesa[]="\033[6;3HHello\n");
+  write(STDOUT_FILENO, mesa, strlen(mesa));
+  write(iovars.fptra,  mesa, strlen(mesa));
+
+//Cursor Up <ESC>[{COUNT}A
+//Moves the cursor up by COUNT rows;
+
+  char mesb[]="\033[1A";
+  write(iovars.fptra, mesb, strlen(mesb));
   
+//  char mesy[] = "eal is finished\n"; write(iovars.fptra,mesy,strlen(mesy));
+
   int ignore; read(STDIN_FILENO, &ignore, 1); // pause, wait for input 
 
-  char mesy[] = "eal is finished\n";
-  write(iovars.fptra,mesy,strlen(mesy));
+//  write(iovars.fptra, mesy, strlen(mesy));
 
   return 0;
 }
@@ -103,8 +123,6 @@ void init(int argc, char** argv)
     retval=readAline(); 
     if (iovars.nread == 0) {break;}
     lastline = line.count; 
-
-
 
     }
    
@@ -249,7 +267,7 @@ int main(int argc, char** argv)
       printf("%d ('%c')\n", c, c);
     }
 
-  edal(c);
+  edal(c,3);
 
  /* Build Screen Buffer */
 
