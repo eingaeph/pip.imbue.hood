@@ -1,10 +1,14 @@
-cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/118.ct
-cat /home/ubuntu/git/repo.1/118.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/118.ct
-cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/118.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/107.ct
+cat /home/ubuntu/git/repo.1/107.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/107.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/107.ct
 
 cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/127.ct
 cat /home/ubuntu/git/repo.1/127.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/127.ct
 cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/127.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/118.ct
+cat /home/ubuntu/git/repo.1/118.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/118.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/118.ct
 
 cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/ADAL.ct
 cat /home/ubuntu/git/repo.1/ADAL.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/ADAL.ct
@@ -30,9 +34,13 @@ cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index
 cat /home/ubuntu/git/repo.1/INSP.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/INSP.ct
 cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/INSP.ct
 
-cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/IO.ct
-cat /home/ubuntu/git/repo.1/IO.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/IO.ct
-cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/IO.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/firsIO.ct
+cat /home/ubuntu/git/repo.1/firsIO.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/firsIO.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/firsIO.ct
+
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/secoIO.ct
+cat /home/ubuntu/git/repo.1/secoIO.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/secoIO.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/secoIO.ct
 
 cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/IOCTL.ct
 cat /home/ubuntu/git/repo.1/IOCTL.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/IOCTL.ct
