@@ -1,6 +1,6 @@
-cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/107.ct
-cat /home/ubuntu/git/repo.1/107.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/107.ct
-cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/107.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/118.ct
+cat /home/ubuntu/git/repo.1/118.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/118.ct
+cat /home/ubuntu/git/repo.1/index/patt/snip.foot >> /home/ubuntu/git/repo.1/index/118.ct
 
 cat /home/ubuntu/git/repo.1/index/patt/snip.head > /home/ubuntu/git/repo.1/index/127.ct
 cat /home/ubuntu/git/repo.1/127.c | tr '\074\076' '\176\176'  >> /home/ubuntu/git/repo.1/index/127.ct

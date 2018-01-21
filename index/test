@@ -11,20 +11,52 @@
 <HR>
 
 
-<H1>Kilo.c Index</H1>
+<H1>Kilo.c Index / Build Path</H1>
 
 <H2>Executables and Associated Idioms</H2>
 
-<p><a href="file:///home/ubuntu/git/repo.1/index/IO.ct">IO.c</a>
-&nbsp &nbsp Demonstrate IO primitives from <unistd.h>
+<p><a href="file:///home/ubuntu/git/repo.1/index/firsIO.ct">firsIO.c</a>
+&nbsp &nbsp Demonstrate input file IO primitives based on unistd.h
 <p>int fd = open("test.dat",O_RDONLY);
 <p>while(read(fd,s,1)==1) 
 </br></br>
 
-<p><a href="file:///home/ubuntu/git/repo.1/index/KEYP.ct">KEYP.c</a>
-&nbsp &nbsp Process multiple character return keypresses
-<p>while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') 
+<p><a href="file:///home/ubuntu/git/repo.1/index/secoIO.ct">secoIO.c</a>
+&nbsp &nbsp Process single letter keypress returns and multi letter escape 
+sequences identically
+<p>  char c;
+<p>  while (read(STDIN_FILENO, &c, 1) == 1 && c != 17) {
+<p>  if (iscntrl(c)) {printf("%d\n", c);} 
+<p>  else {printf("%d ('%c')\n", c, c);}
 <p>iscntrl(c) // returns true when c is a control character 
+</br></br>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/NCOD.ct">NCOD.c</a>
+&nbsp &nbsp Process multiple character escape sequence return keypresses
+<p>  while (1) { char c = ReadKey(); }
+<p>
+<p>  char ReadKey() {
+<p>  char c; int nread;
+<p>  while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
+<p>  if (nread == -1 && errno != EAGAIN) die("read");
+<p>
+<p>  if (c == 17) write(STDOUT_FILENO,"\r\n",2);
+<p>  if (c == 17) exit(0);
+<p>
+<p>  char seq[3]={' ',' ',' '}; int count = 1;
+<p> 
+<p>  if (read(STDIN_FILENO, &seq[0], 1) == 1) {count++;}
+<p>  if (read(STDIN_FILENO, &seq[1], 1) == 1) {count++;}
+<p>  if (read(STDIN_FILENO, &seq[2], 1) == 1) {count++;}
+<p>  if (count > 1) { c = encode(count,seq); }
+</br></br>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/GTUR.ct">GTUR.c</a>
+&nbsp &nbsp getline replacement
+<p>use mulltiple indirection to pass a character string
+<p>while((nread = read(fd,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
+<p>fd = open(argv[1],O_RDONLY); //input file
+<p>linesize = getr(qtr);   //sets ptr
 </br></br>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/REAF.ct">REAF.c</a>
@@ -38,13 +70,6 @@
 <p>char *filename = "qwik.inp"; fp = fopen(filename,"r");
 </br></br>
 
-<p><a href="file:///home/ubuntu/git/repo.1/index/GTUR.ct">GTUR.c</a>
-&nbsp &nbsp getline replacement
-<p>use mulltiple indirection to pass a character string
-<p>while((nread = read(fd,s,1))==1) {if (*s != '\n') {s++; linesize++;} else break;}
-<p>fd = open(argv[1],O_RDONLY); //input file
-<p>linesize = getr(qtr);   //sets ptr
-</br></br>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/NDEX.ct">NDEX.c</a>
 &nbsp &nbsp Access characters in text buffer by buffer coordinates x y
@@ -52,6 +77,13 @@
 <p>x = 0,1,2 ... (first character in line y, ...) 
 <p>char ch = text[y].row[x]
 <p>main(int arc, char** argv)
+</br></br>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/NDEX.ct">NDEX.c</a>
+&nbsp &nbsp Display a portion of the text buffer
+<p>for (int y = 0; y < lastline;      y++)
+<p>   {for (int x = 0; x < text[y].size;  x++)
+<p>   {char ch = text[y].row[x];    printf("%c",ch);}}
 </br></br>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/ADAL.ct">ADAL.c</a>
@@ -62,13 +94,12 @@
 <p>line.row = ptr;
 </br></br>
 
-<p><a href="file:///home/ubuntu/git/repo.1/index/DCOD.ct">DCOD.c</a>
-&nbsp &nbsp Decode multiple character keypress return codes 
-<p>int uncode(char c) 
-<p>if ((c != 27) && (decode.seqno == 0 )) 
-<p>int testa = (c==72)||(c==70);                   // home, end
-<p>int testb = (c==65)||(c==66)||(c==67)||(c==68); // arrow up, down, right, left
-<p>int testc = (c==50)||(c==51)||(c==53)||(c==54); // page up, page down, insert, delete
+<p><a href="file:///home/ubuntu/git/repo.1/index/118.ct">118.c</a>
+&nbsp &nbsp Edit a line, insert a character into the editLineBuffer, update the text buffer
+<p> char mesa[]="\033[6;3HHello\n");
+<p>write(iovars.fptra,  mesa, strlen(mesa));
+<p>char mesb[]="\033[1A";
+<p>write(iovars.fptra, mesb, strlen(mesb));
 </br></br>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/BASC.ct">BASC.c</a>
