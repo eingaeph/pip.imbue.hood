@@ -13,6 +13,7 @@
 /*** includes ***/
 
 #include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -25,7 +26,7 @@
 
 struct termios orig_termios;
 
-struct { int fpinp; int nread; int fptra; } iovars;
+struct {int fpinp; int nread; int fptra; } iovars;
 
 typedef struct {ssize_t size; char *row; int count;} slot;
 
@@ -49,11 +50,144 @@ struct
 
 } cord;
 
+/*** Numeric Codes for Escape Sequences ***/
+
+enum KEY_ACTION
+{
+        KEY_NULL = 0,       /* NULL */
+        CTRL_C = 3,         /* Ctrl-c */
+        CTRL_D = 4,         /* Ctrl-d */
+        CTRL_F = 6,         /* Ctrl-f */
+        CTRL_H = 8,         /* Ctrl-h */
+        TAB = 9,            /* Tab */
+        CTRL_L = 12,        /* Ctrl+l */
+        ENTER = 13,         /* Enter */
+        CTRL_Q = 17,        /* Ctrl-q */
+        CTRL_S = 19,        /* Ctrl-s */
+        CTRL_U = 21,        /* Ctrl-u */
+        ESC = 27,           /* Escape */
+        BACKSPACE =  127,   /* Backspace */
+
+        /* The following are just soft codes, not really reported by the
+         * terminal directly. */
+
+        ARROW_LEFT = 1000,
+        ARROW_RIGHT,
+        ARROW_UP,
+        ARROW_DOWN,
+        DEL_KEY,
+        HOME_KEY,
+        END_KEY,
+        PAGE_UP,
+        PAGE_DOWN,
+        INSERT_KEY
+};
+
 /*** function declarations ***/
 
 int readAline(void);
+char encode (int count, char* seq);
+
+void writeDigit(int digit);
 
 /*** function definitions ***/
+
+void wind(int xmin, int xmax, int ymin, int ymax)
+{
+ 
+    int y;
+    for (y = ymin; y < ymax + 1; y++) 
+    {
+    char *s = xmin + text[y].row; 
+
+    int no;
+    for ( no = 0; no + xmin < xmax + 1; no++)     
+    {
+    if (no>text[y].size ) {break;}; 
+    if (*s == '\n')       {break;};
+    printf("%c",*s); s++;
+    }
+    printf("\n");
+    }
+}
+
+void die(const char *s) {
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+  write(STDOUT_FILENO, "\x1b[H", 3);
+
+  perror(s);
+  exit(1);
+}
+
+char ReadKey() 
+{
+  char c; int nread;
+  while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
+  if (nread == -1 && errno != EAGAIN) die("terminated in readkey");
+
+  char mesg[] = "readkey at work \n";
+  write(STDOUT_FILENO,mesg,strlen(mesg));
+
+  if (c == 17) write(STDOUT_FILENO,"\r\n",2); // CTRL-q 
+  if (c == 17) exit(0);
+
+  if (c != 27) return c; 
+
+  char seq[3]={' ',' ',' '}; int count = 1;
+  for (int n = 0; n < 3; ++n) 
+   {if (read(STDIN_FILENO, &seq[n], 1) == 1) {count++;}
+    else break;}
+
+  if (count > 1) c = encode(count, seq);
+
+  return c;
+}
+
+/*** handle escape sequences. ***/
+
+char encode (int count, char* seq)
+{
+  write(1,"encode at work  ",16);
+  write(1,"count = ",8);
+  writeDigit(count);
+  write(1,"  ",2);
+
+  char buf[] = "   ";
+
+  buf[0] = seq[0] ; write(STDOUT_FILENO,buf,1); 
+  buf[0] = seq[1] ; write(STDOUT_FILENO,buf,1); 
+  buf[0] = seq[2] ; write(STDOUT_FILENO,buf,1); 
+  write(1,"\n\r",2);
+
+  int testa = ( (seq[0] == '[')); 
+  int testb = ( (count < 4 ) );
+  int testc = ( (seq[2] == '~') );
+
+  if (count < 3 ) return ESC;  // this is unusual
+   
+  if (!testa)     return ESC;
+
+  if (testb) {
+     switch(seq[1]) {
+        case 'A': return ARROW_UP;
+        case 'B': return ARROW_DOWN;
+        case 'C': return ARROW_RIGHT;
+        case 'D': return ARROW_LEFT;
+        case 'H': return HOME_KEY;
+        case 'F': return END_KEY;                            }
+              }
+
+  if (testc) {
+     switch(seq[1]) {
+        case '2': return INSERT_KEY;
+        case '3': return DEL_KEY;
+        case '5': return PAGE_UP;
+        case '6': return PAGE_DOWN;
+                    }
+             } // else return ESC;  
+     
+  return ESC; // this is unusual 
+}
 
 void writeDigit(int digit)
 {
@@ -65,39 +199,39 @@ void writeDigit(int digit)
 
 int edal(char c, int fetch)
 {
-  write(iovars.fptra,&c,1);
-  char msg[] = " was passed to edal\n";
-  write(iovars.fptra,msg,strlen(msg));
+  int fpt = iovars.fptra;
+  free(buff.row);  // free space initialized in init or in this function
+  buff.row = text[fetch].row;buff.size = text[fetch].size;
+  // int insertionPoint = cord.ix; 
 
-  buff.row = text[fetch].row;
-  buff.size = text[fetch].size;
-  write(iovars.fptra,buff.row,buff.size); 
-  write(iovars.fptra,"\n",1);
+  char ClearScreen[]= "\x1b[2J"; write(fpt, ClearScreen,4);
+  write(fpt,buff.row,buff.size); write(fpt,"\n",1);
 
-  char ClearScreen[]= "\x1b[2J";
-  write(STDOUT_FILENO,ClearScreen,4);
-  write(iovars.fptra, ClearScreen,4);
+  int test = (c > 31 && c < 127); // true for printable character
+  if (c == ARROW_RIGHT) {cord.ix++ ; return 0;}
+  if (!test) return 0;
 
-// Move the cursor to column 3, row 6 
-// and display the word "Hello", 
-// so that the letter H is in column 3 on row 6. 
- 
-  printf("\033[6;3HHello\n");
-  char mesa[]="\033[6;3HHello\n");
-  write(STDOUT_FILENO, mesa, strlen(mesa));
-  write(iovars.fptra,  mesa, strlen(mesa));
+  int limit = buff.size + 1 ; 
+  char *chng = malloc((limit)*sizeof(char));
+  char *save = chng;
+  char *orig = buff.row;
 
-//Cursor Up <ESC>[{COUNT}A
-//Moves the cursor up by COUNT rows;
+  // "insert %c at position %d\n"
 
-  char mesb[]="\033[1A";
-  write(iovars.fptra, mesb, strlen(mesb));
-  
-//  char mesy[] = "eal is finished\n"; write(iovars.fptra,mesy,strlen(mesy));
+  int no;
+  for (no = 0 ; no < limit; no++)
+    {if (no != cord.ix)  {*chng = *orig; chng++; orig++;}
+     else                {*chng = c; chng++;}
+    }
 
+  buff.row = save;    text[fetch].row = buff.row;
+  buff.size = limit;  text[fetch].size = buff.size;
+
+  write(fpt,buff.row,buff.size); write(fpt,"\n",1);
+
+  char mesy[] = "eal is finished\n"; write(fpt,mesy,strlen(mesy));
   int ignore; read(STDIN_FILENO, &ignore, 1); // pause, wait for input 
-
-//  write(iovars.fptra, mesy, strlen(mesy));
+  write(fpt, mesy, strlen(mesy));
 
   return 0;
 }
@@ -144,7 +278,8 @@ void init(int argc, char** argv)
     outt = "lastline = "; write(STDOUT_FILENO,outt,strlen(outt)); 
     writeDigit(lastline);  write(STDOUT_FILENO,"\n",1);
 
-
+    buff.row  = malloc(1*sizeof(char));
+    buff.size = 1;
 }
 
 int getl(char **qtr)    // getline work-alike
@@ -255,32 +390,23 @@ void enableRawMode() {
 
 int main(int argc, char** argv)
 {
-  init(argc, argv);
 
-  enableRawMode();
+  init(argc, argv); enableRawMode();
 
-  char c;
-  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
-    if (iscntrl(c)) {
-      printf("%d\n", c);
-    } else {
-      printf("%d ('%c')\n", c, c);
-    }
+  while (1) 
+   {
+    char c = ReadKey();
 
-  edal(c,3);
+    edal(c,3);
 
- /* Build Screen Buffer */
+//  buildScreenBuffer(5, 10);
 
-  buildScreenBuffer(5, 10);
+    wind(0,79,0,9);
 
-
- /* Query screen for cursor location */
-
-  int x ; int y; getCursorPosition(&y, &x);
+//  int x ; int y; getCursorPosition(&y, &x);
 //  printf("x = %d, y = %d\n",x,y);
 
-  }
-
+   }
   return 0;
 }
 
