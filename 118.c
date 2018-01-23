@@ -4,7 +4,6 @@
    init readAline
    keypress wait intercept
    keypress code translater
-   e
    getCursorPosition
    buildScreenBuffer
 
@@ -122,11 +121,14 @@ void die(const char *s) {
 char ReadKey() 
 {
   char c; int nread;
+  printf("starting readkey\n");
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
   if (nread == -1 && errno != EAGAIN) die("terminated in readkey");
+  else write(STDIN_FILENO,'*',1);
 
-  char mesg[] = "readkey at work \n";
+  char mesg[] = "\nreadkey at work \n";
   write(STDOUT_FILENO,mesg,strlen(mesg));
+  printf("%c (%d)\n",c,c);
 
   if (c == 17) write(STDOUT_FILENO,"\r\n",2); // CTRL-q 
   if (c == 17) exit(0);
@@ -373,20 +375,27 @@ int getCursorPosition(int *rows, int *cols) {
   return 0;
 }
 
+/* Raw mode: 1960's magic stuff (grumble). */
+
 void disableRawMode() {
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
+    die("tcsetattr");
 }
 
 void enableRawMode() {
-  tcgetattr(STDIN_FILENO, &orig_termios);
+  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
   atexit(disableRawMode);
 
   struct termios raw = orig_termios;
-  raw.c_lflag &= ~(ECHO | ICANON);
+  raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+  raw.c_oflag &= ~(OPOST);
+  raw.c_cflag |= (CS8);
+  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+  raw.c_cc[VMIN] = 0;
+  raw.c_cc[VTIME] = 1;
 
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
-
 
 int main(int argc, char** argv)
 {
@@ -395,8 +404,9 @@ int main(int argc, char** argv)
 
   while (1) 
    {
+    printf("calling ReadKey\n");
     char c = ReadKey();
-
+    printf("calling edal\n");
     edal(c,3);
 
 //  buildScreenBuffer(5, 10);
