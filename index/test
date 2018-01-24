@@ -13,15 +13,25 @@
 
 <H1>Kilo.c Index / Build Path</H1>
 
-<H2>Executables and Associated Idioms</H2>
+<H1>Executables and Associated Idioms</H1>
 
-<p><a href="file:///home/ubuntu/git/repo.1/index/firsIO.ct">firsIO.c</a>
+<H2>IO Primitives and Raw Terminals</H2>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/IO.firs.ct">IO.firs.c</a>
 &nbsp &nbsp Demonstrate input file IO primitives based on unistd.h
 <p>int fd = open("test.dat",O_RDONLY);
 <p>while(read(fd,s,1)==1) 
 </br></br>
 
-<p><a href="file:///home/ubuntu/git/repo.1/index/secoIO.ct">secoIO.c</a>
+<p><a href="file:///home/ubuntu/git/repo.1/index/enrw.ct">enrw.c</a>
+&nbsp &nbsp Enable/disable raw mode
+<p>raw.c_cc[VTIME] = 1;
+<p>tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw)
+<p>atexit(disableRawMode);
+<p>tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios)
+</br></br>
+
+<p><a href="file:///home/ubuntu/git/repo.1/index/IO.seco.ct">IO.seco.c</a>
 &nbsp &nbsp Process single letter keypress returns and multi letter escape 
 sequences identically
 <p>  char c;
@@ -30,6 +40,8 @@ sequences identically
 <p>  else {printf("%d ('%c')\n", c, c);}
 <p>iscntrl(c) // returns true when c is a control character 
 </br></br>
+
+<H2>Multi-Character Keypress Sendings</H2>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/NCOD.ct">NCOD.c</a>
 &nbsp &nbsp Process multiple character escape sequence return keypresses
@@ -51,6 +63,8 @@ sequences identically
 <p>  if (count > 1) { c = encode(count,seq); }
 </br></br>
 
+<H2>Initialize the Text Buffer</H2>
+
 <p><a href="file:///home/ubuntu/git/repo.1/index/GTUR.ct">GTUR.c</a>
 &nbsp &nbsp getline replacement
 <p>use mulltiple indirection to pass a character string
@@ -70,6 +84,7 @@ sequences identically
 <p>char *filename = "qwik.inp"; fp = fopen(filename,"r");
 </br></br>
 
+<H2>Manipulate the Text Buffer</H2>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/NDEX.ct">NDEX.c</a>
 &nbsp &nbsp Access characters in text buffer by buffer coordinates x y
@@ -94,6 +109,8 @@ sequences identically
 <p>line.row = ptr;
 </br></br>
 
+<H2>Edit a Line</H2>
+
 <p><a href="file:///home/ubuntu/git/repo.1/index/118.ct">118.c</a>
 &nbsp &nbsp Edit a line, insert a character into the editLineBuffer, update the text buffer
 <p> char mesa[]="\033[6;3HHello\n");
@@ -101,6 +118,8 @@ sequences identically
 <p>char mesb[]="\033[1A";
 <p>write(iovars.fptra, mesb, strlen(mesb));
 </br></br>
+
+<H2>Build the Write Buffer</H2>
 
 <p><a href="file:///home/ubuntu/git/repo.1/index/BASC.ct">BASC.c</a>
 &nbsp &nbsp Build a screen in a single write

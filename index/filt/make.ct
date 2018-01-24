@@ -1,5 +1,6 @@
 #!/usr/bin/rexx
 i=0
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/118/enrw.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/107.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/127.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/118.c'
@@ -9,8 +10,8 @@ i=i+1 ; store.i ='/home/ubuntu/git/repo.1/BRAC.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/DCOD.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/GTUR.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/INSP.c'
-i=i+1 ; store.i ='/home/ubuntu/git/repo.1/firsIO.c'
-i=i+1 ; store.i ='/home/ubuntu/git/repo.1/secoIO.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/IO.firs.c'
+i=i+1 ; store.i ='/home/ubuntu/git/repo.1/IO.seco.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/IOCTL.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/KEYP.c'
 i=i+1 ; store.i ='/home/ubuntu/git/repo.1/kilo.c'
