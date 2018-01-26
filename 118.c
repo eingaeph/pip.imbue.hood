@@ -103,7 +103,20 @@ int main(int argc, char **argv);
 
 void window(int xmin, int xmax, int ymin, int ymax)
 {
- 
+    int y;
+    for (y = ymin; y < ymax + 1; y++) 
+  {
+    char *s = xmin + text[y].row; 
+
+    int no;
+    for ( no = 0; no + xmin < xmax + 1; no++)     
+    {
+    if (no+1>text[y].size) {break;}; 
+    if (*s == '\n')        {break;};
+    write(STDOUT_FILENO,s,1); s++;
+    }
+    write(STDOUT_FILENO,"\n\r",2);
+  }
 }
 
 void die(const char *s) {
@@ -255,7 +268,7 @@ void init(int argc, char** argv)
     display = malloc(     (60)*sizeof(slot));
 
     iovars.fpinp = open(filename,O_RDONLY);
-    iovars.fptra = open("/dev/pts/18", O_RDWR);
+    iovars.fptra = open("/dev/pts/4", O_RDWR);
 
     line.count = 0;
    for (numb = 0 ; numb < 100; numb++) 
@@ -371,9 +384,10 @@ int main(int argc, char** argv)
   while (1) 
    {
     char c = ReadKey();
-  write(1,text[4].row,text[4].size); write(1,"\n\r",2);
-    edal(c,4);
-  write(1,text[4].row,text[4].size); write(1,"\n\r",2);
+
+    edal(c,3);
+
+    window(0,79,0,6);
 
    }
   return 0;
