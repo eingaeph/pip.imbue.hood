@@ -84,30 +84,26 @@ enum KEY_ACTION
 
 /*** function declarations ***/
 
+void window(int xmin, int xmax, int ymin, int ymax);
+void die(const char *s);
+char ReadKey(void);
+char encode(int count, char *seq);
+void writeDigit(int digit, int fildes);
+int edal(char c, int fetch);
+void init(int argc, char **argv);
+int getl(char **qtr);
 int readAline(void);
-char encode (int count, char* seq);
-
-void writeDigit(int digit);
+void buildScreenBuffer(int star, int stop);
+int getCursorPosition(int *rows, int *cols);
+void disableRawMode(void);
+void enableRawMode(void);
+int main(int argc, char **argv);
 
 /*** function definitions ***/
 
-void wind(int xmin, int xmax, int ymin, int ymax)
+void window(int xmin, int xmax, int ymin, int ymax)
 {
  
-    int y;
-    for (y = ymin; y < ymax + 1; y++) 
-    {
-    char *s = xmin + text[y].row; 
-
-    int no;
-    for ( no = 0; no + xmin < xmax + 1; no++)     
-    {
-    if (no>text[y].size ) {break;}; 
-    if (*s == '\n')       {break;};
-    printf("%c",*s); s++;
-    }
-    printf("\n");
-    }
 }
 
 void die(const char *s) {
@@ -121,25 +117,23 @@ void die(const char *s) {
 char ReadKey() 
 {
   char c; int nread;
-  printf("starting readkey\n");
+
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
   if (nread == -1 && errno != EAGAIN) die("terminated in readkey");
-  else write(STDIN_FILENO,'*',1);
-
-  char mesg[] = "\nreadkey at work \n";
-  write(STDOUT_FILENO,mesg,strlen(mesg));
-  printf("%c (%d)\n",c,c);
-
-  if (c == 17) write(STDOUT_FILENO,"\r\n",2); // CTRL-q 
-  if (c == 17) exit(0);
+  else  write(STDIN_FILENO,"*",1); 
+  write(STDOUT_FILENO,"\n\r",2);
+ 
+  if (c == 17) exit(0);  // CTRL-q is 17 in decimal
 
   if (c != 27) return c; 
 
+  
   char seq[3]={' ',' ',' '}; int count = 1;
   for (int n = 0; n < 3; ++n) 
    {if (read(STDIN_FILENO, &seq[n], 1) == 1) {count++;}
     else break;}
 
+  
   if (count > 1) c = encode(count, seq);
 
   return c;
@@ -151,14 +145,14 @@ char encode (int count, char* seq)
 {
   write(1,"encode at work  ",16);
   write(1,"count = ",8);
-  writeDigit(count);
+  writeDigit(count,STDOUT_FILENO);
   write(1,"  ",2);
 
   char buf[] = "   ";
 
-  buf[0] = seq[0] ; write(STDOUT_FILENO,buf,1); 
-  buf[0] = seq[1] ; write(STDOUT_FILENO,buf,1); 
-  buf[0] = seq[2] ; write(STDOUT_FILENO,buf,1); 
+  buf[0] = seq[0] ; // write(STDOUT_FILENO,buf,1); 
+  buf[0] = seq[1] ; // write(STDOUT_FILENO,buf,1); 
+  buf[0] = seq[2] ; // write(STDOUT_FILENO,buf,1); 
   write(1,"\n\r",2);
 
   int testa = ( (seq[0] == '[')); 
@@ -191,51 +185,58 @@ char encode (int count, char* seq)
   return ESC; // this is unusual 
 }
 
-void writeDigit(int digit)
+void writeDigit(int digit,int fildes)
 {
   char buf[20];
-   snprintf(buf,4,"%d",digit);
-   write(STDOUT_FILENO,buf,4);
-   return;
+   snprintf(buf,4,"%d\0",digit);
+   write(fildes,buf,strlen(buf));
 }
 
 int edal(char c, int fetch)
 {
   int fpt = iovars.fptra;
-  free(buff.row);  // free space initialized in init or in this function
-  buff.row = text[fetch].row;buff.size = text[fetch].size;
-  // int insertionPoint = cord.ix; 
+  int insertionPoint = cord.ix; 
 
-  char ClearScreen[]= "\x1b[2J"; write(fpt, ClearScreen,4);
-  write(fpt,buff.row,buff.size); write(fpt,"\n",1);
+  char ClearScreen[]= "\x1b[2J"; 
+  write(fpt, ClearScreen,4);
+  write(fpt,"\r\nat entry \r\n",13);
+  write(fpt,buff.row,buff.size); 
+  write(fpt,"\r\n",2);
+
+  write(fpt,"fetch = ",9);
+  writeDigit(fetch, fpt);
+  write(fpt,"\r\n",2);
 
   int test = (c > 31 && c < 127); // true for printable character
   if (c == ARROW_RIGHT) {cord.ix++ ; return 0;}
   if (!test) return 0;
 
-  int limit = buff.size + 1 ; 
-  char *chng = malloc((limit)*sizeof(char));
-  char *save = chng;
-  char *orig = buff.row;
+  int limit = text[fetch].size + 1 ; 
+  char *new = malloc((limit)*sizeof(char));
+  char *chng = new;
+  char *orig = text[fetch].row;
 
   // "insert %c at position %d\n"
 
-  int no;
+  int no; 
   for (no = 0 ; no < limit; no++)
-    {if (no != cord.ix)  {*chng = *orig; chng++; orig++;}
+    {
+     if (no != cord.ix)  {*chng = *orig; chng++; orig++;}
      else                {*chng = c; chng++;}
     }
 
-  buff.row = save;    text[fetch].row = buff.row;
-  buff.size = limit;  text[fetch].size = buff.size;
+  free(text[fetch].row); 
+  text[fetch].row = new;
+  text[fetch].size = limit;
+  cord.ix++;
 
-  write(fpt,buff.row,buff.size); write(fpt,"\n",1);
+  write(fpt,text[fetch].row,text[fetch].size); write(fpt,"\n\r",2);
 
   char mesy[] = "eal is finished\n"; write(fpt,mesy,strlen(mesy));
   int ignore; read(STDIN_FILENO, &ignore, 1); // pause, wait for input 
-  write(fpt, mesy, strlen(mesy));
 
   return 0;
+
 }
 
 void init(int argc, char** argv)
@@ -245,8 +246,11 @@ void init(int argc, char** argv)
 
     if (argc == 1) return;
 
+    enableRawMode();
+
     char * filename = argv[1];
-    write(STDOUT_FILENO,filename,strlen(argv[1])); write(1,"\n",1);
+    write(STDOUT_FILENO,filename,strlen(filename)); 
+    write(STDOUT_FILENO,"\n\r",2);
 
     display = malloc(     (60)*sizeof(slot));
 
@@ -254,15 +258,20 @@ void init(int argc, char** argv)
     iovars.fptra = open("/dev/pts/18", O_RDWR);
 
     line.count = 0;
-    for (numb = 0 ; numb < 100; numb++) 
+   for (numb = 0 ; numb < 100; numb++) 
     {
-    retval=readAline(); 
-    if (iovars.nread == 0) {break;}
-    lastline = line.count; 
-
+     retval=readAline(); 
+     if (iovars.nread == 0) {break;}
+     lastline = line.count; 
     }
-   
-    cord.ix = 0 ; 
+
+    char mesa[]="lastline = ";
+
+    write(STDOUT_FILENO,mesa,strlen(mesa));
+    writeDigit(lastline,STDOUT_FILENO);
+    write(STDOUT_FILENO,"\n\r",2);
+
+    cord.ix = 0; 
     cord.iy = 0;    /* insertion point, text coordinates */
 
     cord.xmin =  0;
@@ -277,11 +286,11 @@ void init(int argc, char** argv)
     cord.umax = 80;
     cord.vmin = 1;
     cord.vmax = 24;
-    outt = "lastline = "; write(STDOUT_FILENO,outt,strlen(outt)); 
-    writeDigit(lastline);  write(STDOUT_FILENO,"\n",1);
 
     buff.row  = malloc(1*sizeof(char));
     buff.size = 1;
+
+  
 }
 
 int getl(char **qtr)    // getline work-alike
@@ -299,13 +308,13 @@ int getl(char **qtr)    // getline work-alike
   if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));
                         memcpy(ptr,inLine,inLineSize);
                        *qtr = ptr;}
+
   return inLineSize;
 }
 
 int readAline(void)
 {
     line.row = 0; 
-/***line.count (the number of lines read)***/ 
     line.size = getl(&line.row);    
 
     if (line.size == 0) {return line.size;}
@@ -325,57 +334,14 @@ int readAline(void)
 
 void buildScreenBuffer(int star, int stop)
 {
-//    printf("%s","buildScreenBuffer at work\n");
-
-    for (int i=0; i<24; i++) {display[i].size  =   1;
-                              display[i].row   = "~\n";
-                              display[i].count =   0;}
-
-    int dy = 0;
-    display[0].row  = "kilo.c welcomes you";
-    display[0].count = 0;
-    display[0].size = strlen(display[0].row);
-
-    dy = 1; int y = 0;
-    display[dy].row  = text[y].row;
-    display[dy].count = 0;
-    display[dy].size = strlen(display[dy].row);   
-
-    int i;  dy = 9;
-    for (int i = star; i<(stop+1); i++)
-         {dy++ ; display[dy] = text[i];}
-
-    dy = -1 ;
-    for (int i = 0; i< 22; i++) // make the limit 23 later
-         {
-          dy++ ;
-          write(STDOUT_FILENO,display[dy].row,display[dy].size);
-          write(STDOUT_FILENO,"\n",1);
-         }
-
 }
 
 
-int getCursorPosition(int *rows, int *cols) {
-  char buf[32];
-  unsigned int i = 0;
-
-  if (write(STDOUT_FILENO, "\x1b[6n", 4) != 4) return -1;
-
-  while (i < sizeof(buf) - 1) {
-    if (read(STDIN_FILENO, &buf[i], 1) != 1) break;
-    if (buf[i] == 'R') break;
-    i++;
-  }
-  buf[i] = '\0';
-
-  if (buf[0] != '\x1b' || buf[1] != '[') return -1;
-  if (sscanf(&buf[2], "%d;%d", rows, cols) != 2) return -1;
-
-  return 0;
+int getCursorPosition(int *rows, int *cols) 
+{
 }
 
-/* Raw mode: 1960's magic stuff (grumble). */
+/* Raw mode: 1960's magic numbers (grumble). */
 
 void disableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
@@ -400,21 +366,14 @@ void enableRawMode() {
 int main(int argc, char** argv)
 {
 
-  init(argc, argv); enableRawMode();
+  init(argc, argv);
 
   while (1) 
    {
-    printf("calling ReadKey\n");
     char c = ReadKey();
-    printf("calling edal\n");
-    edal(c,3);
-
-//  buildScreenBuffer(5, 10);
-
-    wind(0,79,0,9);
-
-//  int x ; int y; getCursorPosition(&y, &x);
-//  printf("x = %d, y = %d\n",x,y);
+  write(1,text[4].row,text[4].size); write(1,"\n\r",2);
+    edal(c,4);
+  write(1,text[4].row,text[4].size); write(1,"\n\r",2);
 
    }
   return 0;
