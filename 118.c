@@ -376,6 +376,22 @@ void enableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
+void c3a(c) // choose amongst alternative actions
+{
+
+
+/*** add character before ip                ***/
+/*** delete character under ip              ***/
+/*** overwrite character under ip           ***/
+
+/*** insert: toggle insert overwrite        ***/
+/*** home: set ip to home position          ***/
+/*** end: set ip to end position            ***/
+/*** enter: split line                      ***/
+/*** ctrl-k: delete line                    ***/
+/*** back space: decrement ip               ***/
+
+}
 int main(int argc, char** argv)
 {
 
