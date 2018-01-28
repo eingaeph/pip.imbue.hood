@@ -176,6 +176,9 @@ char encode (int count, char* seq)
    
   if (!testa)     return ESC;
 
+  write(STDOUT_FILENO,"seq[1] = ",9); write(STDOUT_FILENO,&seq[1]    ,1);
+  write(STDOUT_FILENO,"\n\r"     ,2);
+
   if (testb) {
      switch(seq[1]) {
         case 'A': return ARROW_UP;
