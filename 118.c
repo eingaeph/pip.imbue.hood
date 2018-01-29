@@ -86,10 +86,10 @@ enum KEY_ACTION
 
 void window(int xmin, int xmax, int ymin, int ymax);
 void die(const char *s);
-char ReadKey(void);
-char encode(int count, char *seq);
+int  ReadKey(void);
+int  encode(int count, char *seq);
 void writeDigit(int digit, int fildes);
-int edal(char c, int fetch);
+int edal(int retval, int fetch);
 void init(int argc, char **argv);
 int getl(char **qtr);
 int readAline(void);
@@ -127,7 +127,7 @@ void die(const char *s) {
   exit(1);
 }
 
-char ReadKey() 
+int ReadKey() 
 {
   char c; int nread;
 
@@ -146,15 +146,15 @@ char ReadKey()
    {if (read(STDIN_FILENO, &seq[n], 1) == 1) {count++;}
     else break;}
 
-  
-  if (count > 1) c = encode(count, seq);
+  int retval;
+  if (count > 1) retval = encode(count, seq);
 
-  return c;
+  return retval;
 }
 
 /*** handle escape sequences. ***/
 
-char encode (int count, char* seq)
+int encode (int count, char* seq)
 {
   write(1,"encode at work  ",16);
   write(1,"count = ",8);
@@ -208,31 +208,23 @@ void writeDigit(int digit,int fildes)
    write(fildes,buf,strlen(buf));
 }
 
-int edal(char c, int fetch)
+int edal(int retval, int fetch)
 {
+  char c = retval;         //retrieve character from 4 byte integer
   int fpt = iovars.fptra;
   int insertionPoint = cord.ix; 
 
+  if (retval == ARROW_RIGHT) {cord.ix++ ; return 0;}
   char ClearScreen[]= "\x1b[2J"; 
   write(fpt, ClearScreen,4);
-  write(fpt,"\r\nat entry \r\n",13);
-  write(fpt,buff.row,buff.size); 
-  write(fpt,"\r\n",2);
-
-  write(fpt,"fetch = ",9);
-  writeDigit(fetch, fpt);
-  write(fpt,"\r\n",2);
 
   int test = (c > 31 && c < 127); // true for printable character
-  if (c == ARROW_RIGHT) {cord.ix++ ; return 0;}
   if (!test) return 0;
 
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
   char *chng = new;
   char *orig = text[fetch].row;
-
-  // "insert %c at position %d\n"
 
   int no; 
   for (no = 0 ; no < limit; no++)
@@ -242,14 +234,9 @@ int edal(char c, int fetch)
     }
 
   free(text[fetch].row); 
-  text[fetch].row = new;
-  text[fetch].size = limit;
-  cord.ix++;
+  text[fetch].row = new; text[fetch].size = limit; cord.ix++;
 
   write(fpt,text[fetch].row,text[fetch].size); write(fpt,"\n\r",2);
-
-  char mesy[] = "eal is finished\n"; write(fpt,mesy,strlen(mesy));
-  int ignore; read(STDIN_FILENO, &ignore, 1); // pause, wait for input 
 
   return 0;
 
@@ -271,7 +258,7 @@ void init(int argc, char** argv)
     display = malloc(     (60)*sizeof(slot));
 
     iovars.fpinp = open(filename,O_RDONLY);
-    iovars.fptra = open("/dev/pts/4", O_RDWR);
+    iovars.fptra = open("/dev/pts/18", O_RDWR);
 
     line.count = 0;
    for (numb = 0 ; numb < 100; numb++) 
@@ -402,9 +389,9 @@ int main(int argc, char** argv)
 
   while (1) 
    {
-    char c = ReadKey();
+    int retval = ReadKey();
 
-    edal(c,3);
+    edal(retval,3);
 
     window(0,79,0,6);
 
