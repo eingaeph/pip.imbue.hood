@@ -166,10 +166,10 @@ int ReadKey()
 
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
   if (nread == -1 && errno != EAGAIN) die("terminated in readkey");
-  else  write(STDIN_FILENO,"*",1); 
+  else ; // write(STDIN_FILENO,"*",1); 
   write(STDOUT_FILENO,"\n\r",2);
  
-  if (c == 17) exit(0);  // CTRL-q is 17 in decimal
+  if (c == (char) CTRL_Q) exit(0);  // CTRL-q is 17 in decimal
 
   if (c != 27) return c; 
 
@@ -247,7 +247,26 @@ void enter(void)
 
 void adal(void)    // add a line
 {
+      // state: ix text insertion point coordinate
+      // state: iy text insertion point coordinate
+      // state: ENTER
+      // state: iy == iymax
+      // state: lastline
 
+      // action: malloc new line firs
+      // action: malloc new line seco
+      // populate new line firs
+      // populate new line seco
+   
+      // calculate: iy_firs
+      // calculate: iy_seco
+      
+      // malloc new with space for an extra line 
+      // populate new
+
+      // free text
+      // malloc text with space for extra line
+ 
     slot *new  = (slot *)malloc(10*sizeof(slot));
     slot *old  = (slot *)malloc(10*sizeof(slot));
 
@@ -458,7 +477,6 @@ int main(int argc, char** argv)
     edal(retval, cord.iy);
 
     window(0,79,0,6);
-
    }
   return 0;
 }
