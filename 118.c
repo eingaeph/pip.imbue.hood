@@ -67,8 +67,10 @@ enum KEY_ACTION
         ESC = 27,           /* Escape */
         BACKSPACE =  127,   /* Backspace */
 
-        /* The following are just soft codes, not really reported by the
-         * terminal directly. */
+        /*** 
+           The following are returned from the keyboard as escape squences
+           not as single (ascii) characters
+        ***/
 
         ARROW_LEFT = 1000,
         ARROW_RIGHT,
@@ -82,6 +84,36 @@ enum KEY_ACTION
         INSERT_KEY
 };
 
+
+/*** VT100 Display Control Escape Sequences ***/
+
+char ClearScreen[]=                          "\x1b[2J";
+char CursorToTopLeft[] =                     "\x1b[H";
+char TildeReturnNewline[] =                  "~\r\n";
+
+char ReturnNewline[] =                       "\r\n";
+
+/*
+two sequences
+C is cursor foward, but don't exit the screen
+B is cursor down, but don't exit the screen
+999 is a large enough maximum number of steps
+*/
+
+char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
+char GetCursorPosition[] =                  "\x1b[6n";
+
+/*
+the terminal reply to GetCursorPosition   "24;80R" or similar
+*/
+
+char CursorHide[]=                          "\x1b[?25l";
+char CursorDisplay[]=                       "\x1b[?25h";
+char ClearCurrentLine[]=                    "\x1b[K";
+char CursorToCenter[]=                      "\x1b[12;30f";
+
+//Force Cursor Position	<ESC>[{ROW};{COLUMN}f
+
 /*** function declarations ***/
 
 void window(int xmin, int xmax, int ymin, int ymax);
@@ -89,12 +121,13 @@ void die(const char *s);
 int  ReadKey(void);
 int  encode(int count, char *seq);
 void writeDigit(int digit, int fildes);
-int edal(int retval, int fetch);
+int  edal(int retval, int fetch);
 void init(int argc, char **argv);
-int getl(char **qtr);
-int readAline(void);
+int  getl(char **qtr);
+int  readAline(void);
+void enter(void);
 void buildScreenBuffer(int star, int stop);
-int getCursorPosition(int *rows, int *cols);
+int  getCursorPosition(int *rows, int *cols);
 void disableRawMode(void);
 void enableRawMode(void);
 int main(int argc, char **argv);
@@ -208,18 +241,46 @@ void writeDigit(int digit,int fildes)
    write(fildes,buf,strlen(buf));
 }
 
+void enter(void)
+{
+}
+
+void adal(void)    // add a line
+{
+
+    slot *new  = (slot *)malloc(10*sizeof(slot));
+    slot *old  = (slot *)malloc(10*sizeof(slot));
+
+    int j;
+
+    slot newline;
+    char *ptr = "Hello world!";
+    newline.row = ptr;
+    newline.size = strlen(ptr);
+
+    for (j = 0; j < 10; j++) 
+      {if (j != 3) {new[j] = text[j];}
+       else        {new[j] = newline;}
+      }
+}
+
 int edal(int retval, int fetch)
 {
-  char c = retval;         //retrieve character from 4 byte integer
+  char c = retval;         // retrieve a 1 byte character 
+                           // from a 4 byte integer
+
   int fpt = iovars.fptra;
   int insertionPoint = cord.ix; 
 
-  if (retval == ARROW_RIGHT) {cord.ix++ ; return 0;}
-  char ClearScreen[]= "\x1b[2J"; 
-  write(fpt, ClearScreen,4);
+  if (retval == BACKSPACE  & cord.ix != 0) {cord.ix-- ; return 0;}
+  if (retval == ARROW_LEFT & cord.ix != 0) {cord.ix-- ; return 0;}
+  if (retval == ARROW_RIGHT)               {cord.ix++ ; return 0;}
+  if (retval == ENTER)                     {enter();    return 0;}
 
   int test = (c > 31 && c < 127); // true for printable character
   if (!test) return 0;
+ 
+  write(fpt, ClearScreen,strlen(ClearScreen));
 
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
@@ -282,8 +343,8 @@ void init(int argc, char** argv)
     cord.ymin =  0;
     cord.ymax = 23;   
 
-    cord.cu = 0;    /*screen coordinates */
-    cord.cv = 0;
+    cord.cu = 1;    /*screen coordinates */
+    cord.cv = 1;
             
     cord.umin = 1;
     cord.umax = 80;
@@ -358,15 +419,15 @@ void enableRawMode() {
   struct termios raw = orig_termios;
   raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
   raw.c_oflag &= ~(OPOST);
-  raw.c_cflag |= (CS8);
+  raw.c_cflag |=  (CS8);
   raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-  raw.c_cc[VMIN] = 0;
+  raw.c_cc[VMIN]  = 0;
   raw.c_cc[VTIME] = 1;
 
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
-void c3a(c) // choose amongst alternative actions
+void c3a(int retval) // choose amongst alternative actions
 {
 
 
@@ -382,6 +443,7 @@ void c3a(c) // choose amongst alternative actions
 /*** back space: decrement ip               ***/
 
 }
+
 int main(int argc, char** argv)
 {
 
@@ -391,7 +453,9 @@ int main(int argc, char** argv)
    {
     int retval = ReadKey();
 
-    edal(retval,3);
+    cord.iy  = 4;
+
+    edal(retval, cord.iy);
 
     window(0,79,0,6);
 
