@@ -1,11 +1,8 @@
 #! /usr/bin/tcc -run
 
 /***
-   init readAline
-   keypress wait intercept
-   keypress code translater
-   getCursorPosition
-   buildScreenBuffer
+
+   keypress wait intercept translate
 
 ***/
 
@@ -20,6 +17,10 @@
 #include <string.h>
 #include <sys/stat.h> //open,close per Kerrisk page 72
 #include <fcntl.h>    //open,close 
+
+/*** macro defines ***/
+
+#define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 
 /*** global symbols ***/
 
@@ -47,29 +48,33 @@ struct
 
     int umin,umax,vmin,vmax;   /* window edges in screen coordinates */
 
-} cord;
+    int lastline;              /* size of text */
 
-/*** Numeric Codes for Escape Sequences ***/
+} global;
+
+ 
+/*** Numeric Codes for Escape Sequences, CTRL+ Keys, Others ***/
 
 enum KEY_ACTION
 {
-        KEY_NULL = 0,       /* NULL */
+        KEY_NULL = 0,       /* NULL   */
         CTRL_C = 3,         /* Ctrl-c */
         CTRL_D = 4,         /* Ctrl-d */
         CTRL_F = 6,         /* Ctrl-f */
         CTRL_H = 8,         /* Ctrl-h */
-        TAB = 9,            /* Tab */
+        TAB    = 9,         /* Tab    */
+        CTRL_K = 11,        /* Ctrl+k */
         CTRL_L = 12,        /* Ctrl+l */
-        ENTER = 13,         /* Enter */
+        ENTER  = 13,        /* Enter  */
         CTRL_Q = 17,        /* Ctrl-q */
         CTRL_S = 19,        /* Ctrl-s */
         CTRL_U = 21,        /* Ctrl-u */
-        ESC = 27,           /* Escape */
+        ESC    = 27,        /* Escape */
         BACKSPACE =  127,   /* Backspace */
 
         /*** 
-           The following are returned from the keyboard as escape squences
-           not as single (ascii) characters
+The following are returned from the keyboard as escape squences 
+not as single (ascii encoded) characters
         ***/
 
         ARROW_LEFT = 1000,
@@ -92,6 +97,8 @@ char CursorToTopLeft[] =                     "\x1b[H";
 char TildeReturnNewline[] =                  "~\r\n";
 
 char ReturnNewline[] =                       "\r\n";
+char CursorDown[] =                          "\x1b[1B"; 
+char CursorForward[] =                       "\x1b[1C";
 
 /*
 two sequences
@@ -116,6 +123,10 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+int  inAline(int ix, int iy);
+int  inWindow(int ix, int iy);
+void delAline(void);
+void setWindow(void);
 void window(int xmin, int xmax, int ymin, int ymax);
 void die(const char *s);
 int  ReadKey(void);
@@ -130,22 +141,7 @@ void buildScreenBuffer(int star, int stop);
 int  getCursorPosition(int *rows, int *cols);
 void disableRawMode(void);
 void enableRawMode(void);
-int main(int argc, char **argv);
+int  main(int argc, char **argv);
 
 /*** function definitions ***/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

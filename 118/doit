@@ -1,0 +1,4 @@
+rm deck.c
+cat 118.h *c > deck.c
+chmod +x deck.c
+./deck.c short.dat
