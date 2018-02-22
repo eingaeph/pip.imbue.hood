@@ -32,12 +32,12 @@ void setWindow(void)
                      ymax = iy;    ymin = ymax - ysize;
                      if (ymin < 0) ymin = 0; 
                     }
-    writeToScreen("ix = ");writeDigit(ix,1);writeToScreen("\n\r");
-    writeToScreen("iy = ");writeDigit(iy,1);writeToScreen("\n\r");
-    writeToScreen("ymax = ");writeDigit(ymax,1);writeToScreen("\n\r");
-    writeToScreen("ymin = ");writeDigit(ymin,1);writeToScreen("\n\r");
-    writeToScreen("xmax = ");writeDigit(xmax,1);writeToScreen("\n\r");
-    writeToScreen("xmin = ");writeDigit(xmin,1);writeToScreen("\n\r");
+//    writeToScreen("ix = ");writeDigit(ix,1);writeToScreen("\n\r");
+//    writeToScreen("iy = ");writeDigit(iy,1);writeToScreen("\n\r");
+//    writeToScreen("ymax = ");writeDigit(ymax,1);writeToScreen("\n\r");
+//    writeToScreen("ymin = ");writeDigit(ymin,1);writeToScreen("\n\r");
+//    writeToScreen("xmax = ");writeDigit(xmax,1);writeToScreen("\n\r");
+//    writeToScreen("xmin = ");writeDigit(xmin,1);writeToScreen("\n\r");
 
     global.xmin = xmin;
     global.xmax = xmax;

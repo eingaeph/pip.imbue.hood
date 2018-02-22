@@ -175,7 +175,7 @@ void buildScreenBuffer(int star, int stop)
 
 
 
-// chin  character insert, printiable
+// chin  character insert, printable
 
 void chin(char c, int fetch)
 {

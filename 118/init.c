@@ -36,15 +36,15 @@ void init(int argc, char** argv)
     global.xmin =  0;
     global.xmax = 79;
     global.ymin =  0;
-    if (lastline < 24) global.ymax = lastline - 1;
+    if (lastline < 24) global.ymax = lastline;
     else               global.ymax = 23; 
 
     global.cu = 0;    /*screen coordinates */
     global.cv = 0;
             
-    global.umin = 1;
+    global.umin = 0;
     global.umax = 80;
-    global.vmin = 1;
+    global.vmin = 0;
     global.vmax = 24;
 
     global.lastline = lastline; 
