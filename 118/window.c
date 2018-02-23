@@ -7,6 +7,10 @@ void window(int xmin, int xmax, int ymin, int ymax)
 
     int y; int count = 0;
 
+    writeToScreen("entering window\n\r");
+
+/*** draw the window ***/
+
     for (y = ymin; y <= ymax; y++) 
   {
     if (y > global.lastline) break;
@@ -21,6 +25,8 @@ void window(int xmin, int xmax, int ymin, int ymax)
     }
     write(STDOUT_FILENO,"\n\r",2);
   }
+
+/*** place the cursor ***/
 
     writeToScreen(CursorToTopLeft);
     int no; 

@@ -21,13 +21,19 @@
 
 /*** macro defines ***/
 
-#define possibleIxIy ix = global.ix;          \
-                     iy = global.iy;          \
-                     assert(ix >= 0) ;        \
-                     assert(iy >= 0);         \
-                     assert(iy <= lastline);
+#define possibleIxIy    assert(global.ix >= 0);                 \
+                        assert(global.iy >= 0);                 \
+                        assert(global.iy <= global.lastline);
+
+#define possibleLine    assert(global.iy <= global.lastline);   \
+                        assert(global.iy >= 0);                 \
+                        assert(global.ix >= 0);                 \
+                        assert(global.ix < text[global.iy].size);
  
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
+
+#define chekfree(x)     assert(x != NULL);                      \
+                        free(x);
 
 /*** global symbols ***/
 
@@ -130,8 +136,6 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
-int  inAline(int ix, int iy);
-int  inWindow(int ix, int iy);
 void delAline(void);
 void setWindow(void);
 void window(int xmin, int xmax, int ymin, int ymax);

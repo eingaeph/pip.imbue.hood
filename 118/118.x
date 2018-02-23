@@ -21,13 +21,19 @@
 
 /*** macro defines ***/
 
-#define possibleIxIy ix = global.ix;          \
-                     iy = global.iy;          \
-                     assert(ix >= 0) ;        \
-                     assert(iy >= 0);         \
-                     assert(iy <= lastline);
+#define possibleIxIy    assert(global.ix >= 0);                 \
+                        assert(global.iy >= 0);                 \
+                        assert(global.iy <= global.lastline);
+
+#define possibleLine    assert(global.iy <= global.lastline);   \
+                        assert(global.iy >= 0);                 \
+                        assert(global.ix >= 0);                 \
+                        assert(global.ix < text[global.iy].size);
  
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
+
+#define chekfree(x)     assert(x != NULL);                      \
+                        free(x);
 
 /*** global symbols ***/
 
@@ -130,8 +136,6 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
-int  inAline(int ix, int iy);
-int  inWindow(int ix, int iy);
 void delAline(void);
 void setWindow(void);
 void window(int xmin, int xmax, int ymin, int ymax);
@@ -239,7 +243,7 @@ void delAline(void)
  
 }
 
-// chin  character insert, printiable
+// delete key action
 
 void del_key(int fetch)
 {
@@ -259,10 +263,7 @@ void del_key(int fetch)
   free(text[fetch].row); 
   text[fetch].row = new; text[fetch].size = limit; 
 
-  int testa = inAline(global.ix,global.iy);
-  int testb = inWindow(global.ix,global.iy);
-
-  if (!(testa && testb)) die("quitting in del_key");
+  possibleLine;
 
   return;
 
@@ -392,8 +393,12 @@ void enter(void)
 
 /*** build firs and seco ***/
 
-  char *firs = malloc(lena*sizeof(char)); //string firs
-  char *seco = malloc(lenb*sizeof(char)); //string seco
+  char *firs;
+  if (lena > 0) firs = malloc(lena*sizeof(char)); //string firs
+  else          firs = NULL;                      //zero length
+  char *seco; 
+  if (lenb > 0) seco = malloc(lenb*sizeof(char)); //string seco
+  else          seco = NULL;                      //zero length
 
   char *chng = firs; // populate firs length lena 
   char *orig = text[iy].row; 
@@ -420,7 +425,7 @@ void enter(void)
     }
 
 
-  free(text[iy].row);
+  assert(text[iy].row != NULL); free(text[iy].row); 
 
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
@@ -428,8 +433,7 @@ void enter(void)
   text = realloc(text,lastline*sizeof(slot));
   for (j = 0; j <= lastline; j++) text[j] = new[j];
 
-  free(new);
-
+  assert(new != NULL); free(new);
 
 }
 int getCursorPosition(int *rows, int *cols) 
@@ -451,24 +455,11 @@ int getl(char **qtr)    // getline work-alike
   if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));
                         memcpy(ptr,inLine,inLineSize);
                        *qtr = ptr;}
+  else    {ptr = NULL; *qtr = ptr;}
 
   return inLineSize;
 }
 
-
-
-int inAline(int ix, int iy)    /* test ix iy ok, in a line    */
-{
-  
-    int lastline = global.lastline;  
-    int size = text[iy].size;
-
-    int testa = (iy <= lastline) && (iy >= 0); 
-    int testb = (ix <= size )    && (ix >= 0);
-  
-    return testa && testb;     /* returns true in a line      */
-
-}
 
 
 void init(int argc, char** argv)
@@ -528,22 +519,6 @@ void init(int argc, char** argv)
 }
 
 
-
-
-int inWindow(int ix, int iy) 
-{
-  
-    int xmin = global.xmin;    /* window edges in text coordinates */
-    int ymin = global.ymin;
-    int xmax = global.xmax;
-    int ymax = global.ymax;
-
-    int testa = (ix >= xmin) && (ix <= xmax); 
-    int testb = (iy >= ymin) && (iy <= ymax);
-  
-    return testa && testb;     /* returns true inside the window   */
-
-}
 
 
 
@@ -620,54 +595,32 @@ int ReadKey()
 void setWindow(void)
 {
 
-    int ix,iy;                 /* insertion point, text coordinates */
-    int lastline;              /* last line (max iy) in text            */
+//    int ix,iy;                 /* insertion point, text coordinates */
+//    int lastline;              /* last line (max iy) in text            */
 
-    int xmin,xmax,ymin,ymax;   /* window edges in text coordinates      */ 
-    int umin,umax,vmin,vmax;   /* window edges in screen coordinates    */
+//    int xmin,xmax,ymin,ymax;   /* window edges in text coordinates      */ 
+//    int umin,umax,vmin,vmax;   /* window edges in screen coordinates    */
 
-    int cu,cv;                 /* cursor position in screen coordinates */
+//    int cu,cv;                 /* cursor position in screen coordinates */
 
-    lastline = global.lastline;
-    ix = global.ix;
-    iy = global.iy;
     possibleIxIy;
 
-    xmin = global.xmin;
-    xmax = global.xmax;
-    ymin = global.ymin;
-    ymax = global.ymax;
+    int ysize; if (global.lastline < 20) ysize = global.lastline;
+               else                      ysize = 20;
 
-    int ysize; if (lastline < 20) ysize = lastline;
-               else               ysize = 20;
-
-    if (ix > xmax)  {xmax = ix; xmin = xmax - 79;}
-    if (ix < xmin)  {xmin = ix; xmax = xmin + 79;}
-    if (iy > ymax)  {
-                     ymax = iy;    ymin = ymax - ysize;
-                     if (ymin < 0) ymin = 0; 
-                    }
-//    writeToScreen("ix = ");writeDigit(ix,1);writeToScreen("\n\r");
-//    writeToScreen("iy = ");writeDigit(iy,1);writeToScreen("\n\r");
-//    writeToScreen("ymax = ");writeDigit(ymax,1);writeToScreen("\n\r");
-//    writeToScreen("ymin = ");writeDigit(ymin,1);writeToScreen("\n\r");
-//    writeToScreen("xmax = ");writeDigit(xmax,1);writeToScreen("\n\r");
-//    writeToScreen("xmin = ");writeDigit(xmin,1);writeToScreen("\n\r");
-
-    global.xmin = xmin;
-    global.xmax = xmax;
-    global.ymin = ymin;
-    global.ymax = ymax;
+    if (global.ix > global.xmax)  {global.xmax = global.ix; global.xmin = global.xmax - 79;}
+    if (global.ix < global.xmin)  {global.xmin = global.ix; global.xmax = global.xmin + 79;}
+    if (global.iy > global.ymax)  
+                  {
+                       global.ymax = global.iy;    
+                       global.ymin = global.ymax - ysize;
+                   if (global.ymin < 0) global.ymin = 0; 
+                  }
 
     global.cu = global.ix - global.xmin;
     global.cv = global.iy - global.ymin;
 
-
-    int testa = inAline(global.ix,global.iy);
-    int testb = inWindow(global.ix,global.iy);
-
-    if (!testa) die("testa:exiting in setWindow.c");
-    if (!testb) die("testb:exiting in setWindow.c");
+    possibleLine;
 
 }
 void window(int xmin, int xmax, int ymin, int ymax)
@@ -678,6 +631,10 @@ void window(int xmin, int xmax, int ymin, int ymax)
     writeToScreen(CursorToTopLeft);
 
     int y; int count = 0;
+
+    writeToScreen("entering window\n\r");
+
+/*** draw the window ***/
 
     for (y = ymin; y <= ymax; y++) 
   {
@@ -693,6 +650,8 @@ void window(int xmin, int xmax, int ymin, int ymax)
     }
     write(STDOUT_FILENO,"\n\r",2);
   }
+
+/*** place the cursor ***/
 
     writeToScreen(CursorToTopLeft);
     int no; 

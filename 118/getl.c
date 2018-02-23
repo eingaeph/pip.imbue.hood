@@ -13,6 +13,7 @@ int getl(char **qtr)    // getline work-alike
   if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));
                         memcpy(ptr,inLine,inLineSize);
                        *qtr = ptr;}
+  else    {ptr = NULL; *qtr = ptr;}
 
   return inLineSize;
 }

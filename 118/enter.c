@@ -9,8 +9,12 @@ void enter(void)
 
 /*** build firs and seco ***/
 
-  char *firs = malloc(lena*sizeof(char)); //string firs
-  char *seco = malloc(lenb*sizeof(char)); //string seco
+  char *firs;
+  if (lena > 0) firs = malloc(lena*sizeof(char)); //string firs
+  else          firs = NULL;                      //zero length
+  char *seco; 
+  if (lenb > 0) seco = malloc(lenb*sizeof(char)); //string seco
+  else          seco = NULL;                      //zero length
 
   char *chng = firs; // populate firs length lena 
   char *orig = text[iy].row; 
@@ -37,7 +41,7 @@ void enter(void)
     }
 
 
-  free(text[iy].row);
+  assert(text[iy].row != NULL); free(text[iy].row); 
 
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
@@ -45,7 +49,6 @@ void enter(void)
   text = realloc(text,lastline*sizeof(slot));
   for (j = 0; j <= lastline; j++) text[j] = new[j];
 
-  free(new);
-
+  assert(new != NULL); free(new);
 
 }

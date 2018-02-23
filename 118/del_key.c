@@ -1,5 +1,5 @@
 
-// chin  character insert, printiable
+// delete key action
 
 void del_key(int fetch)
 {
@@ -19,10 +19,7 @@ void del_key(int fetch)
   free(text[fetch].row); 
   text[fetch].row = new; text[fetch].size = limit; 
 
-  int testa = inAline(global.ix,global.iy);
-  int testb = inWindow(global.ix,global.iy);
-
-  if (!(testa && testb)) die("quitting in del_key");
+  possibleLine;
 
   return;
 
