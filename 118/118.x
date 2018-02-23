@@ -8,6 +8,7 @@
 
 /*** includes ***/
 
+#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -20,6 +21,12 @@
 
 /*** macro defines ***/
 
+#define possibleIxIy ix = global.ix;          \
+                     iy = global.iy;          \
+                     assert(ix >= 0) ;        \
+                     assert(iy >= 0);         \
+                     assert(iy <= lastline);
+ 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 
 /*** global symbols ***/
@@ -501,15 +508,15 @@ void init(int argc, char** argv)
     global.xmin =  0;
     global.xmax = 79;
     global.ymin =  0;
-    if (lastline < 24) global.ymax = lastline - 1;
+    if (lastline < 24) global.ymax = lastline;
     else               global.ymax = 23; 
 
     global.cu = 0;    /*screen coordinates */
     global.cv = 0;
             
-    global.umin = 1;
+    global.umin = 0;
     global.umax = 80;
-    global.vmin = 1;
+    global.vmin = 0;
     global.vmax = 24;
 
     global.lastline = lastline; 
@@ -552,16 +559,7 @@ int main(int argc, char** argv)
 
     edal(retval, global.iy);
 
-   writeToScreen("x:global.ix = ");writeDigit(global.ix,1); writeToScreen("\n\r");
-   writeToScreen("x:global.iy = ");writeDigit(global.iy,1); writeToScreen("\n\r");
-
     setWindow();
-
-   writeToScreen("x:global.xmin = ");writeDigit(global.xmin,1); writeToScreen("\n\r");
-   writeToScreen("x:global.ymin = ");writeDigit(global.ymin,1); writeToScreen("\n\r");
-
-   writeToScreen("x:global.xmax = ");writeDigit(global.xmax,1); writeToScreen("\n\r");
-   writeToScreen("x:global.ymax = ");writeDigit(global.ymax,1); writeToScreen("\n\r");
 
     window(global.xmin,global.xmax,
            global.ymin,global.ymax);
@@ -623,16 +621,17 @@ void setWindow(void)
 {
 
     int ix,iy;                 /* insertion point, text coordinates */
+    int lastline;              /* last line (max iy) in text            */
 
     int xmin,xmax,ymin,ymax;   /* window edges in text coordinates      */ 
     int umin,umax,vmin,vmax;   /* window edges in screen coordinates    */
 
-    int lastline;              /* last line (max iy) in text            */
-
     int cu,cv;                 /* cursor position in screen coordinates */
 
+    lastline = global.lastline;
     ix = global.ix;
     iy = global.iy;
+    possibleIxIy;
 
     xmin = global.xmin;
     xmax = global.xmax;
@@ -648,12 +647,12 @@ void setWindow(void)
                      ymax = iy;    ymin = ymax - ysize;
                      if (ymin < 0) ymin = 0; 
                     }
-    writeToScreen("ix = ");writeDigit(ix,1);writeToScreen("\n\r");
-    writeToScreen("iy = ");writeDigit(iy,1);writeToScreen("\n\r");
-    writeToScreen("ymax = ");writeDigit(ymax,1);writeToScreen("\n\r");
-    writeToScreen("ymin = ");writeDigit(ymin,1);writeToScreen("\n\r");
-    writeToScreen("xmax = ");writeDigit(xmax,1);writeToScreen("\n\r");
-    writeToScreen("xmin = ");writeDigit(xmin,1);writeToScreen("\n\r");
+//    writeToScreen("ix = ");writeDigit(ix,1);writeToScreen("\n\r");
+//    writeToScreen("iy = ");writeDigit(iy,1);writeToScreen("\n\r");
+//    writeToScreen("ymax = ");writeDigit(ymax,1);writeToScreen("\n\r");
+//    writeToScreen("ymin = ");writeDigit(ymin,1);writeToScreen("\n\r");
+//    writeToScreen("xmax = ");writeDigit(xmax,1);writeToScreen("\n\r");
+//    writeToScreen("xmin = ");writeDigit(xmin,1);writeToScreen("\n\r");
 
     global.xmin = xmin;
     global.xmax = xmax;

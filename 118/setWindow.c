@@ -7,16 +7,17 @@ void setWindow(void)
 {
 
     int ix,iy;                 /* insertion point, text coordinates */
+    int lastline;              /* last line (max iy) in text            */
 
     int xmin,xmax,ymin,ymax;   /* window edges in text coordinates      */ 
     int umin,umax,vmin,vmax;   /* window edges in screen coordinates    */
 
-    int lastline;              /* last line (max iy) in text            */
-
     int cu,cv;                 /* cursor position in screen coordinates */
 
+    lastline = global.lastline;
     ix = global.ix;
     iy = global.iy;
+    possibleIxIy;
 
     xmin = global.xmin;
     xmax = global.xmax;

@@ -8,6 +8,7 @@
 
 /*** includes ***/
 
+#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -20,6 +21,12 @@
 
 /*** macro defines ***/
 
+#define possibleIxIy ix = global.ix;          \
+                     iy = global.iy;          \
+                     assert(ix >= 0) ;        \
+                     assert(iy >= 0);         \
+                     assert(iy <= lastline);
+ 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 
 /*** global symbols ***/
