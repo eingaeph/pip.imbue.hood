@@ -46,7 +46,7 @@ void enter(void)
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
 
-  text = realloc(text,lastline*sizeof(slot));
+  text = realloc(text,(lastline+1)*sizeof(slot));
   for (j = 0; j <= lastline; j++) text[j] = new[j];
 
   assert(new != NULL); free(new);
