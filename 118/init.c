@@ -51,7 +51,6 @@ void init(int argc, char** argv)
 
     buff.row  = malloc(1*sizeof(char));
     buff.size = 1;
-
   
 }
 

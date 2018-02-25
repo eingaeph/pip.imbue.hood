@@ -28,8 +28,10 @@
 #define possibleLine    assert(global.iy <= global.lastline);   \
                         assert(global.iy >= 0);                 \
                         assert(global.ix >= 0);                 \
-                        assert(global.ix < text[global.iy].size);
- 
+                        assert(                                 \
+                              (global.ix < text[global.iy].size)\
+                               ||                               \
+                              (global.ix == 0 ));
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 
 #define chekfree(x)     assert(x != NULL);                      \

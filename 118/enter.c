@@ -41,7 +41,7 @@ void enter(void)
     }
 
 
-  assert(text[iy].row != NULL); free(text[iy].row); 
+  if(text[iy].row != NULL); free(text[iy].row); 
 
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
@@ -49,6 +49,6 @@ void enter(void)
   text = realloc(text,(lastline+1)*sizeof(slot));
   for (j = 0; j <= lastline; j++) text[j] = new[j];
 
-  assert(new != NULL); free(new);
+  if (new != NULL); free(new);
 
 }

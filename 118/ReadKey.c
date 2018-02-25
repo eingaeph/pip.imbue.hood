@@ -20,6 +20,7 @@ int ReadKey()
   int retval;
   if (count > 1) retval = encode(count, seq);
 
+
   return retval;
 }
 

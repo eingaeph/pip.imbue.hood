@@ -8,6 +8,7 @@ int edal(int retval, int fetch)
   int iy   = global.iy;
   int ymax = global.ymax;   // previous values of xmax,etc. 
 
+  assert(iy == fetch);
 
   int test = (retval > 31 && retval < 127); // true for printable character
 
@@ -15,7 +16,7 @@ int edal(int retval, int fetch)
   if (retval == BACKSPACE  & ix != 0)   {global.ix-- ;  return 0;}
   if (retval == ARROW_LEFT & ix != 0)   {global.ix-- ;  return 0;}
   if (retval == ARROW_RIGHT)            {global.ix++ ;  return 0;}
-  if (retval == ARROW_UP   & iy != 0)   {global.iy-- ;  return 0;}
+  if (retval == ARROW_UP   & iy != 0)   {arrow_up();    return 0;}
   if (retval == ARROW_DOWN )            {arrow_down();  return 0;}
   if (retval == ENTER)                  {enter();       return 0;}
   if (retval == CTRL_K)                 {delAline();    return 0;}

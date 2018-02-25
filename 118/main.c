@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 
     window(global.xmin,global.xmax,
            global.ymin,global.ymax);
+  
    }
 
   return 0; // this statement is never reached

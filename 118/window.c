@@ -7,8 +7,6 @@ void window(int xmin, int xmax, int ymin, int ymax)
 
     int y; int count = 0;
 
-    writeToScreen("entering window\n\r");
-
 /*** draw the window ***/
 
     for (y = ymin; y <= ymax; y++) 

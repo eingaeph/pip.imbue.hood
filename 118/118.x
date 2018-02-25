@@ -28,8 +28,10 @@
 #define possibleLine    assert(global.iy <= global.lastline);   \
                         assert(global.iy >= 0);                 \
                         assert(global.ix >= 0);                 \
-                        assert(global.ix < text[global.iy].size);
- 
+                        assert(                                 \
+                              (global.ix < text[global.iy].size)\
+                               ||                               \
+                              (global.ix == 0 ));
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 
 #define chekfree(x)     assert(x != NULL);                      \
@@ -166,15 +168,48 @@ int arrow_down(void)
   int ymax = global.ymax;
   int lastline = global.lastline;
 
-  iy++; if(iy > lastline) iy = lastline;
+  iy++; if(iy > lastline ) iy = lastline;
 
   int size = text[iy].size;
   if (size < ix + 1 )  ix = size - 1;
+  if (size = 0) ix = 0;
 
 //store the insertion point 
 
   global.ix   = ix;
   global.iy   = iy;
+
+  return 0;
+
+}
+
+
+
+int arrow_up(void)
+{
+
+  int iy = global.iy; 
+  int ix = global.ix;
+  int ymax = global.ymax;
+  int lastline = global.lastline;
+
+
+  writeToScreen("arow iy =  ");writeDigit(global.iy,1);writeToScreen("       kkk\n\r");
+  writeToScreen("arow ix =  ");writeDigit(global.ix,1);writeToScreen("       kkk\n\r");
+
+  iy--; if(iy < 0 ) iy = 0;
+
+  int size = text[iy].size;
+  if (size < ix + 1 )  ix = size - 1;
+  if (ix < 0 ) ix = 0;
+
+//store the insertion point 
+
+  global.ix   = ix;
+  global.iy   = iy;
+
+  writeToScreen("arow iy =  ");writeDigit(global.iy,1);writeToScreen("       lll\n\r");
+  writeToScreen("arow ix =  ");writeDigit(global.ix,1);writeToScreen("       lll\n\r");
 
   return 0;
 
@@ -190,7 +225,7 @@ void buildScreenBuffer(int star, int stop)
 
 void chin(char c, int fetch)
 {
-
+  assert(global.iy == fetch);
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
   char *chng = new;
@@ -202,9 +237,14 @@ void chin(char c, int fetch)
      if (no != global.ix)  {*chng = *orig; chng++; orig++;}
      else                  {*chng = c; chng++;}
     }
+  
+  assert((text[fetch].row != NULL) || (text[fetch].size == 0));
+  if (text[fetch].row != NULL) free(text[fetch].row); 
+  text[fetch].row = new; 
+  text[fetch].size = limit; 
+  global.ix++; if(limit == 1) global.ix = 0;
 
-  free(text[fetch].row); 
-  text[fetch].row = new; text[fetch].size = limit; global.ix++;
+  possibleLine;
 
   return;
 
@@ -249,7 +289,10 @@ void del_key(int fetch)
 {
 
   int limit = text[fetch].size - 1 ; 
-  char *new = malloc((limit)*sizeof(char));
+  char *new;
+  if (limit > 0) new = malloc((limit)*sizeof(char));
+  else           new = NULL;
+
   char *chng = new;
   char *orig = text[fetch].row;
 
@@ -260,8 +303,11 @@ void del_key(int fetch)
      else                  { orig++ ;} // skipping
     }
 
-  free(text[fetch].row); 
+  if (text[fetch].row != NULL); free(text[fetch].row); 
   text[fetch].row = new; text[fetch].size = limit; 
+
+  if (global.ix >= limit) global.ix = limit - 1;
+  if (global.ix <= 0)     global.ix = 0;
 
   possibleLine;
 
@@ -293,6 +339,7 @@ int edal(int retval, int fetch)
   int iy   = global.iy;
   int ymax = global.ymax;   // previous values of xmax,etc. 
 
+  assert(iy == fetch);
 
   int test = (retval > 31 && retval < 127); // true for printable character
 
@@ -300,7 +347,7 @@ int edal(int retval, int fetch)
   if (retval == BACKSPACE  & ix != 0)   {global.ix-- ;  return 0;}
   if (retval == ARROW_LEFT & ix != 0)   {global.ix-- ;  return 0;}
   if (retval == ARROW_RIGHT)            {global.ix++ ;  return 0;}
-  if (retval == ARROW_UP   & iy != 0)   {global.iy-- ;  return 0;}
+  if (retval == ARROW_UP   & iy != 0)   {arrow_up();    return 0;}
   if (retval == ARROW_DOWN )            {arrow_down();  return 0;}
   if (retval == ENTER)                  {enter();       return 0;}
   if (retval == CTRL_K)                 {delAline();    return 0;}
@@ -425,15 +472,15 @@ void enter(void)
     }
 
 
-  assert(text[iy].row != NULL); free(text[iy].row); 
+  if(text[iy].row != NULL); free(text[iy].row); 
 
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
 
-  text = realloc(text,lastline*sizeof(slot));
+  text = realloc(text,(lastline+1)*sizeof(slot));
   for (j = 0; j <= lastline; j++) text[j] = new[j];
 
-  assert(new != NULL); free(new);
+  if (new != NULL); free(new);
 
 }
 int getCursorPosition(int *rows, int *cols) 
@@ -460,6 +507,20 @@ int getl(char **qtr)    // getline work-alike
   return inLineSize;
 }
 
+
+
+int inAline(int ix, int iy)    /* test ix iy ok, in a line    */
+{
+  
+    int lastline = global.lastline;  
+    int size = text[iy].size;
+
+    int testa = (iy <= lastline) && (iy >= 0); 
+    int testb = (ix <= size )    && (ix >= 0);
+  
+    return testa && testb;     /* returns true in a line      */
+
+}
 
 
 void init(int argc, char** argv)
@@ -514,11 +575,26 @@ void init(int argc, char** argv)
 
     buff.row  = malloc(1*sizeof(char));
     buff.size = 1;
-
   
 }
 
 
+
+
+int inWindow(int ix, int iy) 
+{
+  
+    int xmin = global.xmin;    /* window edges in text coordinates */
+    int ymin = global.ymin;
+    int xmax = global.xmax;
+    int ymax = global.ymax;
+
+    int testa = (ix >= xmin) && (ix <= xmax); 
+    int testb = (iy >= ymin) && (iy <= ymax);
+  
+    return testa && testb;     /* returns true inside the window   */
+
+}
 
 
 
@@ -538,6 +614,7 @@ int main(int argc, char** argv)
 
     window(global.xmin,global.xmax,
            global.ymin,global.ymax);
+  
    }
 
   return 0; // this statement is never reached
@@ -583,6 +660,10 @@ int ReadKey()
 
   int retval;
   if (count > 1) retval = encode(count, seq);
+
+
+  writeToScreen("readk iy =  ");writeDigit(global.iy,1);writeToScreen("       rrr\n\r");
+  writeToScreen("readk ix =  ");writeDigit(global.ix,1);writeToScreen("       rrr\n\r");
 
   return retval;
 }
@@ -631,8 +712,6 @@ void window(int xmin, int xmax, int ymin, int ymax)
     writeToScreen(CursorToTopLeft);
 
     int y; int count = 0;
-
-    writeToScreen("entering window\n\r");
 
 /*** draw the window ***/
 
