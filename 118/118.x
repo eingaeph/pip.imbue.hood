@@ -509,20 +509,6 @@ int getl(char **qtr)    // getline work-alike
 
 
 
-int inAline(int ix, int iy)    /* test ix iy ok, in a line    */
-{
-  
-    int lastline = global.lastline;  
-    int size = text[iy].size;
-
-    int testa = (iy <= lastline) && (iy >= 0); 
-    int testb = (ix <= size )    && (ix >= 0);
-  
-    return testa && testb;     /* returns true in a line      */
-
-}
-
-
 void init(int argc, char** argv)
 {
     int numb; int retval; int lastline;
@@ -579,22 +565,6 @@ void init(int argc, char** argv)
 }
 
 
-
-
-int inWindow(int ix, int iy) 
-{
-  
-    int xmin = global.xmin;    /* window edges in text coordinates */
-    int ymin = global.ymin;
-    int xmax = global.xmax;
-    int ymax = global.ymax;
-
-    int testa = (ix >= xmin) && (ix <= xmax); 
-    int testb = (iy >= ymin) && (iy <= ymax);
-  
-    return testa && testb;     /* returns true inside the window   */
-
-}
 
 
 
@@ -661,9 +631,6 @@ int ReadKey()
   int retval;
   if (count > 1) retval = encode(count, seq);
 
-
-  writeToScreen("readk iy =  ");writeDigit(global.iy,1);writeToScreen("       rrr\n\r");
-  writeToScreen("readk ix =  ");writeDigit(global.ix,1);writeToScreen("       rrr\n\r");
 
   return retval;
 }
