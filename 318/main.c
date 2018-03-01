@@ -8,7 +8,11 @@ int main(int argc, char** argv)
   while (1) 
 
    {
-    int retval = ReadKey();
+
+    int tests = 1; int retval;
+
+    if (tests) retval = replay();
+    else       retval = ReadKey(); write(global.fpscp,&retval,sizeof(retval));
 
     int test = (retval != CTRL_U);
 
@@ -19,7 +23,7 @@ int main(int argc, char** argv)
         setWindow();
 
         window(global.xmin,global.xmax,
-              global.ymin,global.ymax);
+               global.ymin,global.ymax);
       }
 
     else sear();

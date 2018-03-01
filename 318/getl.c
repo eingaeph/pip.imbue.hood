@@ -7,7 +7,7 @@ int getl(char **qtr)    // getline work-alike
   int nread; 
   int inLineSize = 0; 
   char *s = &inLine[0];   //s and inLine are aliases of each other
-  while((iovars.nread = read(iovars.fpinp,s,1))==1) 
+  while((global.nread = read(global.fpinp,s,1))==1) 
     {if (*s != '\n') {s++; inLineSize++;} else break;}
 
   if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));

@@ -8,6 +8,7 @@
 
 /*** includes ***/
 
+#include <time.h>
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -32,7 +33,9 @@
                               (global.ix < text[global.iy].size)\
                                ||                               \
                               (global.ix == 0 ));
+
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
+#define wts(x)            write(STDOUT_FILENO,x,strlen(x))
 
 #define chekfree(x)     assert(x != NULL);                      \
                         free(x);
@@ -40,8 +43,6 @@
 /*** global symbols ***/
 
 struct termios orig_termios;
-
-struct {int fpinp; int nread; int fptra; } iovars;
 
 typedef struct {ssize_t size; char *row; int count;} slot;
 
@@ -64,6 +65,13 @@ struct
     int umin,umax,vmin,vmax;   /* window edges in screen coordinates */
 
     int lastline;              /* size of text */
+
+    int fpinp; 
+    int fptra;
+    int fpscp; 
+    int nread;
+
+    int noscript;
 
 } global;
 
@@ -138,6 +146,7 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+int  replay(void);
 void sear(void);
 void delAline(void);
 void setWindow(void);
@@ -321,7 +330,8 @@ void die(const char *s) {
 //  writeToScreen(ClearScreen);
 //  writeToScreen(CursorToTopLeft); 
 //  perror(s);
-  writeToScreen(s); writeToScreen("\n\r");
+  wts("\n\r");
+  wts(ClearCurrentLine);wts(s); wts("\n\r");
   exit(1);
 }
 
@@ -497,7 +507,7 @@ int getl(char **qtr)    // getline work-alike
   int nread; 
   int inLineSize = 0; 
   char *s = &inLine[0];   //s and inLine are aliases of each other
-  while((iovars.nread = read(iovars.fpinp,s,1))==1) 
+  while((global.nread = read(global.fpinp,s,1))==1) 
     {if (*s != '\n') {s++; inLineSize++;} else break;}
 
   if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));
@@ -525,13 +535,15 @@ void init(int argc, char** argv)
 
     display = malloc(     (60)*sizeof(slot));
 
-    iovars.fpinp = open(filename,O_RDONLY);
-    iovars.fptra = open("/dev/pts/18", O_RDWR);
+    global.fpinp = open(filename,O_RDONLY);
+    global.fptra = open("/dev/pts/18", O_RDWR);
+    global.fpscp = open("script",O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
+//    global.fpscp = open("script",O_RDONLY);
 
    for (numb = 0 ; numb < 100; numb++) 
     {
      retval=readAline(); 
-     if (iovars.nread == 0) {break;}
+     if (global.nread == 0) {break;}
      lastline = numb; 
     }
 
@@ -560,6 +572,8 @@ void init(int argc, char** argv)
 
     global.lastline = lastline; 
 
+    global.noscript = 0;
+
     buff.row  = malloc(1*sizeof(char));
     buff.size = 1;
   
@@ -577,7 +591,11 @@ int main(int argc, char** argv)
   while (1) 
 
    {
-    int retval = ReadKey();
+
+    int tests = 1; int retval;
+
+    if (tests) retval = replay();
+    else       retval = ReadKey(); write(global.fpscp,&retval,sizeof(retval));
 
     int test = (retval != CTRL_U);
 
@@ -588,7 +606,7 @@ int main(int argc, char** argv)
         setWindow();
 
         window(global.xmin,global.xmax,
-              global.ymin,global.ymax);
+               global.ymin,global.ymax);
       }
 
     else sear();
@@ -643,6 +661,34 @@ int ReadKey()
   return retval;
 }
 
+int replay(void)
+{
+  clock_t ticks1, ticks2;
+
+  ticks1=clock();
+  ticks2=ticks1;
+  while((ticks2-ticks1)<1934567)
+         ticks2=clock();
+
+ int retval;
+ if (global.noscript < 9) 
+     {
+      global.noscript++;
+      retval = ARROW_DOWN;
+     }
+ else 
+     {
+      global.noscript++;
+      if (global.noscript < 21) retval = ARROW_RIGHT;
+      else die("ending in replay");
+     }
+
+//  printf("The wait time is %ld ticks.\n",ticks2-ticks1);
+//  printf("This value of CLOCKS_PER_SEC is %d.\n",CLOCKS_PER_SEC);
+
+  return retval;
+
+}
 void sear(void)
 {
 

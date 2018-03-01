@@ -3,7 +3,8 @@ void die(const char *s) {
 //  writeToScreen(ClearScreen);
 //  writeToScreen(CursorToTopLeft); 
 //  perror(s);
-  writeToScreen(s); writeToScreen("\n\r");
+  wts("\n\r");
+  wts(ClearCurrentLine);wts(s); wts("\n\r");
   exit(1);
 }
 

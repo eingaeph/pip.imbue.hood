@@ -14,13 +14,15 @@ void init(int argc, char** argv)
 
     display = malloc(     (60)*sizeof(slot));
 
-    iovars.fpinp = open(filename,O_RDONLY);
-    iovars.fptra = open("/dev/pts/18", O_RDWR);
+    global.fpinp = open(filename,O_RDONLY);
+    global.fptra = open("/dev/pts/18", O_RDWR);
+    global.fpscp = open("script",O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
+//    global.fpscp = open("script",O_RDONLY);
 
    for (numb = 0 ; numb < 100; numb++) 
     {
      retval=readAline(); 
-     if (iovars.nread == 0) {break;}
+     if (global.nread == 0) {break;}
      lastline = numb; 
     }
 
@@ -48,6 +50,8 @@ void init(int argc, char** argv)
     global.vmax = 24;
 
     global.lastline = lastline; 
+
+    global.noscript = 0;
 
     buff.row  = malloc(1*sizeof(char));
     buff.size = 1;
