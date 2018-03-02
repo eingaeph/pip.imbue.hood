@@ -5,8 +5,6 @@ void window(int xmin, int xmax, int ymin, int ymax)
     writeToScreen(ClearScreen);
     writeToScreen(CursorToTopLeft);
 
-    wts("in window \n\r");
-
     int y; int count = 0;
 
 /*** draw the window ***/
@@ -15,6 +13,7 @@ void window(int xmin, int xmax, int ymin, int ymax)
   {
     if (y > global.lastline) break;
     assert(text[y].row != NULL);
+
     char *s = xmin + text[y].row; 
 
     int no;
