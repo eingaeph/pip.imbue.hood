@@ -4,6 +4,7 @@
 void chin(char c, int fetch)
 {
   assert(global.iy == fetch);
+  wts("chin in operation \n\r");
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
   char *chng = new;

@@ -146,6 +146,7 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+int  winOut(int y, int xmin, int xmax);
 int  replay(void);
 void sear(void);
 void delAline(void);

@@ -14,6 +14,8 @@ int main(int argc, char** argv)
     if (tests) retval = replay();
     else       retval = ReadKey(); write(global.fpscp,&retval,sizeof(retval));
 
+    wts("testing \n\r");
+
     int test = (retval != CTRL_U);
 
     if (test)

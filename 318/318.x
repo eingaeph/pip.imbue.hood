@@ -146,6 +146,7 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+int  winOut(int y, int xmin, int xmax);
 int  replay(void);
 void sear(void);
 void delAline(void);
@@ -236,6 +237,7 @@ void buildScreenBuffer(int star, int stop)
 void chin(char c, int fetch)
 {
   assert(global.iy == fetch);
+  wts("chin in operation \n\r");
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
   char *chng = new;
@@ -307,7 +309,7 @@ void del_key(int fetch)
   char *orig = text[fetch].row;
 
   int no; 
-  for (no = 0 ; no < limit; no++)
+  for (no = 0 ; no <= limit; no++)
     {
      if (no != global.ix)  {*chng = *orig; chng++; orig++;}
      else                  { orig++ ;} // skipping
@@ -597,6 +599,8 @@ int main(int argc, char** argv)
     if (tests) retval = replay();
     else       retval = ReadKey(); write(global.fpscp,&retval,sizeof(retval));
 
+    wts("testing \n\r");
+
     int test = (retval != CTRL_U);
 
     if (test)
@@ -667,21 +671,95 @@ int replay(void)
 
   ticks1=clock();
   ticks2=ticks1;
-  while((ticks2-ticks1)<1934567)
+  while((ticks2-ticks1)<0634567)
          ticks2=clock();
 
- int retval;
- if (global.noscript < 9) 
-     {
-      global.noscript++;
-      retval = ARROW_DOWN;
-     }
- else 
-     {
-      global.noscript++;
-      if (global.noscript < 21) retval = ARROW_RIGHT;
-      else die("ending in replay");
-     }
+ int store[200]; char c; int retval;
+
+ int j = 1;
+
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;          
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;          
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+ c = 'a'; store[j] = c; j = j + 1;  
+ c = 'b'; store[j] = c; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+ c = 'c'; store[j] = c; j = j + 1;
+ c = 'd'; store[j] = c; j = j + 1;
+          store[j] = ENTER;      j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+
+
+ global.noscript++;
+ if (global.noscript < j) retval = store[global.noscript];
+ else die("ending in function replay");
 
 //  printf("The wait time is %ld ticks.\n",ticks2-ticks1);
 //  printf("This value of CLOCKS_PER_SEC is %d.\n",CLOCKS_PER_SEC);
@@ -781,19 +859,15 @@ void window(int xmin, int xmax, int ymin, int ymax)
 /*** draw the window ***/
 
     for (y = ymin; y <= ymax; y++) 
-  {
-    if (y > global.lastline) break;
-    char *s = xmin + text[y].row; 
-
-    int no;
-    for ( no = 0; no + xmin <= xmax; no++)     
-    {
-    if (no==text[y].size) {break;}; 
-    if (*s == '\n')        {break;};
-    write(STDOUT_FILENO,s,1); s++; count++;
-    }
-    write(STDOUT_FILENO,"\n\r",2);
-  }
+   {
+      if (y > global.lastline) break;
+      if (text[y].row == NULL) wts("\n\r");
+      else 
+        {
+         count = count + winOut(y, xmin, xmax);
+         write(STDOUT_FILENO,"\n\r",2);
+        }
+   }
 
 /*** place the cursor ***/
 
@@ -802,6 +876,26 @@ void window(int xmin, int xmax, int ymin, int ymax)
     for ( no = 0; no < global.cu ; no ++ ) writeToScreen(CursorForward);
     for ( no = 0; no < global.cv ; no ++ ) writeToScreen(CursorDown);
     writeToScreen(CursorDisplay);
+}
+int winOut(int y, int xmin, int xmax)
+{
+
+/*** write the line ***/
+
+  int delta = 0;
+  assert(text[y].row != NULL);
+
+  char *s = xmin + text[y].row; 
+
+  int no;
+    for ( no = 0; no + xmin <= xmax; no++)     
+    {
+     if (no==text[y].size)  {break;}; 
+     if (*s == '\n')        {break;};
+     write(STDOUT_FILENO,s,1); s++; delta++;
+    }
+  
+  return delta;
 }
 
 void writeDigit(int digit,int fildes)

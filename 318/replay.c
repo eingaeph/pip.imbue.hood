@@ -4,20 +4,13 @@ int replay(void)
 
   ticks1=clock();
   ticks2=ticks1;
-  while((ticks2-ticks1)<1234567)
+  while((ticks2-ticks1)<0634567)
          ticks2=clock();
 
- int store[20]; char c; int retval;
+ int store[200]; char c; int retval;
 
  int j = 1;
-// c = 'a'; store[j] = c; j = j + 1;   
-// c = 'b'; store[j] = c; j = j + 1;
-//          store[j] = ARROW_DOWN; j = j + 1;
-// c = 'c'; store[j] = c; j = j + 1;
-// c = 'd'; store[j] = c; j = j + 1;
-//          store[j] = ARROW_DOWN; j = j + 1;
-//          store[j] = ARROW_DOWN; j = j + 1;
-//          store[j] = ARROW_DOWN; j = j + 1;
+
           store[j] = DEL_KEY;    j = j + 1;
           store[j] = DEL_KEY;    j = j + 1;          
           store[j] = DEL_KEY;    j = j + 1;
@@ -36,6 +29,66 @@ int replay(void)
           store[j] = DEL_KEY;    j = j + 1;
           store[j] = DEL_KEY;    j = j + 1;
           store[j] = DEL_KEY;    j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+ c = 'a'; store[j] = c; j = j + 1;  
+ c = 'b'; store[j] = c; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+ c = 'c'; store[j] = c; j = j + 1;
+ c = 'd'; store[j] = c; j = j + 1;
+          store[j] = ENTER;      j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+
 
  global.noscript++;
  if (global.noscript < j) retval = store[global.noscript];
