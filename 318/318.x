@@ -298,16 +298,36 @@ void delAline(void)
 void del_key(int fetch)
 {
 
-  int limit = text[fetch].size - 1 ; 
+  int size = text[fetch].size;
+  int limit = size - 1;
+   
+  if (size == 0) 
+    {
+     assert(text[fetch].row == NULL);
+     global.ix = 0;
+     text[fetch].row = NULL;
+     return;
+    }
+
+  if (size == 1)
+    {
+     global.ix = 0;
+     if (text[fetch].row != NULL); free(text[fetch].row); 
+     text[fetch].row = NULL;
+     return;
+    }
+     
+  assert(text[fetch].size > 1);
+ 
   char *new;
-  if (limit > 0) new = malloc((limit)*sizeof(char));
-  else           new = NULL;
+
+  new = malloc((limit)*sizeof(char));
 
   char *chng = new;
   char *orig = text[fetch].row;
 
   int no; 
-  for (no = 0 ; no < limit; no++)
+  for (no = 0 ; no <= limit; no++)
     {
      if (no != global.ix)  {*chng = *orig; chng++; orig++;}
      else                  { orig++ ;} // skipping
@@ -316,8 +336,11 @@ void del_key(int fetch)
   if (text[fetch].row != NULL); free(text[fetch].row); 
   text[fetch].row = new; text[fetch].size = limit; 
 
-  if (global.ix >= limit) global.ix = limit - 1;
-  if (global.ix <= 0)     global.ix = 0;
+
+  if      (global.ix >= limit) global.ix = limit - 1;
+  else if (global.ix <= 0)     global.ix = 0;
+
+
 
   possibleLine;
 
@@ -667,21 +690,42 @@ int replay(void)
 
   ticks1=clock();
   ticks2=ticks1;
-  while((ticks2-ticks1)<1934567)
+  while((ticks2-ticks1)<1234567)
          ticks2=clock();
 
- int retval;
- if (global.noscript < 9) 
-     {
-      global.noscript++;
-      retval = ARROW_DOWN;
-     }
- else 
-     {
-      global.noscript++;
-      if (global.noscript < 21) retval = ARROW_RIGHT;
-      else die("ending in replay");
-     }
+ int store[20]; char c; int retval;
+
+ int j = 1;
+// c = 'a'; store[j] = c; j = j + 1;   
+// c = 'b'; store[j] = c; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
+// c = 'c'; store[j] = c; j = j + 1;
+// c = 'd'; store[j] = c; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;          
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;          
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = ARROW_DOWN; j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_RIGHT;j = j + 1;
+          store[j] = ARROW_UP;   j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+          store[j] = DEL_KEY;    j = j + 1;
+
+ global.noscript++;
+ if (global.noscript < j) retval = store[global.noscript];
+ else die("ending in function replay");
 
 //  printf("The wait time is %ld ticks.\n",ticks2-ticks1);
 //  printf("This value of CLOCKS_PER_SEC is %d.\n",CLOCKS_PER_SEC);
@@ -776,6 +820,8 @@ void window(int xmin, int xmax, int ymin, int ymax)
     writeToScreen(ClearScreen);
     writeToScreen(CursorToTopLeft);
 
+    wts("in window \n\r");
+
     int y; int count = 0;
 
 /*** draw the window ***/
@@ -783,6 +829,7 @@ void window(int xmin, int xmax, int ymin, int ymax)
     for (y = ymin; y <= ymax; y++) 
   {
     if (y > global.lastline) break;
+    assert(text[y].row != NULL);
     char *s = xmin + text[y].row; 
 
     int no;
