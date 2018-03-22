@@ -146,7 +146,6 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
-int  winOut(int y, int xmin, int xmax);
 int  replay(void);
 void sear(void);
 void delAline(void);
@@ -237,7 +236,6 @@ void buildScreenBuffer(int star, int stop)
 void chin(char c, int fetch)
 {
   assert(global.iy == fetch);
-  wts("chin in operation \n\r");
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
   char *chng = new;
@@ -599,8 +597,6 @@ int main(int argc, char** argv)
     if (tests) retval = replay();
     else       retval = ReadKey(); write(global.fpscp,&retval,sizeof(retval));
 
-    wts("testing \n\r");
-
     int test = (retval != CTRL_U);
 
     if (test)
@@ -671,13 +667,20 @@ int replay(void)
 
   ticks1=clock();
   ticks2=ticks1;
-  while((ticks2-ticks1)<1034567)
+  while((ticks2-ticks1)<1234567)
          ticks2=clock();
 
- int store[200]; char c; int retval;
+ int store[20]; char c; int retval;
 
  int j = 1;
-
+// c = 'a'; store[j] = c; j = j + 1;   
+// c = 'b'; store[j] = c; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
+// c = 'c'; store[j] = c; j = j + 1;
+// c = 'd'; store[j] = c; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
+//          store[j] = ARROW_DOWN; j = j + 1;
           store[j] = DEL_KEY;    j = j + 1;
           store[j] = DEL_KEY;    j = j + 1;          
           store[j] = DEL_KEY;    j = j + 1;
@@ -696,66 +699,6 @@ int replay(void)
           store[j] = DEL_KEY;    j = j + 1;
           store[j] = DEL_KEY;    j = j + 1;
           store[j] = DEL_KEY;    j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
- c = 'a'; store[j] = c; j = j + 1;  
- c = 'b'; store[j] = c; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
- c = 'c'; store[j] = c; j = j + 1;
- c = 'd'; store[j] = c; j = j + 1;
-          store[j] = ENTER;      j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-
 
  global.noscript++;
  if (global.noscript < j) retval = store[global.noscript];
@@ -859,23 +802,25 @@ void window(int xmin, int xmax, int ymin, int ymax)
 /*** draw the window ***/
 
     for (y = ymin; y <= ymax; y++) 
-   {
-     if (y > global.lastline) break;
+  {
+    if (y > global.lastline) break;
 
-     assert(!(text[y].size > 0 && text[y].row == NULL));
-     if(text[y].row == NULL) {write (STDOUT_FILENO,"\n\r",2);
-                              continue; }
+    assert(!(text[y].size > 0 && text[y].row == NULL));
+
+    if(text[y].row == NULL) {write (STDOUT_FILENO,"\n\r",2);
+                             continue;}
+
     char *s = xmin + text[y].row; 
 
     int no;
-    for ( no = 0; no + xmin <= xmax; no++)
+    for ( no = 0; no + xmin <= xmax; no++)     
     {
-    if (no==text[y].size) {break;};
-    if (*s == '\n')       {break;};
+    if (no==text[y].size) {break;}; 
+    if (*s == '\n')        {break;};
     write(STDOUT_FILENO,s,1); s++; count++;
     }
     write(STDOUT_FILENO,"\n\r",2);
-   }
+  }
 
 /*** place the cursor ***/
 
@@ -884,26 +829,6 @@ void window(int xmin, int xmax, int ymin, int ymax)
     for ( no = 0; no < global.cu ; no ++ ) writeToScreen(CursorForward);
     for ( no = 0; no < global.cv ; no ++ ) writeToScreen(CursorDown);
     writeToScreen(CursorDisplay);
-}
-int winOut(int y, int xmin, int xmax)
-{
-
-/*** write the line ***/
-
-  int delta = 0;
-  assert(text[y].row != NULL);
-
-  char *s = xmin + text[y].row; 
-
-  int no;
-    for ( no = 0; no + xmin <= xmax; no++)     
-    {
-     if (no==text[y].size)  {break;}; 
-     if (*s == '\n')        {break;};
-     write(STDOUT_FILENO,s,1); s++; delta++;
-    }
-  
-  return delta;
 }
 
 void writeDigit(int digit,int fildes)

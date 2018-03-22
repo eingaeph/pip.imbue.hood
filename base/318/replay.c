@@ -4,7 +4,7 @@ int replay(void)
 
   ticks1=clock();
   ticks2=ticks1;
-  while((ticks2-ticks1)<0634567)
+  while((ticks2-ticks1)<1034567)
          ticks2=clock();
 
  int store[200]; char c; int retval;
