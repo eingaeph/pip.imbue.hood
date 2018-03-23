@@ -527,7 +527,7 @@ void init(int argc, char** argv)
     int numb; int retval; int lastline;
     char *outt;
 
-    if (argc == 1) return;
+    if(argc < 2) die("filename not entered as argument");
 
     enableRawMode();
 
@@ -539,8 +539,7 @@ void init(int argc, char** argv)
 
     global.fpinp = open(filename,O_RDONLY);
     global.fptra = open("/dev/pts/18", O_RDWR);
-    global.fpscp = open("script",O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
-//    global.fpscp = open("script",O_RDONLY);
+//    global.fpscp = open("script",O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
 
    for (numb = 0 ; numb < 100; numb++) 
     {
@@ -671,7 +670,7 @@ int replay(void)
 
   ticks1=clock();
   ticks2=ticks1;
-  while((ticks2-ticks1)<0634567)
+  while((ticks2-ticks1)<1034567)
          ticks2=clock();
 
  int store[200]; char c; int retval;
@@ -860,13 +859,21 @@ void window(int xmin, int xmax, int ymin, int ymax)
 
     for (y = ymin; y <= ymax; y++) 
    {
-      if (y > global.lastline) break;
-      if (text[y].row == NULL) wts("\n\r");
-      else 
-        {
-         count = count + winOut(y, xmin, xmax);
-         write(STDOUT_FILENO,"\n\r",2);
-        }
+     if (y > global.lastline) break;
+
+     assert(!(text[y].size > 0 && text[y].row == NULL));
+     if(text[y].row == NULL) {write (STDOUT_FILENO,"\n\r",2);
+                              continue; }
+    char *s = xmin + text[y].row; 
+
+    int no;
+    for ( no = 0; no + xmin <= xmax; no++)
+    {
+    if (no==text[y].size) {break;};
+    if (*s == '\n')       {break;};
+    write(STDOUT_FILENO,s,1); s++; count++;
+    }
+    write(STDOUT_FILENO,"\n\r",2);
    }
 
 /*** place the cursor ***/

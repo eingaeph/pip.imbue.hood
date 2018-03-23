@@ -4,7 +4,7 @@ void init(int argc, char** argv)
     int numb; int retval; int lastline;
     char *outt;
 
-    if (argc == 1) return;
+    if(argc < 2) die("filename not entered as argument");
 
     enableRawMode();
 
@@ -16,8 +16,7 @@ void init(int argc, char** argv)
 
     global.fpinp = open(filename,O_RDONLY);
     global.fptra = open("/dev/pts/18", O_RDWR);
-    global.fpscp = open("script",O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
-//    global.fpscp = open("script",O_RDONLY);
+//    global.fpscp = open("script",O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
 
    for (numb = 0 ; numb < 100; numb++) 
     {
