@@ -20,11 +20,11 @@ void init(int argc, char** argv)
 
    for (numb = 0 ; numb < 100; numb++) 
     {
-     retval=readAline(); 
+     retval=readAline();
      if (global.nread == 0) {break;}
      lastline = numb; 
     }
-
+    
     char mesa[]="lastline = ";
 
     write(STDOUT_FILENO,mesa,strlen(mesa));

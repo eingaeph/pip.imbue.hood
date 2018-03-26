@@ -3,18 +3,37 @@
 int pageDown(void)
 {
 
-// window parameters
-// yend, ymax, ymin, ix, iy
-// ydel = ymax - ymin 
+// delta = ymax - ymin 
 
-// easy case:
-// ymax + delta; ymin + ydel;
-// iy = ymin; ix = 0;
+  int delta = 24;
 
-// problem: ymax + delta > yend
-// solution ymax = yend
-//          ymin = ymax - ydel 
- 
+// default action
+
+   global.ymax = global.ymax + delta;
+   global.ymin = global.ymin + delta;
+   global.iy = global.ymin; global.ix = 0;
+
+// edge cases 
+
+   if(global.ymax > global.lastline) 
+     {
+      global.ymax = global.lastline;
+      global.ymin = global.lastline - delta;
+      global.ix = 0;
+      global.iy = global.ymin;
+     }
+  
+  if(global.ymin < 0) 
+    {
+     global.ymin = 0; 
+     global.iy = 0;
+     global.ix = 0;
+    }
+
+  possibleIxIy;
+  possibleLine;
+
+  wts("leaving pageDown.c \n\r");
   return 0;
 
 }

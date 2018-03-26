@@ -1,9 +1,14 @@
 int readAline(void)
 {
-    line.row = 0; 
-    line.size = getl(&line.row);    
+    line.row = NULL; 
+    line.size = getl(&line.row);  
 
-    if (line.size == 0) {return line.size;}
+    if (line.size == 0) { 
+                         text[line.count].size = line.size; 
+                         text[line.count].row  = NULL;
+                         line.count++;
+                         return line.size;
+                        }
 
     if((line.count == 0)) 
          { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}

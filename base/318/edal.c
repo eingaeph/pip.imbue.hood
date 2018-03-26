@@ -22,6 +22,7 @@ int edal(int retval, int fetch)
   if (retval == CTRL_K)                 {delAline();    return 0;}
   if (retval == DEL_KEY)                {del_key(fetch);return 0;} 
   if (retval == HOME_KEY)               {global.ix = 0; return 0;} 
+  if (retval == PAGE_DOWN)              {pageDown();    return 0;}
 
   return 0;
 

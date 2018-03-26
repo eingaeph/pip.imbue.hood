@@ -9,21 +9,20 @@ int main(int argc, char** argv)
 
    {
 
-    int tests = 1; int retval;
+    int testa = 1; int retval; testa = 0;
 
-    if (tests) retval = replay();
-    else       retval = ReadKey(); write(global.fpscp,&retval,sizeof(retval));
+    if (testa) retval = replay();
+    else       retval = ReadKey(); 
 
-    wts("testing \n\r");
 
-    int test = (retval != CTRL_U);
+    int testb = (retval != CTRL_U);
 
-    if (test)
+    if (testb)
       {
         edal(retval, global.iy);
 
         setWindow();
-
+ 
         window(global.xmin,global.xmax,
                global.ymin,global.ymax);
       }

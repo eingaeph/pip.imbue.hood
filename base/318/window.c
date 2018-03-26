@@ -7,7 +7,9 @@ void window(int xmin, int xmax, int ymin, int ymax)
 
     int y; int count = 0;
 
-/*** draw the window ***/
+//    wts("drawing the window \n\r");
+
+    possibleScreen();
 
     for (y = ymin; y <= ymax; y++) 
    {
@@ -16,23 +18,26 @@ void window(int xmin, int xmax, int ymin, int ymax)
      assert(!(text[y].size > 0 && text[y].row == NULL));
      if(text[y].row == NULL) {write (STDOUT_FILENO,"\n\r",2);
                               continue; }
+
     char *s = xmin + text[y].row; 
 
     int no;
     for ( no = 0; no + xmin <= xmax; no++)
     {
     if (no==text[y].size) {break;};
+    if (*s == '\r')       {break;};
     if (*s == '\n')       {break;};
     write(STDOUT_FILENO,s,1); s++; count++;
     }
     write(STDOUT_FILENO,"\n\r",2);
    }
 
-/*** place the cursor ***/
+//    wts("placing the cursor \n\r");
 
     writeToScreen(CursorToTopLeft);
     int no; 
     for ( no = 0; no < global.cu ; no ++ ) writeToScreen(CursorForward);
     for ( no = 0; no < global.cv ; no ++ ) writeToScreen(CursorDown);
     writeToScreen(CursorDisplay);
+
 }

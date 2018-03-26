@@ -35,7 +35,7 @@
                               (global.ix == 0 ));
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
-#define wts(x)            write(STDOUT_FILENO,x,strlen(x))
+#define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();
 
 #define chekfree(x)     assert(x != NULL);                      \
                         free(x);
@@ -146,6 +146,9 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void possibleScreen(void);
+void delay(void);
+int  pageDown(void);
 int  winOut(int y, int xmin, int xmax);
 int  replay(void);
 void sear(void);

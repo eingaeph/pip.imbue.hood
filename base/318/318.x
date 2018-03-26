@@ -35,7 +35,7 @@
                               (global.ix == 0 ));
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
-#define wts(x)            write(STDOUT_FILENO,x,strlen(x))
+#define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();
 
 #define chekfree(x)     assert(x != NULL);                      \
                         free(x);
@@ -146,6 +146,9 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void possibleScreen(void);
+void delay(void);
+int  pageDown(void);
 int  winOut(int y, int xmin, int xmax);
 int  replay(void);
 void sear(void);
@@ -294,6 +297,17 @@ void delAline(void)
   return; 
  
 }
+void delay(void)
+{
+  clock_t ticks1, ticks2;
+
+  ticks1=clock();
+  ticks2=ticks1;
+//  while((ticks2-ticks1) < 1234567)
+  while((ticks2-ticks1) < 0034567)
+         ticks2=clock();
+}
+
 
 // delete key action
 
@@ -366,6 +380,7 @@ int edal(int retval, int fetch)
   if (retval == CTRL_K)                 {delAline();    return 0;}
   if (retval == DEL_KEY)                {del_key(fetch);return 0;} 
   if (retval == HOME_KEY)               {global.ix = 0; return 0;} 
+  if (retval == PAGE_DOWN)              {pageDown();    return 0;}
 
   return 0;
 
@@ -502,20 +517,19 @@ int getCursorPosition(int *rows, int *cols)
 
 int getl(char **qtr)    // getline work-alike
 {
-  char test[1];
   char inLine[240];     // sets maximum linesize at three times reasonable
   char* ptr;
 
-  int nread; 
   int inLineSize = 0; 
   char *s = &inLine[0];   //s and inLine are aliases of each other
   while((global.nread = read(global.fpinp,s,1))==1) 
     {if (*s != '\n') {s++; inLineSize++;} else break;}
 
-  if (inLineSize  > 0) {ptr = malloc(inLineSize*sizeof(char));
-                        memcpy(ptr,inLine,inLineSize);
-                       *qtr = ptr;}
-  else    {ptr = NULL; *qtr = ptr;}
+  if (inLineSize == 0) {ptr = NULL; *qtr = ptr; return inLineSize;}
+
+  ptr = malloc(inLineSize*sizeof(char));
+  memcpy(ptr,inLine,inLineSize);
+  *qtr = ptr;
 
   return inLineSize;
 }
@@ -543,11 +557,11 @@ void init(int argc, char** argv)
 
    for (numb = 0 ; numb < 100; numb++) 
     {
-     retval=readAline(); 
+     retval=readAline();
      if (global.nread == 0) {break;}
      lastline = numb; 
     }
-
+    
     char mesa[]="lastline = ";
 
     write(STDOUT_FILENO,mesa,strlen(mesa));
@@ -593,21 +607,20 @@ int main(int argc, char** argv)
 
    {
 
-    int tests = 1; int retval;
+    int testa = 1; int retval; testa = 0;
 
-    if (tests) retval = replay();
-    else       retval = ReadKey(); write(global.fpscp,&retval,sizeof(retval));
+    if (testa) retval = replay();
+    else       retval = ReadKey(); 
 
-    wts("testing \n\r");
 
-    int test = (retval != CTRL_U);
+    int testb = (retval != CTRL_U);
 
-    if (test)
+    if (testb)
       {
         edal(retval, global.iy);
 
         setWindow();
-
+ 
         window(global.xmin,global.xmax,
                global.ymin,global.ymax);
       }
@@ -618,12 +631,71 @@ int main(int argc, char** argv)
 
   return 0; // this statement is never reached
 }
+
+
+int pageDown(void)
+{
+
+// delta = ymax - ymin 
+
+  int delta = 24;
+
+// default action
+
+   global.ymax = global.ymax + delta;
+   global.ymin = global.ymin + delta;
+   global.iy = global.ymin; global.ix = 0;
+
+// edge cases 
+
+   if(global.ymax > global.lastline) 
+     {
+      global.ymax = global.lastline;
+      global.ymin = global.lastline - delta;
+      global.ix = 0;
+      global.iy = global.ymin;
+     }
+  
+  if(global.ymin < 0) 
+    {
+     global.ymin = 0; 
+     global.iy = 0;
+     global.ix = 0;
+    }
+
+  possibleIxIy;
+  possibleLine;
+
+  wts("leaving pageDown.c \n\r");
+  return 0;
+
+}
+
+void possibleScreen(void)
+{
+  int ymin = global.ymin;
+  int ymax = global.ymax;
+  int y;
+
+  for (y = ymin; y <= ymax; y++)
+    {
+     assert(text[y].size >= 0 );
+     assert(text[y].size < 200); 
+     if(text[y].row == NULL) assert(text[y].size == 0);
+     if(text[y].size == 0)   assert(text[y].row  == NULL);
+    }
+}
 int readAline(void)
 {
-    line.row = 0; 
-    line.size = getl(&line.row);    
+    line.row = NULL; 
+    line.size = getl(&line.row);  
 
-    if (line.size == 0) {return line.size;}
+    if (line.size == 0) { 
+                         text[line.count].size = line.size; 
+                         text[line.count].row  = NULL;
+                         line.count++;
+                         return line.size;
+                        }
 
     if((line.count == 0)) 
          { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}
@@ -855,7 +927,9 @@ void window(int xmin, int xmax, int ymin, int ymax)
 
     int y; int count = 0;
 
-/*** draw the window ***/
+//    wts("drawing the window \n\r");
+
+    possibleScreen();
 
     for (y = ymin; y <= ymax; y++) 
    {
@@ -864,25 +938,28 @@ void window(int xmin, int xmax, int ymin, int ymax)
      assert(!(text[y].size > 0 && text[y].row == NULL));
      if(text[y].row == NULL) {write (STDOUT_FILENO,"\n\r",2);
                               continue; }
+
     char *s = xmin + text[y].row; 
 
     int no;
     for ( no = 0; no + xmin <= xmax; no++)
     {
     if (no==text[y].size) {break;};
+    if (*s == '\r')       {break;};
     if (*s == '\n')       {break;};
     write(STDOUT_FILENO,s,1); s++; count++;
     }
     write(STDOUT_FILENO,"\n\r",2);
    }
 
-/*** place the cursor ***/
+//    wts("placing the cursor \n\r");
 
     writeToScreen(CursorToTopLeft);
     int no; 
     for ( no = 0; no < global.cu ; no ++ ) writeToScreen(CursorForward);
     for ( no = 0; no < global.cv ; no ++ ) writeToScreen(CursorDown);
     writeToScreen(CursorDisplay);
+
 }
 int winOut(int y, int xmin, int xmax)
 {
