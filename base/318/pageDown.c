@@ -30,10 +30,9 @@ int pageDown(void)
      global.ix = 0;
     }
 
-  possibleIxIy;
-  possibleLine;
+                         possibleIxIy;
+  int testy = global.iy; possibleLine;
 
-  wts("leaving pageDown.c \n\r");
   return 0;
 
 }

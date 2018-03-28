@@ -22,17 +22,26 @@
 
 /*** macro defines ***/
 
-#define possibleIxIy    assert(global.ix >= 0);                 \
-                        assert(global.iy >= 0);                 \
-                        assert(global.iy <= global.lastline);
 
-#define possibleLine    assert(global.iy <= global.lastline);   \
-                        assert(global.iy >= 0);                 \
-                        assert(global.ix >= 0);                 \
-                        assert(                                 \
-                              (global.ix < text[global.iy].size)\
-                               ||                               \
-                              (global.ix == 0 ));
+#define possibleIxIy    assert( global.iy <= global.lastline);            \
+                        assert( global.iy >= 0); assert( global.ix >= 0); \
+                        assert( global.ix <= text[global.iy].size + 1 );
+
+
+// invoke with      int testy = iy; possibleLine;
+  
+#define possibleLine    assert(       ((text[testy].row == NULL) &&       \
+                                       (text[testy].size == 0  ))         \
+                                 ||                                       \
+                                      ((text[testy].row != NULL) &&       \
+                                       (text[testy].size >  0  ))         \
+                               ); 
+
+#define testScreen      assert( global.xmin < global.xmax);            \
+                        assert( global.xmin > 0 );                     \
+                        assert( global.ymin < global.ymax);            \
+                        assert( global.ymin >= 0 );                    \
+                        assert( global.ymax) <= lastline + 1 );
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 #define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();

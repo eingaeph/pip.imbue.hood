@@ -22,17 +22,26 @@
 
 /*** macro defines ***/
 
-#define possibleIxIy    assert(global.ix >= 0);                 \
-                        assert(global.iy >= 0);                 \
-                        assert(global.iy <= global.lastline);
 
-#define possibleLine    assert(global.iy <= global.lastline);   \
-                        assert(global.iy >= 0);                 \
-                        assert(global.ix >= 0);                 \
-                        assert(                                 \
-                              (global.ix < text[global.iy].size)\
-                               ||                               \
-                              (global.ix == 0 ));
+#define possibleIxIy    assert( global.iy <= global.lastline);            \
+                        assert( global.iy >= 0); assert( global.ix >= 0); \
+                        assert( global.ix <= text[global.iy].size + 1 );
+
+
+// invoke with      int testy = iy; possibleLine;
+  
+#define possibleLine    assert(       ((text[testy].row == NULL) &&       \
+                                       (text[testy].size == 0  ))         \
+                                 ||                                       \
+                                      ((text[testy].row != NULL) &&       \
+                                       (text[testy].size >  0  ))         \
+                               ); 
+
+#define testScreen      assert( global.xmin < global.xmax);            \
+                        assert( global.xmin > 0 );                     \
+                        assert( global.ymin < global.ymax);            \
+                        assert( global.ymin >= 0 );                    \
+                        assert( global.ymax) <= lastline + 1 );
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 #define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();
@@ -240,7 +249,6 @@ void buildScreenBuffer(int star, int stop)
 void chin(char c, int fetch)
 {
   assert(global.iy == fetch);
-  wts("chin in operation \n\r");
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
   char *chng = new;
@@ -259,7 +267,8 @@ void chin(char c, int fetch)
   text[fetch].size = limit; 
   global.ix++; if(limit == 1) global.ix = 0;
 
-  possibleLine;
+
+  int testy = fetch; possibleLine;
 
   return;
 
@@ -304,20 +313,31 @@ void delay(void)
   ticks1=clock();
   ticks2=ticks1;
 //  while((ticks2-ticks1) < 1234567)
-  while((ticks2-ticks1) < 0034567)
+  while((ticks2-ticks1) < 1034567)
          ticks2=clock();
 }
 
 
-// delete key action
-
 void del_key(int fetch)
 {
+  possibleIxIy;
+  int testy = fetch; possibleLine;
+  int testa = (text[fetch].size == 0); // first edge case
+  if (testa) {assert(global.ix == 0);   
+              assert(text[fetch].row == NULL);
+              return;}
+
+  int testb = (text[fetch].size == 1); // second edge case
+  if (testb) {free(text[fetch].row);
+              text[fetch].row = NULL;
+              text[fetch].size = 0;
+              global.ix = 0; 
+              return;}
+
+  assert(text[fetch].size > 1); assert(text[fetch].row != NULL);
 
   int limit = text[fetch].size - 1 ; 
-  char *new;
-  if (limit > 0) new = malloc((limit)*sizeof(char));
-  else           new = NULL;
+  char *new; new = malloc((limit)*sizeof(char));
 
   char *chng = new;
   char *orig = text[fetch].row;
@@ -329,13 +349,13 @@ void del_key(int fetch)
      else                  { orig++ ;} // skipping
     }
 
-  if (text[fetch].row != NULL); free(text[fetch].row); 
+  free(text[fetch].row); 
   text[fetch].row = new; text[fetch].size = limit; 
 
   if (global.ix >= limit) global.ix = limit - 1;
-  if (global.ix <= 0)     global.ix = 0;
 
-  possibleLine;
+  assert(global.ix >= 0);
+  testy = fetch; possibleLine;
 
   return;
 
@@ -346,8 +366,10 @@ void die(const char *s) {
 //  writeToScreen(ClearScreen);
 //  writeToScreen(CursorToTopLeft); 
 //  perror(s);
-  wts("\n\r");
-  wts(ClearCurrentLine);wts(s); wts("\n\r");
+  writeToScreen("\n\r");
+  writeToScreen(ClearCurrentLine);
+  writeToScreen(s); 
+  writeToScreen("\n\r");
   exit(1);
 }
 
@@ -459,12 +481,20 @@ int encode (int count, char* seq)
 
 void enter(void)
 {
-  int ix = global.ix;    //text x insertion point
-  int iy = global.iy;    //text y insertion point
-  int lastline = global.lastline; // number of rows in text
-  int lena = ix; // length of newline firs
-  int lenb = text[iy].size - lena; //length of newline seco
+  int ix = global.ix;              // text x insertion point
+  int iy = global.iy;              // text y insertion point
+  int lastline = global.lastline;  // number of rows in text
+  int lena = ix + 1;               // number of chars in newline firs
+  int lenb = text[iy].size - lena; // number of chars in newline seco
 
+  wts("entering enter.c    \n\r");
+  int testy = iy; possibleLine;
+
+  int testa = (text[iy].size == 0) ;
+  if (testa) assert(ix = 0);
+  if (testa) die("trying to enter a zero length line\n\r");
+
+  assert(text[iy].size > 0);
 
 /*** build firs and seco ***/
 
@@ -481,7 +511,7 @@ void enter(void)
     {*chng = *orig; chng++; orig++;}
 
   chng = seco;       // populate seco length lenb
-  for (no = lena ; no < lena + lenb; no++)
+  for (no = lena; no < lena + lenb; no++)
     {*chng = *orig; chng++; orig++;}
 
 //build aray of slots new with space for extra line
@@ -505,8 +535,11 @@ void enter(void)
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
 
-  text = realloc(text,(lastline+1)*sizeof(slot));
-  for (j = 0; j <= lastline; j++) text[j] = new[j];
+  wts("call realloc, expand text    \n\r");
+  writeDigit(lastline,1); wts("    \n\r");
+
+  text = realloc(text,(lastline+2)*sizeof(slot));
+  for (j = 0; j <= lastline; j++) {text[j] = new[j];writeDigit(j,1);wts("\n\r");}
 
   if (new != NULL); free(new);
 
@@ -663,10 +696,9 @@ int pageDown(void)
      global.ix = 0;
     }
 
-  possibleIxIy;
-  possibleLine;
+                         possibleIxIy;
+  int testy = global.iy; possibleLine;
 
-  wts("leaving pageDown.c \n\r");
   return 0;
 
 }
@@ -915,7 +947,7 @@ void setWindow(void)
     global.cu = global.ix - global.xmin;
     global.cv = global.iy - global.ymin;
 
-    possibleLine;
+    int testy = global.iy; possibleLine;
 
 }
 void window(int xmin, int xmax, int ymin, int ymax)

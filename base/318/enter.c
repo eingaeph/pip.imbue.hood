@@ -1,11 +1,19 @@
 void enter(void)
 {
-  int ix = global.ix;    //text x insertion point
-  int iy = global.iy;    //text y insertion point
-  int lastline = global.lastline; // number of rows in text
-  int lena = ix; // length of newline firs
-  int lenb = text[iy].size - lena; //length of newline seco
+  int ix = global.ix;              // text x insertion point
+  int iy = global.iy;              // text y insertion point
+  int lastline = global.lastline;  // number of rows in text
+  int lena = ix + 1;               // number of chars in newline firs
+  int lenb = text[iy].size - lena; // number of chars in newline seco
 
+  wts("entering enter.c    \n\r");
+  int testy = iy; possibleLine;
+
+  int testa = (text[iy].size == 0) ;
+  if (testa) assert(ix = 0);
+  if (testa) die("trying to enter a zero length line\n\r");
+
+  assert(text[iy].size > 0);
 
 /*** build firs and seco ***/
 
@@ -22,7 +30,7 @@ void enter(void)
     {*chng = *orig; chng++; orig++;}
 
   chng = seco;       // populate seco length lenb
-  for (no = lena ; no < lena + lenb; no++)
+  for (no = lena; no < lena + lenb; no++)
     {*chng = *orig; chng++; orig++;}
 
 //build aray of slots new with space for extra line
@@ -46,8 +54,11 @@ void enter(void)
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
 
-  text = realloc(text,(lastline+1)*sizeof(slot));
-  for (j = 0; j <= lastline; j++) text[j] = new[j];
+  wts("call realloc, expand text    \n\r");
+  writeDigit(lastline,1); wts("    \n\r");
+
+  text = realloc(text,(lastline+2)*sizeof(slot));
+  for (j = 0; j <= lastline; j++) {text[j] = new[j];writeDigit(j,1);wts("\n\r");}
 
   if (new != NULL); free(new);
 

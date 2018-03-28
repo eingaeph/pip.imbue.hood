@@ -31,6 +31,6 @@ void setWindow(void)
     global.cu = global.ix - global.xmin;
     global.cv = global.iy - global.ymin;
 
-    possibleLine;
+    int testy = global.iy; possibleLine;
 
 }
