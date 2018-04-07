@@ -1,37 +1,56 @@
 #! /usr/bin/tcc -run
 
+//demonstrate index out of bounds error 
+//flagged by statement number
+
+//set smax or tmax when malloc is called
+
 #include <string.h>  // memcpy
 #include <stdio.h>   // printf
 #include <stdlib.h>  // malloc
 #include <assert.h>  // assert
 
-#define textbound   texndx = (int) (text + iy);          \
-                    assert(textmin <= texndx);           \
-                    assert(textmax >= texndx);           
+#define tbound   assert(t >= 0); assert(t <= tmax);
+#define sbound   assert(s >= 0); assert(s <= smax);          
 
 typedef struct {ssize_t size; char *row; int count;} slot;
 
-    slot line; 
-    slot *text;
+    slot line; slot *text;
+    int smax, tmax;
 
 int main(void)
 {
+ int s,t,smax,tmax;
  int leng = 10; 
- text = malloc(leng*sizeof(slot)); 
-
- int textmax = (int) (text + leng - 1);
- int textmin = (int) (text + 0);
+ text = malloc(leng*sizeof(slot)); tmax = leng - 1;
 
  line.row = NULL;
  line.size = 0;
 
- int iy; for(iy = 0; iy < leng+1; iy++)     //deliberate iy overrun
+// insert deliberate iy overrun in next line
+
+ int iy; for(iy = 0; iy < leng +7; iy++)   
    {
-     printf("%d  text = %p\n",iy,text+iy);
-     int texndx; textbound; 
-     text[iy] = line;
+     t = iy; tbound; text[iy] = line;
    } 
 
+ line.row = "sing that story";
+ line.size = strlen(line.row); smax = line.size -1;
+
+// insert deliberate s overrun in next line
+
+ for(s = 0; s < line.size + 5; s++)
+   {
+     sbound; printf("%c",line.row[s]);
+   }
+ printf("\n");
+
+// put deliberate t out of bounds in next line
+
+   t=-15; tbound; text[t] = line; 
+   printf("%s\n",text[t].row);
+
  printf("test run ending\n");
+
  return 0;
 }
