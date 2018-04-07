@@ -1,11 +1,13 @@
 #! /usr/bin/tcc -run
 
-// demonstate testmin testmax consistency with malloc
-
 #include <string.h>  // memcpy
 #include <stdio.h>   // printf
 #include <stdlib.h>  // malloc
 #include <assert.h>  // assert
+
+#define textbound   texndx = (int) (text + iy);          \
+                    assert(textmin <= texndx);           \
+                    assert(textmax >= texndx);           
 
 typedef struct {ssize_t size; char *row; int count;} slot;
 
@@ -14,7 +16,7 @@ typedef struct {ssize_t size; char *row; int count;} slot;
 
 int main(void)
 {
- leng = 10; int numb;
+ int leng = 10; 
  text = malloc(leng*sizeof(slot)); 
 
  int textmax = (int) (text + leng - 1);
@@ -23,13 +25,11 @@ int main(void)
  line.row = NULL;
  line.size = 0;
 
- int i; for(i = 0; i < leng+1; i++)     //deliberate overrun
+ int iy; for(iy = 0; iy < leng+1; iy++)     //deliberate iy overrun
    {
-     printf("%d  text = %p\n",i,text+i);
-     numb = (int) (text+i);
-     printf("%d  numb = %x\n",i,numb);
-     assert(textmin <= numb); assert(textmax >= numb);
-     *(text+i) = line;
+     printf("%d  text = %p\n",iy,text+iy);
+     int texndx; textbound; 
+     text[iy] = line;
    } 
 
  printf("test run ending\n");
