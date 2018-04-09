@@ -1,0 +1,4 @@
+rm deck.c
+cat 418.h *c > deck.c
+chmod +x deck.c
+./deck.c test.dat
