@@ -17,9 +17,8 @@ void chin(char c, int fetch)
     }
 
 // ssize_t write(int fd, void *buffer, size_t count);
-
-  for (no = 0; no < limit; no++) write(1,&new[no], 1); wts("\n\r");
-  for (no = 0; no+1 < limit; no++) write(1,&orig[no], 1); wts("\n\r");
+//  for (no = 0; no < limit; no++) write(1,&new[no], 1); wts("\n\r");
+//  for (no = 0; no+1 < limit; no++) write(1,&orig[no], 1); wts("\n\r");
   
   assert((text[fetch].row != NULL) || (text[fetch].size == 0));
 

@@ -9,11 +9,13 @@ int main(int argc, char** argv)
 
    {
 
-    int testa = 1; int retval; testa = 0;
+    int testa = 1; int retval;
 
-    if (testa) retval = replay();
-    else       retval = ReadKey(); 
 
+    if (testa)  retval = replay();
+    if (!testa) retval = ReadKey(); 
+
+    if (retval == CTRL_Q) die("\n\nn\n\r") ;
 
     int testb = (retval != CTRL_U);
 

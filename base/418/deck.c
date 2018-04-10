@@ -263,9 +263,8 @@ void chin(char c, int fetch)
     }
 
 // ssize_t write(int fd, void *buffer, size_t count);
-
-  for (no = 0; no < limit; no++) write(1,&new[no], 1); wts("\n\r");
-  for (no = 0; no+1 < limit; no++) write(1,&orig[no], 1); wts("\n\r");
+//  for (no = 0; no < limit; no++) write(1,&new[no], 1); wts("\n\r");
+//  for (no = 0; no+1 < limit; no++) write(1,&orig[no], 1); wts("\n\r");
   
   assert((text[fetch].row != NULL) || (text[fetch].size == 0));
 
@@ -655,11 +654,13 @@ int main(int argc, char** argv)
 
    {
 
-    int testa = 1; int retval; testa = 0;
+    int testa = 1; int retval;
 
-    if (testa) retval = replay();
-    else       retval = ReadKey(); 
 
+    if (testa)  retval = replay();
+    if (!testa) retval = ReadKey(); 
+
+    if (retval == CTRL_Q) die("\n\nn\n\r") ;
 
     int testb = (retval != CTRL_U);
 
@@ -801,84 +802,15 @@ int replay(void)
 
  int j = 1;
 
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;          
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;          
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
- c = 'a'; store[j] = c; j = j + 1;  
- c = 'b'; store[j] = c; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
- c = 'c'; store[j] = c; j = j + 1;
- c = 'd'; store[j] = c; j = j + 1;
-          store[j] = ENTER;      j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-
+ c = 'a';   store[j] = c;          j = j + 1;
+ c = 'b';   store[j] = c;          j = j + 1;
+            store[j] = ARROW_DOWN; j = j + 1;
+            store[j] = ENTER;      j = j + 1;
+            store[j] = ENTER;      j++;
+            store[j] = CTRL_Q;     j = j + 1;
+ 
+//          store[j] = ARROW_DOWN; j = j + 1;
+//          store[j] = DEL_KEY;    j = j + 1;
 
  global.noscript++;
  if (global.noscript < j) retval = store[global.noscript];
