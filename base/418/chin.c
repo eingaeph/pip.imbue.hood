@@ -27,8 +27,8 @@ void chin(char c, int fetch)
   text[fetch].size = limit; 
   global.ix++; if(limit == 1) global.ix = 0;
 
-  char *test = text[fetch].row;
-  for (no = 0; no < limit; no++) write(1,&test[no], 1); wts("\n\r");
+//  char *test = text[fetch].row;
+//  for (no = 0; no < limit; no++) write(1,&test[no], 1); wts("\n\r");
 
 
   int testy = fetch; possibleLine;

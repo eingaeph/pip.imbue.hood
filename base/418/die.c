@@ -4,7 +4,7 @@ void die(const char *s) {
 //  writeToScreen(CursorToTopLeft); 
 //  perror(s);
   writeToScreen("\n\r");
-  writeToScreen(ClearCurrentLine);
+//  writeToScreen(ClearCurrentLine);
   writeToScreen(s); 
   writeToScreen("\n\r");
   exit(1);

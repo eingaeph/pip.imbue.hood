@@ -155,6 +155,7 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void waiter(int iw);
 void xline(int iy, char *firs, int lena, char *seco, int lenb);
 void possibleScreen(void);
 void delay(void);

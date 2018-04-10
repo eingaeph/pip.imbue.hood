@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     if (testa)  retval = replay();
     if (!testa) retval = ReadKey(); 
 
-    if (retval == CTRL_Q) die("\n\nn\n\r") ;
+    if (retval == CTRL_Q) die("\n\n\n\n\r") ;
 
     int testb = (retval != CTRL_U);
 

@@ -155,6 +155,7 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void waiter(int iw);
 void xline(int iy, char *firs, int lena, char *seco, int lenb);
 void possibleScreen(void);
 void delay(void);
@@ -250,27 +251,34 @@ void buildScreenBuffer(int star, int stop)
 void chin(char c, int fetch)
 {
   assert(global.iy == fetch);
+
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
-  char *chng = new;
   char *orig = text[fetch].row;
 
-  int no; 
+  int no; int mo = 0; 
   for (no = 0 ; no < limit; no++)
     {
-     if (no != global.ix)  {*chng = *orig; chng++; orig++;}
-     else                  {*chng = c; chng++;}
+     if (no != global.ix)  {new[no] = orig[mo];mo++;}
+     else                  {new[no] = c; }
     }
+
+// ssize_t write(int fd, void *buffer, size_t count);
+//  for (no = 0; no < limit; no++) write(1,&new[no], 1); wts("\n\r");
+//  for (no = 0; no+1 < limit; no++) write(1,&orig[no], 1); wts("\n\r");
   
   assert((text[fetch].row != NULL) || (text[fetch].size == 0));
+
   if (text[fetch].row != NULL) free(text[fetch].row); 
   text[fetch].row = new; 
   text[fetch].size = limit; 
   global.ix++; if(limit == 1) global.ix = 0;
 
+//  char *test = text[fetch].row;
+//  for (no = 0; no < limit; no++) write(1,&test[no], 1); wts("\n\r");
+
 
   int testy = fetch; possibleLine;
-
   return;
 
 }
@@ -368,7 +376,7 @@ void die(const char *s) {
 //  writeToScreen(CursorToTopLeft); 
 //  perror(s);
   writeToScreen("\n\r");
-  writeToScreen(ClearCurrentLine);
+//  writeToScreen(ClearCurrentLine);
   writeToScreen(s); 
   writeToScreen("\n\r");
   exit(1);
@@ -380,7 +388,7 @@ void disableRawMode()
     die("tcsetattr");
 }
 int edal(int retval, int fetch)
-{
+{ 
   char c = retval;         // retrieve a 1 byte character 
                            // from a 4 byte integer
 
@@ -390,6 +398,7 @@ int edal(int retval, int fetch)
   int ymax = global.ymax;   // previous values of xmax,etc. 
 
   assert(iy == fetch);
+
 
   int test = (retval > 31 && retval < 127); // true for printable character
 
@@ -489,7 +498,6 @@ void enter(void)
   int lenb = text[iy].size - lena; // number of chars in newline seco
   char *firs; char * seco;
 
-  wts("entering enter.c    \n\r");
   int testy = iy; possibleLine;
 
   int testa = (text[iy].size == 0) ;
@@ -537,11 +545,8 @@ void enter(void)
   global.lastline ++; lastline = global.lastline; 
   global.ix = 0; global.iy++;
 
-  wts("call realloc, expand text    \n\r");
-  writeDigit(lastline,1); wts("    \n\r");
-
   text = realloc(text,(lastline+2)*sizeof(slot));
-  for (j = 0; j <= lastline; j++) {text[j] = new[j];writeDigit(j,1);wts("\n\r");}
+  for (j = 0; j <= lastline; j++) {text[j] = new[j];}
 
   if (new != NULL); free(new);
 
@@ -550,23 +555,32 @@ int getCursorPosition(int *rows, int *cols)
 {
 }
 
-int getl(char **qtr)    // getline work-alike
-{
-  char inLine[240];     // sets maximum linesize at three times reasonable
-  char* ptr;
-
+int getl(char **qtr)     // getline work-alike
+{ 
+  char inLine[240];      // sets maximum linesize at three times reasonable
   int inLineSize = 0; 
-  char *s = &inLine[0];   //s and inLine are aliases of each other
-  while((global.nread = read(global.fpinp,s,1))==1) 
-    {if (*s != '\n') {s++; inLineSize++;} else break;}
+  char c;                // c and inLine[] are stored in the stack   
+  
+  int n = 0;
+  while((global.nread = read(global.fpinp,&c,1))==1) 
+    {if (c != '\n') {
+                     assert (n < 241);
+                     inLineSize++; 
+                     inLine[n] = c; 
+                     n++;
+                    } else break;
+    }
 
-  if (inLineSize == 0) {ptr = NULL; *qtr = ptr; return inLineSize;}
+  if(global.nread <=0) return -1;
 
-  ptr = malloc(inLineSize*sizeof(char));
-  memcpy(ptr,inLine,inLineSize);
-  *qtr = ptr;
+  if (inLineSize == 0) {*qtr = NULL; return inLineSize;}
 
-  return inLineSize;
+  assert(inLineSize > 0);
+
+  char *ptr = malloc(inLineSize*sizeof(char));
+  memcpy (ptr,inLine,inLineSize*sizeof(char));
+
+  *qtr = ptr; return inLineSize; // set qtr and return inLineSize
 }
 
 
@@ -584,7 +598,7 @@ void init(int argc, char** argv)
     write(STDOUT_FILENO,filename,strlen(filename)); 
     write(STDOUT_FILENO,"\n\r",2);
 
-    display = malloc(     (60)*sizeof(slot));
+//    display = malloc(     (60)*sizeof(slot));
 
     global.fpinp = open(filename,O_RDONLY);
     global.fptra = open("/dev/pts/18", O_RDWR);
@@ -593,15 +607,14 @@ void init(int argc, char** argv)
    for (numb = 0 ; numb < 100; numb++) 
     {
      retval=readAline();
-     if (global.nread == 0) {break;}
+     if (global.nread == 0) break;
      lastline = numb; 
     }
-    
-    char mesa[]="lastline = ";
 
-    write(STDOUT_FILENO,mesa,strlen(mesa));
-    writeDigit(lastline,STDOUT_FILENO);
-    write(STDOUT_FILENO,"\n\r",2);
+//    char mesa[]="lastline = ";
+//    write(STDOUT_FILENO,mesa,strlen(mesa));
+//    writeDigit(lastline,STDOUT_FILENO);
+//    write(STDOUT_FILENO,"\n\r",2);
 
     global.ix = 0; 
     global.iy = 0;    /* insertion point, text coordinates */
@@ -642,11 +655,13 @@ int main(int argc, char** argv)
 
    {
 
-    int testa = 1; int retval; testa = 0;
+    int testa = 1; int retval;
 
-    if (testa) retval = replay();
-    else       retval = ReadKey(); 
 
+    if (testa)  retval = replay();
+    if (!testa) retval = ReadKey(); 
+
+    if (retval == CTRL_Q) die("\n\n\n\n\r") ;
 
     int testb = (retval != CTRL_U);
 
@@ -655,7 +670,7 @@ int main(int argc, char** argv)
         edal(retval, global.iy);
 
         setWindow();
- 
+
         window(global.xmin,global.xmax,
                global.ymin,global.ymax);
       }
@@ -720,25 +735,30 @@ void possibleScreen(void)
     }
 }
 int readAline(void)
-{
+{  
+
     line.row = NULL; 
     line.size = getl(&line.row);  
+    if(global.nread <= 0) return -1;
+
+    if((line.count == 0)) 
+         { text =  malloc(     (1+line.count)*sizeof(slot));}
+    else { text = realloc(text,(1+line.count)*sizeof(slot));}
 
     if (line.size == 0) { 
                          text[line.count].size = line.size; 
                          text[line.count].row  = NULL;
                          line.count++;
+                         wts("line.size = 0\n\r");
+                         assert(line.row == NULL);
                          return line.size;
                         }
 
-    if((line.count == 0)) 
-         { text = (slot *) malloc(     (1+line.count)*sizeof(slot));}
-    else { text = (slot *)realloc(text,(1+line.count)*sizeof(slot));}
+    assert(line.row != NULL);
 
-    char * ptr = malloc(line.size*sizeof(char));
-    text[line.count].row = ptr  ;
+
+    text[line.count].row = line.row;
     text[line.count].size = line.size;
-    memcpy(ptr,line.row,line.size);  
 
     line.count++; 
     return line.size;
@@ -770,97 +790,39 @@ int ReadKey()
   return retval;
 }
 
+
+// replay.c Duplicates a keystroke stream 
+// 
+
 int replay(void)
 {
-  clock_t ticks1, ticks2;
+//  clock_t ticks1, ticks2;
 
-  ticks1=clock();
-  ticks2=ticks1;
-  while((ticks2-ticks1)<1034567)
-         ticks2=clock();
+//  ticks1=clock();
+//  ticks2=ticks1;
+//  while((ticks2-ticks1)<1034567)
+//         ticks2=clock();
+
+ int iw = 934567; waiter(iw); // iw = 1234567;
 
  int store[200]; char c; int retval;
 
  int j = 1;
 
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;          
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;          
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_RIGHT;j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
- c = 'a'; store[j] = c; j = j + 1;  
- c = 'b'; store[j] = c; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
- c = 'c'; store[j] = c; j = j + 1;
- c = 'd'; store[j] = c; j = j + 1;
-          store[j] = ENTER;      j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_DOWN; j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = ARROW_UP;   j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-          store[j] = DEL_KEY;    j = j + 1;
-
+ c = 'a';   store[j] = c;          j++;
+ c = 'b';   store[j] = c;          j++;
+            store[j] = PAGE_DOWN;  j++;
+/*
+            store[j] = ARROW_DOWN; j++;
+            store[j] = ENTER;      j++;
+            store[j] = ENTER;      j++;
+            store[j] = ENTER;      j++;
+            store[j] = ARROW_UP;   j++;
+            store[j] = DEL_KEY;    j++;
+*/
+ c = 'm';   store[j] = c;          j++;
+         
+            store[j] = CTRL_Q;     j++;
 
  global.noscript++;
  if (global.noscript < j) retval = store[global.noscript];
@@ -950,6 +912,19 @@ void setWindow(void)
     global.cv = global.iy - global.ymin;
 
     int testy = global.iy; possibleLine;
+
+}
+void waiter(int iw)
+{ 
+  clock_t ticks1, ticks2;
+
+  ticks1=clock();
+  ticks2=ticks1;
+  while((ticks2-ticks1)<iw) // iw = 1234567
+         ticks2=clock();
+
+//  printf("The wait time is %ld ticks.\n",ticks2-ticks1);
+//  printf("This value of CLOCKS_PER_SEC is %d.\n",CLOCKS_PER_SEC);
 
 }
 void window(int xmin, int xmax, int ymin, int ymax)
