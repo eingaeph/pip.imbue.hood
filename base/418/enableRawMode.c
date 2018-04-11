@@ -1,7 +1,5 @@
 
-
 /* Raw mode: 1960's magic numbers (grumble). */
-
 
 void enableRawMode() {
   if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");

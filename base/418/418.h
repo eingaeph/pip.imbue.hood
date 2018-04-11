@@ -143,7 +143,7 @@ char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
 char GetCursorPosition[] =                  "\x1b[6n";
 
 /*
-the terminal reply to GetCursorPosition   "24;80R" or similar
+the terminal reply to GetCursorPosition   "24;80R" or similarARROW
 */
 
 char CursorHide[]=                          "\x1b[?25l";
@@ -155,6 +155,7 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+int  arrow_up(void);
 void waiter(int iw);
 void xline(int iy, char *firs, int lena, char *seco, int lenb);
 void possibleScreen(void);

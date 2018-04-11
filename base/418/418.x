@@ -143,7 +143,7 @@ char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
 char GetCursorPosition[] =                  "\x1b[6n";
 
 /*
-the terminal reply to GetCursorPosition   "24;80R" or similar
+the terminal reply to GetCursorPosition   "24;80R" or similarARROW
 */
 
 char CursorHide[]=                          "\x1b[?25l";
@@ -155,6 +155,7 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+int  arrow_up(void);
 void waiter(int iw);
 void xline(int iy, char *firs, int lena, char *seco, int lenb);
 void possibleScreen(void);
@@ -208,33 +209,39 @@ int arrow_down(void)
 
 }
 
+void arrow_left(void)
+{
 
+}
+
+// store the insertion point after arrow_up
 
 int arrow_up(void)
 {
 
   int iy = global.iy; 
   int ix = global.ix;
-  int ymax = global.ymax;
-  int lastline = global.lastline;
 
-
-  writeToScreen("arow iy =  ");writeDigit(global.iy,1);writeToScreen("       kkk\n\r");
-  writeToScreen("arow ix =  ");writeDigit(global.ix,1);writeToScreen("       kkk\n\r");
-
-  iy--; if(iy < 0 ) iy = 0;
+  assert(iy >= 0); if (iy == 0 ) return;
+  iy--; 
 
   int size = text[iy].size;
-  if (size < ix + 1 )  ix = size - 1;
-  if (ix < 0 ) ix = 0;
+  assert (size >= 0); 
+    if (size == 0)
+      { 
+       ix = 0;
+       global.ix = ix;
+       global.iy = iy;
+       return;
+      }
+  
+    if (size < ix + 1)  ix = size - 1;
 
 //store the insertion point 
 
   global.ix   = ix;
   global.iy   = iy;
-
-  writeToScreen("arow iy =  ");writeDigit(global.iy,1);writeToScreen("       lll\n\r");
-  writeToScreen("arow ix =  ");writeDigit(global.ix,1);writeToScreen("       lll\n\r");
+  int testy = iy; possibleLine;
 
   return 0;
 
@@ -387,15 +394,19 @@ void disableRawMode()
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
     die("tcsetattr");
 }
+
+// edit a line defined by the insertion point ix,iy
+// edit operation is specified by int retval
+// int retval is taken sequentially from the keyboard
+//            or is supplied from replay.c
+
 int edal(int retval, int fetch)
 { 
   char c = retval;         // retrieve a 1 byte character 
                            // from a 4 byte integer
 
-
-  int ix   = global.ix;     // previous values of ix,iy
-  int iy   = global.iy;
-  int ymax = global.ymax;   // previous values of xmax,etc. 
+  int ix   = global.ix;     // initial values of ix,iy
+  int iy   = global.iy; 
 
   assert(iy == fetch);
 
@@ -419,9 +430,7 @@ int edal(int retval, int fetch)
 }
 
 
-
 /* Raw mode: 1960's magic numbers (grumble). */
-
 
 void enableRawMode() {
   if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
@@ -792,46 +801,29 @@ int ReadKey()
 
 
 // replay.c Duplicates a keystroke stream 
-// 
+// for testing purposes 
 
 int replay(void)
 {
-//  clock_t ticks1, ticks2;
-
-//  ticks1=clock();
-//  ticks2=ticks1;
-//  while((ticks2-ticks1)<1034567)
-//         ticks2=clock();
-
- int iw = 934567; waiter(iw); // iw = 1234567;
+ int iw = 2234567; waiter(iw); // iw = 1234567;
 
  int store[200]; char c; int retval;
 
  int j = 1;
 
- c = 'a';   store[j] = c;          j++;
- c = 'b';   store[j] = c;          j++;
-            store[j] = PAGE_DOWN;  j++;
-/*
+            store[j] = ENTER;      j++;
+            store[j] = ENTER;      j++;
             store[j] = ARROW_DOWN; j++;
-            store[j] = ENTER;      j++;
-            store[j] = ENTER;      j++;
-            store[j] = ENTER;      j++;
+            store[j] = ARROW_DOWN; j++;
             store[j] = ARROW_UP;   j++;
-            store[j] = DEL_KEY;    j++;
-*/
- c = 'm';   store[j] = c;          j++;
-         
+            store[j] = ARROW_UP;   j++;
             store[j] = CTRL_Q;     j++;
 
  global.noscript++;
  if (global.noscript < j) retval = store[global.noscript];
  else die("ending in function replay");
 
-//  printf("The wait time is %ld ticks.\n",ticks2-ticks1);
-//  printf("This value of CLOCKS_PER_SEC is %d.\n",CLOCKS_PER_SEC);
-
-  return retval;
+ return retval;
 
 }
 void sear(void)

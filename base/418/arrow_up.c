@@ -1,30 +1,32 @@
 
+// store the insertion point after arrow_up
 
 int arrow_up(void)
 {
 
   int iy = global.iy; 
   int ix = global.ix;
-  int ymax = global.ymax;
-  int lastline = global.lastline;
 
-
-  writeToScreen("arow iy =  ");writeDigit(global.iy,1);writeToScreen("       kkk\n\r");
-  writeToScreen("arow ix =  ");writeDigit(global.ix,1);writeToScreen("       kkk\n\r");
-
-  iy--; if(iy < 0 ) iy = 0;
+  assert(iy >= 0); if (iy == 0 ) return;
+  iy--; 
 
   int size = text[iy].size;
-  if (size < ix + 1 )  ix = size - 1;
-  if (ix < 0 ) ix = 0;
+  assert (size >= 0); 
+    if (size == 0)
+      { 
+       ix = 0;
+       global.ix = ix;
+       global.iy = iy;
+       return;
+      }
+  
+    if (size < ix + 1)  ix = size - 1;
 
 //store the insertion point 
 
   global.ix   = ix;
   global.iy   = iy;
-
-  writeToScreen("arow iy =  ");writeDigit(global.iy,1);writeToScreen("       lll\n\r");
-  writeToScreen("arow ix =  ");writeDigit(global.ix,1);writeToScreen("       lll\n\r");
+  int testy = iy; possibleLine;
 
   return 0;
 

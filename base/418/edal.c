@@ -1,12 +1,16 @@
+
+// edit a line defined by the insertion point ix,iy
+// edit operation is specified by int retval
+// int retval is taken sequentially from the keyboard
+//            or is supplied from replay.c
+
 int edal(int retval, int fetch)
 { 
   char c = retval;         // retrieve a 1 byte character 
                            // from a 4 byte integer
 
-
-  int ix   = global.ix;     // previous values of ix,iy
-  int iy   = global.iy;
-  int ymax = global.ymax;   // previous values of xmax,etc. 
+  int ix   = global.ix;     // initial values of ix,iy
+  int iy   = global.iy; 
 
   assert(iy == fetch);
 
