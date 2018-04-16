@@ -18,9 +18,9 @@ int edal(int retval, int fetch)
   int test = (retval > 31 && retval < 127); // true for printable character
 
   if (test)                             {chin(c,fetch); return 0;}     
-  if (retval == BACKSPACE  & ix != 0)   {global.ix-- ;  return 0;}
-  if (retval == ARROW_LEFT & ix != 0)   {global.ix-- ;  return 0;}
-  if (retval == ARROW_RIGHT)            {global.ix++ ;  return 0;}
+  if (retval == BACKSPACE)              {backspace();   return 0;}
+  if (retval == ARROW_LEFT)             {arrow_left();  return 0;}
+  if (retval == ARROW_RIGHT)            {arrow_right(); return 0;}
   if (retval == ARROW_UP   & iy != 0)   {arrow_up();    return 0;}
   if (retval == ARROW_DOWN )            {arrow_down();  return 0;}
   if (retval == ENTER)                  {enter();       return 0;}
@@ -28,8 +28,25 @@ int edal(int retval, int fetch)
   if (retval == DEL_KEY)                {del_key(fetch);return 0;} 
   if (retval == HOME_KEY)               {global.ix = 0; return 0;} 
   if (retval == PAGE_DOWN)              {pageDown();    return 0;}
+  if (retval == PAGE_UP)                {pageUp();      return 0;}
+  if (retval == END_KEY)                {end_key();     return 0;}
 
   return 0;
 
 }
 
+/*
+        ENTER  = 13,                
+        ESC    = 27,        
+        BACKSPACE =  127,   
+        ARROW_LEFT = 1000,
+        ARROW_RIGHT,
+        ARROW_UP,
+        ARROW_DOWN,
+        DEL_KEY,
+        HOME_KEY,
+        END_KEY,
+        PAGE_UP,
+        PAGE_DOWN,
+        INSERT_KEY,
+*/

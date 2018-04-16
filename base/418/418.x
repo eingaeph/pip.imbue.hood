@@ -37,11 +37,20 @@
                                        (text[testy].size >  0  ))         \
                                ); 
 
+
 #define testScreen      assert( global.xmin < global.xmax);            \
-                        assert( global.xmin > 0 );                     \
+                        assert( global.xmin >= 0 );                    \
                         assert( global.ymin < global.ymax);            \
                         assert( global.ymin >= 0 );                    \
-                        assert( global.ymax) <= lastline + 1 );
+                        assert( global.ymax <= global.lastline);       \
+                                                                       \
+                        assert( global.ymax >= global.iy);             \
+                        assert( global.ymin <= global.iy);             \
+                        assert( global.xmax >= global.ix);             \
+                        assert( global.xmin <= global.ix);             \
+                                                                       \
+                        possibleScreen();
+
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 #define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();
@@ -155,12 +164,17 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void arrow_left(void);
+void arrow_right(void);
+void backspace(void);
+int  end_key(void);
 int  arrow_up(void);
 void waiter(int iw);
 void xline(int iy, char *firs, int lena, char *seco, int lenb);
 void possibleScreen(void);
 void delay(void);
 int  pageDown(void);
+int pageUp(void);
 int  winOut(int y, int xmin, int xmax);
 int  replay(void);
 void sear(void);
@@ -211,7 +225,19 @@ int arrow_down(void)
 
 void arrow_left(void)
 {
-
+  possibleIxIy;
+  if(global.ix == 0) return;
+  global.ix--;
+}
+void arrow_right(void)
+{
+  possibleIxIy;
+  if(global.ix < text[global.iy].size ) 
+    {
+     global.ix++;
+     possibleIxIy;
+    }
+  return;
 }
 
 // store the insertion point after arrow_up
@@ -247,6 +273,14 @@ int arrow_up(void)
 
 }
 
+
+// set insertion point on receiving <backspace>
+
+void backspace(void)
+{
+  if (global.ix > 0) global.ix--;
+  possibleIxIy;
+}
 void buildScreenBuffer(int star, int stop)
 {
 }
@@ -414,9 +448,9 @@ int edal(int retval, int fetch)
   int test = (retval > 31 && retval < 127); // true for printable character
 
   if (test)                             {chin(c,fetch); return 0;}     
-  if (retval == BACKSPACE  & ix != 0)   {global.ix-- ;  return 0;}
-  if (retval == ARROW_LEFT & ix != 0)   {global.ix-- ;  return 0;}
-  if (retval == ARROW_RIGHT)            {global.ix++ ;  return 0;}
+  if (retval == BACKSPACE)              {backspace();   return 0;}
+  if (retval == ARROW_LEFT)             {arrow_left();  return 0;}
+  if (retval == ARROW_RIGHT)            {arrow_right(); return 0;}
   if (retval == ARROW_UP   & iy != 0)   {arrow_up();    return 0;}
   if (retval == ARROW_DOWN )            {arrow_down();  return 0;}
   if (retval == ENTER)                  {enter();       return 0;}
@@ -424,11 +458,28 @@ int edal(int retval, int fetch)
   if (retval == DEL_KEY)                {del_key(fetch);return 0;} 
   if (retval == HOME_KEY)               {global.ix = 0; return 0;} 
   if (retval == PAGE_DOWN)              {pageDown();    return 0;}
+  if (retval == PAGE_UP)                {pageUp();      return 0;}
+  if (retval == END_KEY)                {end_key();     return 0;}
 
   return 0;
 
 }
 
+/*
+        ENTER  = 13,                
+        ESC    = 27,        
+        BACKSPACE =  127,   
+        ARROW_LEFT = 1000,
+        ARROW_RIGHT,
+        ARROW_UP,
+        ARROW_DOWN,
+        DEL_KEY,
+        HOME_KEY,
+        END_KEY,
+        PAGE_UP,
+        PAGE_DOWN,
+        INSERT_KEY,
+*/
 
 /* Raw mode: 1960's magic numbers (grumble). */
 
@@ -498,6 +549,24 @@ int encode (int count, char* seq)
 }
 
 
+int end_key(void)
+{
+  possibleIxIy;
+//  wts("size      = "); writeDigit(text[global.iy].size,1);wts("       \n\r");   
+  if (text[global.iy].size == 0) 
+     {global.ix = 0; return 0;} 
+
+
+//  wts("global.iy = "); writeDigit(global.iy,1);wts("       \n\r");
+//  wts("global.ix = "); writeDigit(global.ix,1);wts("       \n\r");
+//  wts("size      = "); writeDigit(text[global.iy].size,1);wts("       \n\r");  
+  global.ix = text[global.iy].size - 1; 
+  possibleIxIy;
+//  wts("global.ix = "); writeDigit(global.ix,1);wts("       \n\r");
+//  die("dying in end_key.c");
+  return 0;
+
+}
 void enter(void)
 {
   int ix = global.ix;              // text x insertion point
@@ -729,6 +798,41 @@ int pageDown(void)
 
 }
 
+
+
+int pageUp(void)
+{
+
+// delta = ymax - ymin 
+
+   int delta = 24;
+
+   possibleIxIy;
+
+// default action
+
+   global.ymax = global.ymax - delta;
+   global.ymin = global.ymin - delta;
+   global.iy = global.ymin; global.ix = 0;
+
+// edge cases 
+
+  if(global.ymin < 0) 
+    {
+     global.ymin = 0; global.ymax = global.ymin + delta;
+     global.iy = 0;
+     global.ix = 0;
+    }
+
+   if(global.ymax > global.lastline) global.ymax = global.lastline;
+
+                         possibleIxIy;
+  int testy = global.iy; possibleLine;
+
+  return 0;
+
+}
+
 void possibleScreen(void)
 {
   int ymin = global.ymin;
@@ -755,16 +859,14 @@ int readAline(void)
     else { text = realloc(text,(1+line.count)*sizeof(slot));}
 
     if (line.size == 0) { 
-                         text[line.count].size = line.size; 
+                         text[line.count].size = 0; 
                          text[line.count].row  = NULL;
                          line.count++;
-                         wts("line.size = 0\n\r");
                          assert(line.row == NULL);
                          return line.size;
                         }
 
     assert(line.row != NULL);
-
 
     text[line.count].row = line.row;
     text[line.count].size = line.size;
@@ -810,13 +912,23 @@ int replay(void)
  int store[200]; char c; int retval;
 
  int j = 1;
+            store[j] = PAGE_DOWN;  j++;
 
-            store[j] = ENTER;      j++;
-            store[j] = ENTER;      j++;
             store[j] = ARROW_DOWN; j++;
             store[j] = ARROW_DOWN; j++;
+            store[j] = ARROW_DOWN; j++;
+            store[j] = END_KEY;    j++;
             store[j] = ARROW_UP;   j++;
             store[j] = ARROW_UP;   j++;
+            store[j] = PAGE_DOWN;  j++;
+            store[j] = ARROW_UP;   j++;
+            store[j] = ARROW_UP;   j++;
+            store[j] = END_KEY;    j++;
+            store[j] = ENTER;      j++;
+            store[j] = PAGE_UP;    j++;
+            store[j] = PAGE_UP;    j++;
+            store[j] = PAGE_UP;    j++;
+
             store[j] = CTRL_Q;     j++;
 
  global.noscript++;
@@ -871,15 +983,14 @@ void sear(void)
   exit(0);
 }
 
-//            implement scrolling
-// setWindow  Set Boundary Parameters for display window
+// implement scrolling
+// Set Boundary Parameters xmin, ymin... for display window
 //            
 
 void setWindow(void)
 {
 
-//    int ix,iy;                 /* insertion point, text coordinates */
-//    int lastline;              /* last line (max iy) in text            */
+//    lastline is last line (max iy) in text coordinates
 
 //    int xmin,xmax,ymin,ymax;   /* window edges in text coordinates      */ 
 //    int umin,umax,vmin,vmax;   /* window edges in screen coordinates    */
@@ -887,12 +998,49 @@ void setWindow(void)
 //    int cu,cv;                 /* cursor position in screen coordinates */
 
     possibleIxIy;
+    int testa, testb, testc, testd;
+
+#define tests testa = (global.ymax >= global.iy);      \
+              testb = (global.ymin <= global.iy);      \
+              testc = (global.xmax >= global.ix);      \
+              testd = (global.xmin <= global.ix);      
+    tests;
+
+    if (testa && testb && testc && testd) 
+      {
+       global.cu = global.ix - global.xmin;
+       global.cv = global.iy - global.ymin;
+       return;
+      }
+
+    assert(global.xmin >= 0); assert(global.xmin < global.xmax);
+    assert(global.ymin >= 0); assert(global.ymin < global.ymax);
+
+//    change one or more of xmin, xmax
+
+    if (global.ix > global.xmax)  
+      { global.xmax = global.ix; global.xmin = global.xmax - 79;}
+
+    if (global.ix < global.xmin)  
+      { global.xmin = global.ix; global.xmax = global.xmin + 79;}
+
+    tests;
+
+    if (testa && testb && testc && testd) 
+      {
+       global.cu = global.ix - global.xmin;
+       global.cv = global.iy - global.ymin;
+       return;
+      }
+
+    
+    assert (global.iy <= global.lastline); assert (global.iy >= 0);
+
+//    change one or both of ymin, ymax
 
     int ysize; if (global.lastline < 20) ysize = global.lastline;
                else                      ysize = 20;
 
-    if (global.ix > global.xmax)  {global.xmax = global.ix; global.xmin = global.xmax - 79;}
-    if (global.ix < global.xmin)  {global.xmin = global.ix; global.xmax = global.xmin + 79;}
     if (global.iy > global.ymax)  
                   {
                        global.ymax = global.iy;    
@@ -900,11 +1048,25 @@ void setWindow(void)
                    if (global.ymin < 0) global.ymin = 0; 
                   }
 
-    global.cu = global.ix - global.xmin;
-    global.cv = global.iy - global.ymin;
+    if (global.iy < global.ymin)
+      {
+        global.ymin = global.iy;
+        global.ymax = global.ymin + ysize;
+        if (global.ymax > global.lastline) global.ymax = global.lastline;
+      }
 
-    int testy = global.iy; possibleLine;
+    tests; 
 
+    if (testa && testb && testc && testd) 
+      {
+       global.cu = global.ix - global.xmin;
+       global.cv = global.iy - global.ymin;
+       return;
+      }
+
+#undef tests
+
+    die("consistency failure in setWindow.c");
 }
 void waiter(int iw)
 { 
@@ -928,9 +1090,7 @@ void window(int xmin, int xmax, int ymin, int ymax)
 
     int y; int count = 0;
 
-//    wts("drawing the window \n\r");
-
-    possibleScreen();
+    testScreen;
 
     for (y = ymin; y <= ymax; y++) 
    {

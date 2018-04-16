@@ -37,11 +37,20 @@
                                        (text[testy].size >  0  ))         \
                                ); 
 
+
 #define testScreen      assert( global.xmin < global.xmax);            \
-                        assert( global.xmin > 0 );                     \
+                        assert( global.xmin >= 0 );                    \
                         assert( global.ymin < global.ymax);            \
                         assert( global.ymin >= 0 );                    \
-                        assert( global.ymax) <= lastline + 1 );
+                        assert( global.ymax <= global.lastline);       \
+                                                                       \
+                        assert( global.ymax >= global.iy);             \
+                        assert( global.ymin <= global.iy);             \
+                        assert( global.xmax >= global.ix);             \
+                        assert( global.xmin <= global.ix);             \
+                                                                       \
+                        possibleScreen();
+
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
 #define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();
@@ -155,12 +164,17 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void arrow_left(void);
+void arrow_right(void);
+void backspace(void);
+int  end_key(void);
 int  arrow_up(void);
 void waiter(int iw);
 void xline(int iy, char *firs, int lena, char *seco, int lenb);
 void possibleScreen(void);
 void delay(void);
 int  pageDown(void);
+int pageUp(void);
 int  winOut(int y, int xmin, int xmax);
 int  replay(void);
 void sear(void);

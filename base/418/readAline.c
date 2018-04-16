@@ -10,16 +10,14 @@ int readAline(void)
     else { text = realloc(text,(1+line.count)*sizeof(slot));}
 
     if (line.size == 0) { 
-                         text[line.count].size = line.size; 
+                         text[line.count].size = 0; 
                          text[line.count].row  = NULL;
                          line.count++;
-                         wts("line.size = 0\n\r");
                          assert(line.row == NULL);
                          return line.size;
                         }
 
     assert(line.row != NULL);
-
 
     text[line.count].row = line.row;
     text[line.count].size = line.size;

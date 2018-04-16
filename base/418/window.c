@@ -7,9 +7,7 @@ void window(int xmin, int xmax, int ymin, int ymax)
 
     int y; int count = 0;
 
-//    wts("drawing the window \n\r");
-
-    possibleScreen();
+    testScreen;
 
     for (y = ymin; y <= ymax; y++) 
    {
