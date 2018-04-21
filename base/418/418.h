@@ -114,8 +114,9 @@ enum KEY_ACTION
         BACKSPACE =  127,   /* Backspace */
 
         /*** 
-The following are returned from the keyboard as escape squences 
-not as single (ascii encoded) characters
+The following are returned from the keyboard as 
+multi character escape squences 
+not as a single (16 bit ascii encoded) character
         ***/
 
         ARROW_LEFT = 1000,
@@ -164,37 +165,41 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+int  arrow_down(void);
 void arrow_left(void);
 void arrow_right(void);
-void backspace(void);
-int  end_key(void);
 int  arrow_up(void);
-void waiter(int iw);
-void xline(int iy, char *firs, int lena, char *seco, int lenb);
-void possibleScreen(void);
+void backspace(void);
+void buildScreenBuffer(int star, int stop);
+void chin(char c, int fetch);
+void delAline(void);
 void delay(void);
+void del_key(int fetch);
+void die(const char *s);
+void disableRawMode(void);
+int  edal(int retval, int fetch);
+void enableRawMode(void);
+int  encode(int count, char *seq);
+int  end_key(void);
+void enter(void);
+int  getCursorPosition(int *rows, int *cols);
+int  getl(char **qtr);
+void init(int argc, char **argv);
+int  main(int argc, char **argv);
 int  pageDown(void);
-int pageUp(void);
-int  winOut(int y, int xmin, int xmax);
+int  pageUp(void);
+void possibleScreen(void);
+int  readAline(void);
+int  ReadKey(void);
 int  replay(void);
 void sear(void);
-void delAline(void);
 void setWindow(void);
+void waiter(int iw);
 void window(int xmin, int xmax, int ymin, int ymax);
-void die(const char *s);
-int  ReadKey(void);
-int  encode(int count, char *seq);
+int  winOut(int y, int xmin, int xmax);
 void writeDigit(int digit, int fildes);
-int  edal(int retval, int fetch);
-void init(int argc, char **argv);
-int  getl(char **qtr);
-int  readAline(void);
-void enter(void);
-void buildScreenBuffer(int star, int stop);
-int  getCursorPosition(int *rows, int *cols);
-void disableRawMode(void);
-void enableRawMode(void);
-int  main(int argc, char **argv);
+void xline(int iy, char *firs, int lena, char *seco, int lenb);
+
 
 /*** function definitions ***/
 

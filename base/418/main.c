@@ -5,6 +5,11 @@ int main(int argc, char** argv)
 
   init(argc, argv);
 
+  setWindow();
+
+  window(global.xmin,global.xmax,
+         global.ymin,global.ymax);
+
   while (1) 
 
    {
