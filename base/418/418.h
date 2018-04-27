@@ -17,8 +17,9 @@
 #include <termios.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/stat.h> //open,close per Kerrisk page 72
-#include <fcntl.h>    //open,close 
+#include <sys/stat.h>   //open,close per Kerrisk page 72
+#include <fcntl.h>      //open,close 
+#include <sys/ioctl.h>  //ioctl
 
 /*** macro defines ***/
 
@@ -182,7 +183,8 @@ void enableRawMode(void);
 int  encode(int count, char *seq);
 int  end_key(void);
 void enter(void);
-int  getCursorPosition(int *rows, int *cols);
+int  getCursorPosition(int ifd, int ofd, int *rows, int *cols);
+int  getWindowSize(int ifd, int ofd, int *rows, int *cols);
 int  getl(char **qtr);
 void init(int argc, char **argv);
 int  main(int argc, char **argv);

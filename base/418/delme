@@ -1,0 +1,22 @@
+ *         escapes on the terminal.
+        ESC = 27,           /* Escape */
+ * escape sequences. */
+        case ESC:    /* escape sequence */
+            /* If this is just an ESC, we'll timeout here. */
+            if (read(fd,seq,1) == 0) return ESC;
+            if (read(fd,seq+1,1) == 0) return ESC;
+            /* ESC [ sequences. */
+                    /* Extended escape, read additional byte. */
+                    if (read(fd,seq+2,1) == 0) return ESC;
+            /* ESC O sequences. */
+/* Use the ESC [6n escape sequence to query the horizontal cursor position
+    /* Read the response: ESC [ rows ; cols R */
+    if (buf[0] != ESC || buf[1] != '[') return -1;
+ * integer pointed by 'buflen' with the size of the string, escluding
+ * write all the escape sequences in a buffer and flush them to the standard
+/* This function writes the whole screen using VT100 escape characters
+            "Search: %s (Use ESC/Arrows/Enter)", query);
+        } else if (c == ESC || c == ENTER) {
+            if (c == ESC) {
+    case ESC:
+        /* Nothing to do for ESC in this mode. */
