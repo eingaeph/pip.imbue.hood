@@ -198,6 +198,7 @@ int  ReadKey(void);
 int  replay(void);
 void sear(void);
 void setWindow(void);
+void statusBar(void);
 void waiter(int iw);
 void window(int xmin, int xmax, int ymin, int ymax);
 int  winOut(int y, int xmin, int xmax);
