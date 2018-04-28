@@ -16,7 +16,10 @@ int main(int argc, char** argv)
   int irow; for (irow = 0; irow < nrows; irow++) 
     {writeDigit(irow,1);if (irow + 1 < nrows) wts("\n\r");}
 
-  delay();wts(CursorToTopLeft); exit(1);
+  delay();wts(CursorToBeginingOfLine);
+          wts(ClearCurrentLine); 
+          wts("Status Line        "); 
+  exit(1);
   die("temporary certain death at this point\n\r");
 
   setWindow();

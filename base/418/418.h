@@ -151,6 +151,8 @@ B is cursor down, but don't exit the screen
 */
 
 char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
+char CursorToMaxDown[]=                     "\x1b[999B";
+char CursorToBeginingOfLine[]=              "\x1b[999D";
 char GetCursorPosition[] =                  "\x1b[6n";
 
 /*
