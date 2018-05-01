@@ -7,7 +7,7 @@ int ReadKey()
   else ; // write(STDIN_FILENO,"*",1); 
   write(STDOUT_FILENO,"\n\r",2);
  
-  if (c == (char) CTRL_Q) die("exiting at CTRL_q");  // CTRL-q is 17 in decimal
+  if (c == (char) CTRL_Q) die("exiting at CTRL_q");  // CTRL-Q is 17 in decimal
 
   if (c != 27) return c; 
 

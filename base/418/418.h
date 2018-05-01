@@ -54,12 +54,22 @@
 
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
-#define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();
+#define wts(x)            write(STDOUT_FILENO,x,strlen(x));            \
+                          waiter(0004567);
 
 #define chekfree(x)     assert(x != NULL);                      \
                         free(x);
 
+#define ABUF_INIT {NULL,0}
+
 /*** global symbols ***/
+
+struct abuf {
+    char *b;
+    int len;
+};
+
+#define ABUF_INIT {NULL,0}
 
 struct termios orig_termios;
 
@@ -168,6 +178,8 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void abAppend(struct abuf *ab, const char *s, int len) ;
+void abFree(struct abuf *ab) ;
 int  arrow_down(void);
 void arrow_left(void);
 void arrow_right(void);

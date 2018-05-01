@@ -17,8 +17,9 @@
 #include <termios.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/stat.h> //open,close per Kerrisk page 72
-#include <fcntl.h>    //open,close 
+#include <sys/stat.h>   //open,close per Kerrisk page 72
+#include <fcntl.h>      //open,close 
+#include <sys/ioctl.h>  //ioctl
 
 /*** macro defines ***/
 
@@ -53,12 +54,22 @@
 
 
 #define writeToScreen(x)  write(STDOUT_FILENO,x,strlen(x))
-#define wts(x)            write(STDOUT_FILENO,x,strlen(x));delay();
+#define wts(x)            write(STDOUT_FILENO,x,strlen(x));            \
+                          waiter(0004567);
 
 #define chekfree(x)     assert(x != NULL);                      \
                         free(x);
 
+#define ABUF_INIT {NULL,0}
+
 /*** global symbols ***/
+
+struct abuf {
+    char *b;
+    int len;
+};
+
+#define ABUF_INIT {NULL,0}
 
 struct termios orig_termios;
 
@@ -114,8 +125,9 @@ enum KEY_ACTION
         BACKSPACE =  127,   /* Backspace */
 
         /*** 
-The following are returned from the keyboard as escape squences 
-not as single (ascii encoded) characters
+The following are returned from the keyboard as 
+multi character escape squences 
+not as a single (16 bit ascii encoded) character
         ***/
 
         ARROW_LEFT = 1000,
@@ -149,6 +161,8 @@ B is cursor down, but don't exit the screen
 */
 
 char CursorToMaxForwardMaxDown[]=           "\x1b[999C\x1b[999B";
+char CursorToMaxDown[]=                     "\x1b[999B";
+char CursorToBeginingOfLine[]=              "\x1b[999D";
 char GetCursorPosition[] =                  "\x1b[6n";
 
 /*
@@ -164,39 +178,75 @@ char CursorToCenter[]=                      "\x1b[12;30f";
 
 /*** function declarations ***/
 
+void abAppend(struct abuf *ab, const char *s, int len) ;
+void abFree(struct abuf *ab) ;
+int  arrow_down(void);
 void arrow_left(void);
 void arrow_right(void);
-void backspace(void);
-int  end_key(void);
 int  arrow_up(void);
-void waiter(int iw);
-void xline(int iy, char *firs, int lena, char *seco, int lenb);
-void possibleScreen(void);
+void backspace(void);
+void buildScreenBuffer(int star, int stop);
+void chin(char c, int fetch);
+void delAline(void);
 void delay(void);
+void del_key(int fetch);
+void die(const char *s);
+void disableRawMode(void);
+int  edal(int retval, int fetch);
+void enableRawMode(void);
+int  encode(int count, char *seq);
+int  end_key(void);
+void enter(void);
+int  getCursorPosition(int ifd, int ofd, int *rows, int *cols);
+int  getWindowSize(int ifd, int ofd, int *rows, int *cols);
+int  getl(char **qtr);
+void init(int argc, char **argv);
+int  main(int argc, char **argv);
 int  pageDown(void);
-int pageUp(void);
-int  winOut(int y, int xmin, int xmax);
+int  pageUp(void);
+void possibleScreen(void);
+int  readAline(void);
+int  ReadKey(void);
 int  replay(void);
 void sear(void);
-void delAline(void);
 void setWindow(void);
+void statusBar(void);
+void waiter(int iw);
 void window(int xmin, int xmax, int ymin, int ymax);
-void die(const char *s);
-int  ReadKey(void);
-int  encode(int count, char *seq);
+int  winOut(int y, int xmin, int xmax);
 void writeDigit(int digit, int fildes);
-int  edal(int retval, int fetch);
-void init(int argc, char **argv);
-int  getl(char **qtr);
-int  readAline(void);
-void enter(void);
-void buildScreenBuffer(int star, int stop);
-int  getCursorPosition(int *rows, int *cols);
-void disableRawMode(void);
-void enableRawMode(void);
-int  main(int argc, char **argv);
+void xline(int iy, char *firs, int lena, char *seco, int lenb);
+
 
 /*** function definitions ***/
+
+/* We define a very simple "append buffer" structure, that is an heap
+ * allocated string where we can append to. This is useful in order to
+ * write all the escape sequences in a buffer and flush them to the standard
+ * output in a single call, to avoid flickering effects. */
+
+
+//  struct abuf {
+//    char *b;
+//    int len;  };
+//
+// #define ABUF_INIT {NULL,0}
+//
+//    example use:
+//
+//    abAppend(&ab,"\x1b[?25l",6); /* Hide cursor. */
+
+void abAppend(struct abuf *ab, const char *s, int len) 
+{
+    char *new = realloc(ab->b,ab->len+len);
+
+    if (new == NULL) return;
+    memcpy(new+ab->len,s,len);
+    ab->b = new;
+    ab->len += len;
+}
+
+void abFree(struct abuf *ab) { free(ab->b); }
 
 
 
@@ -629,8 +679,32 @@ void enter(void)
   if (new != NULL); free(new);
 
 }
-int getCursorPosition(int *rows, int *cols) 
-{
+
+//
+// Use the ESC [6n escape sequence to query the horizontal cursor position
+// and return it. On error -1 is returned, on success the position of the
+// cursor is stored at *rows and *cols and 0 is returned. 
+//
+
+int getCursorPosition(int ifd, int ofd, int *rows, int *cols) {
+    char buf[32];
+    unsigned int i = 0;
+
+    /* Report cursor location */
+    if (write(ofd, "\x1b[6n", 4) != 4) return -1;
+
+    /* Read the response: ESC [ rows ; cols R */
+    while (i < sizeof(buf)-1) {
+        if (read(ifd,buf+i,1) != 1) break;
+        if (buf[i] == 'R') break;
+        i++;
+    }
+    buf[i] = '\0';
+
+    /* Parse it. */
+    if (buf[0] != ESC || buf[1] != '[') return -1;
+    if (sscanf(buf+2,"%d;%d",rows,cols) != 2) return -1;
+    return 0;
 }
 
 int getl(char **qtr)     // getline work-alike
@@ -659,6 +733,52 @@ int getl(char **qtr)     // getline work-alike
   memcpy (ptr,inLine,inLineSize*sizeof(char));
 
   *qtr = ptr; return inLineSize; // set qtr and return inLineSize
+}
+
+
+
+/* Try to get the number of columns in the current terminal. If the ioctl()
+ * call fails the function will try to query the terminal itself.
+ * Returns 0 on success, -1 on error. */
+
+//    #include <sys/ioctl.h>
+//
+//    example call (one call in kilo.c)
+//
+//    if (getWindowSize(STDIN_FILENO,STDOUT_FILENO,
+//                      &E.screenrows,&E.screencols) == -1)
+
+int getWindowSize(int ifd, int ofd, int *rows, int *cols) {
+    struct winsize ws;
+
+    if (ioctl(1, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+        /* ioctl() failed. Try to query the terminal itself. */
+        int orig_row, orig_col, retval;
+
+        /* Get the initial position so we can restore it later. */
+        retval = getCursorPosition(ifd,ofd,&orig_row,&orig_col);
+        if (retval == -1) goto failed;
+
+        /* Go to right/bottom margin and get position. */
+        if (write(ofd,"\x1b[999C\x1b[999B",12) != 12) goto failed;
+        retval = getCursorPosition(ifd,ofd,rows,cols);
+        if (retval == -1) goto failed;
+
+        /* Restore position. */
+        char seq[32];
+        snprintf(seq,32,"\x1b[%d;%dH",orig_row,orig_col);
+        if (write(ofd,seq,strlen(seq)) == -1) {
+            /* Can't recover... */
+        }
+        return 0;
+    } else {
+        *cols = ws.ws_col;
+        *rows = ws.ws_row;
+        return 0;
+    }
+
+failed:
+    return -1;
 }
 
 
@@ -728,6 +848,13 @@ int main(int argc, char** argv)
 {
 
   init(argc, argv);
+
+  statusBar();
+
+  setWindow();
+
+  window(global.xmin,global.xmax,
+         global.ymin,global.ymax);
 
   while (1) 
 
@@ -884,7 +1011,7 @@ int ReadKey()
   else ; // write(STDIN_FILENO,"*",1); 
   write(STDOUT_FILENO,"\n\r",2);
  
-  if (c == (char) CTRL_Q) die("exiting at CTRL_q");  // CTRL-q is 17 in decimal
+  if (c == (char) CTRL_Q) die("exiting at CTRL_q");  // CTRL-Q is 17 in decimal
 
   if (c != 27) return c; 
 
@@ -1067,6 +1194,39 @@ void setWindow(void)
 #undef tests
 
     die("consistency failure in setWindow.c");
+}
+
+
+void statusBar(void)
+{
+
+  int nrows, ncols;
+  getWindowSize(STDIN_FILENO,STDOUT_FILENO,&nrows,&ncols);
+
+//  wts("the number of rows = ");writeDigit(nrows,1);wts("\n\r");
+//  wts("the number of cols = ");writeDigit(ncols,1);
+
+  wts(CursorToTopLeft);wts(ClearScreen);
+  wts("     Welcome");
+  wts(CursorToTopLeft);
+
+
+  int irow; for (irow = 0; irow < nrows; irow++) 
+    {wts("~");if (irow + 1 < nrows) wts("\n\r");}
+
+  wts(CursorToBeginingOfLine); wts(ClearCurrentLine); 
+
+//    wts("placing the cursor \n\r");
+
+  writeToScreen(CursorHide); writeToScreen(CursorToTopLeft);
+  int no; 
+  for ( no = 0; no < 0 ; no ++ )     writeToScreen(CursorForward);
+  for ( no = 0; no < nrows ; no ++ ) writeToScreen(CursorDown);
+  writeToScreen(CursorDisplay);
+  wts("Status Line        "); 
+
+  exit(0);
+
 }
 void waiter(int iw)
 { 

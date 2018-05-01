@@ -17,10 +17,15 @@ void statusBar(void)
   int irow; for (irow = 0; irow < nrows; irow++) 
     {wts("~");if (irow + 1 < nrows) wts("\n\r");}
 
-  delay();wts(CursorToBeginingOfLine);
-          wts(ClearCurrentLine); 
-          wts("Status Line        "); 
-  exit(1);
-  die("temporary certain death at this point\n\r");
+  wts(CursorToBeginingOfLine); wts(ClearCurrentLine); 
+
+//    wts("placing the cursor \n\r");
+
+  writeToScreen(CursorHide); writeToScreen(CursorToTopLeft);
+  int no; 
+  for ( no = 0; no < 0 ; no ++ )     writeToScreen(CursorForward);
+  for ( no = 0; no < nrows ; no ++ ) writeToScreen(CursorDown);
+  writeToScreen(CursorDisplay);
+  wts("Status Line        "); 
 
 }
