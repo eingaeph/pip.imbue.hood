@@ -11,7 +11,7 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
   else assert(text[iy].size == 0); 
   assert (lena >= 0); assert (lenb >= 0);
 
-  slot *temp   = malloc((global.lastline+2)*sizeof(slot *));
+  slot *temp   = malloc((global.lastline+2)*sizeof(slot));
   assert(temp != NULL);
 
 // initialize the slots pointed to by array of pointers temp
@@ -33,8 +33,10 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
   slot *bigger = realloc(text,(global.lastline+2)*sizeof(slot));
   assert(bigger != NULL); text = bigger;
 
+  global.lastline++;
+
   for (j = 0; j <= global.lastline; j++) text[j] = temp[j];
 
-  free(temp); global.lastline ++; global.ix = 0; global.iy++;
+  free(temp); global.ix = 0; global.iy++;
 
 }
