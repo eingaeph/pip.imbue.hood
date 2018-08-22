@@ -1,0 +1,12 @@
+rm -f *.o *.a
+gcc -Wall -c *.c
+ar rcs libUVSE.a *.o
+ar t   libUVSE.a
+rm -f *.o 
+
+rm -f test
+cp main.cold test.c 
+gcc -Wall test.c /data.base/product/libk/UVSE/libUVSE.a -o test
+rm test.c
+#./test
+
