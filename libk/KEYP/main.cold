@@ -1,0 +1,22 @@
+#include "KEYP.h"
+
+int main(int argc, char** argv)
+{
+
+  while (1) 
+
+   {
+
+    int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+
+    char c = retval;
+
+    if (retval > 127) {printf("%d\n", retval);continue;}
+    if (iscntrl(c))   {printf("%d\n", c);continue;} 
+                      {printf("%d ('%c')\n", c, c);}
+
+  
+   }
+
+  return 0; // this statement is never reached
+}
