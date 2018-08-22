@@ -1,0 +1,11 @@
+rm -f *.o 
+gcc -Wall -c chin.c      \
+             backspace.c \
+             arrow_left.c\
+             arrow_down.c\
+             editAline.c \
+             setWindow.c \
+             getCursorPosition.c
+ar rcs libEDAL.a *.o
+ar t   libEDAL.a
+rm -f *.o 
