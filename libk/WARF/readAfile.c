@@ -1,4 +1,4 @@
-#include "WARF.h"
+#include "gather.h"
 
 int readAfile(char *filename)
 {

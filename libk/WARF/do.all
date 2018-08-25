@@ -1,11 +1,11 @@
 rm -f *.o *.a
 gcc -Wall -c *.c
-ar rcs libKEYP.a *.o
-ar t   libKEYP.a
+ar rcs libWARF.a *.o
+ar t   libWARF.a
 rm -f *.o 
 
 cp main.cold test.c 
-gcc -Wall test.c /data.base/product/libk/KEYP/libKEYP.a -o test
+gcc -Wall test.c /data.base/product/libk/WARF/libWARF.a -o test
 rm test.c
-./test
+./test test.dat
 

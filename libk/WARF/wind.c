@@ -1,4 +1,4 @@
-#include "WARF.h"
+#include "gather.h"
 
 void wind(int xmin, int xmax, int ymin, int ymax, int lastline)
 {
