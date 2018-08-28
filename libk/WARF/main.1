@@ -1,0 +1,17 @@
+#include "gather.h"
+
+int main(int arc, char** argv)
+{
+    char *filename =argv[1];
+
+    printf("WARF executing\n");
+    printf("filename = %s\n",filename);
+
+    int lastline = readAfile(filename);
+
+    printf("\n%d lines were read\n\n",lastline);
+ 
+    wind(0,80,0,24,lastline);
+
+    return 0;
+ }

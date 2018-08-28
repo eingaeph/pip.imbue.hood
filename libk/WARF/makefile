@@ -3,6 +3,9 @@ wdir = $(stem)WARF/
 kdir = $(stem)KEYP/
 udir = $(stem)UVSE/
 
+cleano:
+	rm -f *.o *.a
+
 linkall:
 	rm -f *.o *.a
 	gcc -Wall -c $(wdir)*.c
@@ -37,4 +40,5 @@ compileall:
 	rm test.c
 	./test test.dat
 
-
+count:
+	cat $(kdir)*.c $(udir)*.c $(wdir)*.c | wc

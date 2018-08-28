@@ -10,8 +10,50 @@ int main(int arc, char** argv)
     int lastline = readAfile(filename);
 
     printf("\n%d lines were read\n\n",lastline);
- 
+
+    enableRawMode(); uvset(); screenTest(); disableRawMode();
+
+/*
+
+  scrolling sets xmin, ymin
+  u == x - xmin + (umin = 0)
+  v == y - ymin + (vmin = 1)
+  y < numblines
+  u < cols
+  v < rows 
+
+  text coordinates:         x,y
+  corner point of window:   xmin,ymin
+  maximum value of y:       ymax  
+  insertion point:          ix iy
+  number of lines:          numblines, assert(ymax+1==numblines);        
+  
+  screen cordinates:        u,v
+  screen columns:           cols       assert(u < cols)
+  screen rows:              rows       assert(v < rows);
+  cursor location           cu,cv      assert(cu == ix - xmin);
+                                       assert(cv == iy - ymin);
+
+  window coordinates:       f,g    
+                            fmin       assert(u == f + fmin);
+                            gmin       assert(v == g + gmin);
+                            fmax       assert(      
+*/
     wind(0,80,0,24,lastline);
+
+  while (1) 
+
+   {
+
+    int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+
+    char c = retval;
+
+    if (retval > 127) {printf("%d\n", retval);continue;}
+    if (iscntrl(c))   {printf("%d\n", c);continue;} 
+                      {printf("%d ('%c')\n", c, c);}
+
+   }
 
     return 0;
  }
