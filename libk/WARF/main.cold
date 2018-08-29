@@ -15,9 +15,14 @@ int main(int arc, char** argv)
 
 /*
 
+  initially xmin = 0; ymin = 0; ix = 0; iy = 0;
+
+  wind input: xmin, ymin, xmax, ymax
   scrolling sets xmin, ymin
-  u == x - xmin + (umin = 0)
-  v == y - ymin + (vmin = 1)
+  u  == x - xmin + (umin = 0)
+  v  == y - ymin + (vmin = 1)
+  cu == ix - xmin + (umin = 0)
+  cv == iy - ymin + (vmin = 1)
   y < numblines
   u < cols
   v < rows 
