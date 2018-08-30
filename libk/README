@@ -1,0 +1,28 @@
+Directory libk contains the build path for subkilo library of functions. The build path
+model may be thought of as slightly different from the git tree model. The build path 
+emphasizes one trunk which while demonstrating success at various points of the build.
+ 
+1. UVSE Set limits rows, cols for coordinates u and v. Test the values by writing 
+   to the screen.
+
+2. KEYP Encode keyboard data stream as full size digits instead of byte sized characters.
+
+3. WARF Read an input file, then display a portion of the file to the screen.
+
+4. MOCU Move cursor according to keyboard data stream 
+
+5. EDAL Edit a line 
+
+Design Problem:
+libFIRS and libSECO contain object decks with same name. Use the object deck from libSECO
+ignoring the data in libFIRS. In this way keep different versions of a function at
+different points of the build.
+
+join the following with the short circuit
+cd FIRS
+ar x libFIRS
+cp -n *.o LAST
+rm *.o
+
+
+
