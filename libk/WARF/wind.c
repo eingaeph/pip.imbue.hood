@@ -1,23 +1,23 @@
 #include "gather.h"
 
-void wind(int xmin, int xmax, int ymin, int ymax, int lastline)
+void wind(int xmin, int xmax, int ymin, int ymax, int numblines)
 {
- 
-    int y;
-    if (ymax > lastline-1) ymax = lastline-1;
-    for (y = ymin; y < ymax + 1; y++) 
+    assert(ymax >= ymin); assert(ymin < numblines);
+    if (ymax >= numblines) ymax=numblines - 1;
+
+    for (int y = ymin; y < ymax + 1; y++) 
     {
 
-    char *s = xmin + text[y].row; 
+//  description: for (once first; before each conditional exec; after exec)
 
-    int no;
-    for ( no = 0; no + xmin < xmax + 1; no++)     
-    {
-    if (no>text[y].size ) {break;}; 
-    if (*s == '\n')       {break;};
-    printf("%c",*s); s++;
-    }
-    printf("\n");
+      int x; char* s = xmin + text[y].row;
+      for ( x = xmin; x <= xmax; x++)   
+      {
+        if ((x - xmin + 1)>text[y].size ) {break;}; 
+        if (*s == '\n')       {break;};
+        printf("%c",*s); s++;
+      }
+      printf("\n");
     }
    
 }

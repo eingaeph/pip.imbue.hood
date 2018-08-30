@@ -7,7 +7,7 @@ cleano:
 	rm -f *.o *.a
 
 linkall:
-	rm -f *.o *.a
+	rm -f *.o *.a test.c
 	gcc -Wall -c $(wdir)*.c
 	ar x         $(kdir)libKEYP.a
 	ar x         $(udir)libUVSE.a
@@ -16,7 +16,7 @@ linkall:
 	rm -f *.o
 	cp main.cold test.c
 	gcc -Wall test.c $(wdir)libWARF.a -o test
-	rm test.c
+	rm -f test.c
 	./test test.dat
 
 compileall:
