@@ -18,7 +18,7 @@ libFIRS and libSECO contain object decks with same name. Use the object deck fro
 ignoring the data in libFIRS. In this way keep different versions of a function at
 different points of the build.
 
-join the following with the short circuit
+join the following with the short circuit link &&
 cd FIRS
 ar x libFIRS
 cp -n *.o LAST
