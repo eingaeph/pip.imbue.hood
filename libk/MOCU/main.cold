@@ -1,0 +1,30 @@
+#include "../KEYP/KEYP.h"
+#include "../WARF/WARF.h"
+#include "EDAL.h"
+
+int main(int arc, char** argv)
+{
+    char *filename =argv[1];
+
+    printf("EDAL executing\n");
+    printf("filename = %s\n",filename);
+
+    glob.numbLines = readAfile(filename);
+    glob.iy = 0; glob.ix = 0;
+    glob.xmin = 0; glob.xmax = 80;
+    glob.ymin = 0; glob.ymax = 24;
+
+    printf("\n%d lines were read\n\n",glob.numbLines);
+
+    while(1)
+   {
+    int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+    editAline(retval, glob.iy); 
+    setWindow();
+    wind(glob.xmin,glob.xmax, \
+         glob.ymin,glob.ymax, \
+         glob.numbLines);
+   }
+
+    return 0;
+ }

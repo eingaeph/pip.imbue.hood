@@ -1,0 +1,2 @@
+cat main.cold ../KEYP/KEYP.h ../KEYP/*.c  \
+              ../WARF/WARF.h ../WARF/*.c  | wc 

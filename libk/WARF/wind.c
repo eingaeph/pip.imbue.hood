@@ -1,4 +1,4 @@
-#include "gather.h"
+#include "../libk.h"
 
 void wind(int xmin, int xmax, int ymin, int ymax, int numblines)
 {

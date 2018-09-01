@@ -1,4 +1,4 @@
-#include "gather.h"
+#include "../libk.h"
 
 int readAfile(char *filename)
 {

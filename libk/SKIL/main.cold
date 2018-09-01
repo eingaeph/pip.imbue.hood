@@ -1,0 +1,35 @@
+#include "../KEYP/KEYP.h"
+#include "../WARF/WARF.h"
+
+int main(int arc, char** argv)
+{
+    char *filename =argv[1];
+
+    printf("subkilo executing\n");
+    printf("filename = %s\n",filename);
+
+    int lastline = readAfile(filename);
+
+    printf("\n%d lines were read\n\n",lastline);
+ 
+    wind(0,80,0,24,lastline);
+
+    while (1) 
+
+   {
+
+    int retval; char c;
+
+    retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+
+    c = retval;
+
+    if (iscntrl(c)) {printf("%d\n", c);} 
+    else            {printf("%d ('%c')\n", c, c);}
+
+  
+   }
+
+  return 0; // this statement is never reached
+
+}
