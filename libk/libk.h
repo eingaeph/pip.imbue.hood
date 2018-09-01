@@ -1,3 +1,13 @@
+// allibs   libraries required to build libk
+
+#include <termios.h>
+#include <unistd.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <assert.h>
 
 //MOCU
 
@@ -34,8 +44,6 @@ void wind(int xmin, int xmax, int ymin, int ymax, int lastline);
 
 /* global vars */
 
-#include "keyvals.h"
-
 int  ReadKey(void);
 void die(const char *s);
 int  encode (int count, char* seq);
@@ -70,16 +78,7 @@ global glob;
 
 struct termios orig_termios;
 
-#include "VT100.h"
+#include "/data.base/product/libk/VT100.h"
+#include "/data.base/product/libk/keyvals.h"
 
-// allibs   libraries required to build libk
-
-#include <termios.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-#include <assert.h>
 
