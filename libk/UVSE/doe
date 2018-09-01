@@ -1,3 +1,0 @@
-rm -f *.o 
-gcc -E -Wall -c die.c
-
