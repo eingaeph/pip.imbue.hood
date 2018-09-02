@@ -1,32 +1,58 @@
-#include "../allib.h"
-#include "../KEYP/KEYP.h"
-#include "../WARF/WARF.h"
-#include "../EDAL/EDAL.h"
-#include "../EDAL/VT100.h"
+#include "../libk.h"
 
-// given  text, ix,iy, jx,jy, numblines 
-// return xmin, xmax, ymin, ymax 
+// given  text, ix,iy, numblines
+// given previous window xmin xmax ymin ymax
+//   set cursor position cu, cv
+//   return xmin, xmax, ymin, ymax 
+//
+// possibleLine
+//
+// possibleIxIy
+//   0<=ix<=text[iy].size-1
+//   0<=iy<=numblines
+// 
+// test inWindow
+//   xmin<=ix<=xmax 
+//   ymin<=iy<=ymax
+// return immediately
+//
+// window u = 0,...,cols-1
+//        v = 0,.....rows-1
+// 
+// four corner possible test results
+// four edge non corner possible test results
+//
+// the corner cases do not require separate treatemnt
+// except that x and y adjustments must happen each time
+//   x test, then xmin, xmax set
+//   y test, then ymin, ymax set
+//   set cursor wind 
+// assert possibleWindow and return
 
 void setWindow(void)
 {
-    static int jx = 0, jy = 0;
+    int* xmin; int* xmax; int* ymin; int* ymax; 
+    int* ix; int* iy;
+    int* cu; int* cv;
 
-    int rows, cols, retval;
+    xmin =&arg2.xmin; xmax = &arg2.xmax; ymin = &arg2.ymin; ymax= &arg2.ymax;
+    ix = &glob.ix; iy = &glob.iy;
+    cu = &arg2.cu; cv = &arg2.cv;
 
-    enableRawMode();
-    int lena  = strlen(CursorToMaxForwardMaxDown);
-    if (write(STDOUT_FILENO, CursorToMaxForwardMaxDown,lena) != lena) exit(-1);
-    retval = getCursorPosition(STDIN_FILENO,STDOUT_FILENO,&rows,&cols);
-    disableRawMode();
+    possibleLine; possibleIxIy;
+    testa = (*ix >= *xmin);
+    testb = (*ix <= *xmax);
+    testc = (*iy >= *ymin);
+    testd = (*iy <= *ymax);
+    teste = testa && testb && testc && testd;
 
-
-    printf("retval = %d\n",retval);
-    printf("rows   = %d\n",rows);
-    printf("cols   = %d\n",cols);
-//Force Cursor Position	<ESC>[{ROW};{COLUMN}f
-    write(STDOUT_FILENO,"\x1b[50;168f",9);
+    if (teste) 
+      {
+//Set Cursor Position	<ESC>[{ROW};{COLUMN}f
+    *cu = *ix + 1; *cv = *iy + 1
+    print("\x1b[%d;%df",*cv,*cu);
     exit(0);
-
+       {
     int ix = glob.ix; int iy = glob.iy; 
     possibleIxIy; int testy = iy; possibleLine;
 

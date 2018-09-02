@@ -11,6 +11,13 @@
 
 //MOCU
 
+struct arg2 {
+              int xmin;
+              int xmax;
+              int ymin;
+              int ymax;
+             }
+
 #define possibleLine    assert(       ((text[testy].row == NULL) &&       \
                                        (text[testy].size == 0  ))         \
                                  ||                                       \
