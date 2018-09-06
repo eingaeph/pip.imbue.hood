@@ -1,12 +1,11 @@
 // chin  set insertion point after one byte character insert
 
-#include "../WARF/WARF.h"
-#include "EDAL.h"
+#include "../libk.h"
 
 void chin(char c, int fetch) //fetch text[fetch].row
 {
   assert(glob.iy == fetch);
-  int testy = fetch; possibleLine;
+  possibleLine;
   
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
@@ -24,7 +23,7 @@ void chin(char c, int fetch) //fetch text[fetch].row
   text[fetch].size = limit; 
   glob.ix++; if(limit == 1) glob.ix = 0;
 
-  testy = fetch; possibleLine;
+  possibleLine;
   return;
 
 }

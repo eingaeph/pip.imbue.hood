@@ -1,18 +1,18 @@
-#include "../KEYP/KEYP.h"
-#include "../WARF/WARF.h"
-#include "EDAL.h"
+#include "../libk.h"
 
 int main(int arc, char** argv)
 {
     char *filename =argv[1];
 
-    printf("EDAL executing\n");
+    printf("MOCU executing\n");
     printf("filename = %s\n",filename);
+
+    enableRawMode(); uvset(); disableRawMode();
 
     glob.numbLines = readAfile(filename);
     glob.iy = 0; glob.ix = 0;
-    glob.xmin = 0; glob.xmax = 80;
-    glob.ymin = 0; glob.ymax = 24;
+    arg2.xmin = 0; arg2.xmax = glob.cols - 1;
+    arg2.ymin = 0; arg2.ymax = glob.rows - 1;
 
     printf("\n%d lines were read\n\n",glob.numbLines);
 
@@ -21,8 +21,9 @@ int main(int arc, char** argv)
     int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
     editAline(retval, glob.iy); 
     setWindow();
-    wind(glob.xmin,glob.xmax, \
-         glob.ymin,glob.ymax, \
+    printf(ClearScreen);
+    wind(arg2.xmin,arg2.xmax, \
+         arg2.ymin,arg2.ymax, \
          glob.numbLines);
    }
 

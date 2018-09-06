@@ -11,18 +11,13 @@
 
 //MOCU
 
-struct arg2 {
-              int xmin;
-              int xmax;
-              int ymin;
-              int ymax;
-             }
+struct { int xmin; int xmax; int ymin; int ymax; } arg2;
 
-#define possibleLine    assert(       ((text[testy].row == NULL) &&       \
-                                       (text[testy].size == 0  ))         \
-                                 ||                                       \
-                                      ((text[testy].row != NULL) &&       \
-                                       (text[testy].size >  0  ))         \
+#define possibleLine    assert(       ((text[(glob.iy)].row  == NULL) &&       \
+                                       (text[(glob.iy)].size == 0  ))          \
+                                 ||                                            \
+                                      ((text[(glob.iy)].row  != NULL)  &&      \
+                                       (text[(glob.iy)].size  >  0  ))         \
                                );
 
 
@@ -30,6 +25,14 @@ struct arg2 {
                         assert( glob.iy >= 0); assert( glob.ix >= 0); \
                         assert( glob.ix <= text[glob.iy].size - 1 );
 
+int arrow_up(void);
+void arrow_right(void);
+void arrow_left(void);
+int arrow_down(void);
+void backspace(void);
+void chin(char c, int fetch); //fetch text[fetch].row
+int editAline(int retval, int fetch);
+void setWindow(void);
 
 // WARF
 

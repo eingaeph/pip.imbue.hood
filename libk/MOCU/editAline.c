@@ -1,6 +1,4 @@
-#include "../EDAL/EDAL.h"
-#include "../KEYP/KEYP.h"
-
+#include "../libk.h"
 
 // edit a line defined by the insertion point ix,iy
 // edit operation is specified by int retval
@@ -20,7 +18,7 @@ int editAline(int retval, int fetch)
 
   int test = (retval > 31 && retval < 127); // true for printable character
 
-  if (test)                             {chin(c,fetch); return 0;}       
+  if (test)                             {chin(c,fetch); return 0;}
   if (retval == BACKSPACE)              {backspace();   return 0;}
   if (retval == ARROW_LEFT)             {arrow_left();  return 0;}
   if (retval == ARROW_DOWN )            {arrow_down();  return 0;}
@@ -40,8 +38,8 @@ int editAline(int retval, int fetch)
 }
 
 /*
-        ENTER  = 13,                
-        ESC    = 27,        
-        BACKSPACE =  127,   
+        ENTER  = 13,
+        ESC    = 27,
+        BACKSPACE =  127,
         ARROW_LEFT = 1000,
 */

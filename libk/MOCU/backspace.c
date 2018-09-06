@@ -1,8 +1,7 @@
 
 // set insertion point on receiving <backspace>
 
-#include "../WARF/WARF.h"
-#include "EDAL.h"
+#include "../libk.h"
 
 void backspace(void)
 {
