@@ -11,8 +11,7 @@ int getCursorPosition(int *rows, int *cols)
     int ofd = STDOUT_FILENO;
 
 /* Place the Cursor at the bottom right of the screen*/
-    int lena = strlen( CursorToMaxForwardMaxDown );
-    write(ofd, CursorToMaxForwardMaxDown, lena );
+    printf("%s",CursorToMaxForwardMaxDown); fflush(stdout);
 /* Request the cursor location */
     if (write(ofd, "\x1b[6n", 4) != 4) return -1;
 
@@ -29,7 +28,7 @@ int getCursorPosition(int *rows, int *cols)
 // replace R in the buffer with to make a string
     buf[i] = '\0';
 
-//  after skippint two characters
+//  after skipping two characters
 //  the pattern of terminal reply to message GetCursorPosition is
 //    "24;80R" or similar    
 //  test it with printf(" The screen returned <%s>\r\n",buf+2); fflush(stdout);

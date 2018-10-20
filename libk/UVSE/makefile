@@ -1,4 +1,4 @@
-stem    = /data.base/product/libk/
+stem    = /home/ubuntu/git/repo.1/libk/
 udir = $(stem)UVSE/
 clib = UVSE
 
