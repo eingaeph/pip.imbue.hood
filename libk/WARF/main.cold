@@ -1,10 +1,14 @@
 #include "../libk.h"
-
+/*  
+    WARF write after reading file: read and display test.dat
+    text, screen and window coordinates
+    x,y, u,v f,g
+*/
 int main(int arc, char** argv)
 {
     char *filename =argv[1];
 
-    printf("WARF executing\n");
+    printf("test.WARF executing\n");
     printf("filename = %s\n",filename);
 
     int numblines = readAfile(filename);
