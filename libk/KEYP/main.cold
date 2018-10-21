@@ -1,10 +1,10 @@
 #include "../libk.h"
-
+// test program for the KEYP archive
 int main(int argc, char** argv)
 {
 
     enableRawMode(); uvset(); screenTest(); disableRawMode();
-
+// A perpetual loop, begining with reading a keyboard character
   while (1) 
 
    {
@@ -12,9 +12,11 @@ int main(int argc, char** argv)
     int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
 
     char c = retval;
-
+// print encoded multi character sequences as an integer 
     if (retval > 127) {printf("%d\n", retval);continue;}
-    if (iscntrl(c))   {printf("%d\n", c);continue;} 
+// print control character as an integer
+    if (iscntrl(c))   {printf("%d\n", c);continue;}
+// print ordinary character as a decimal and a character  
                       {printf("%d ('%c')\n", c, c);}
 
   

@@ -1,20 +1,26 @@
 #include "../libk.h"
 
+// function ReadKey
+// read single and multi-byte characters 
+// process multi-byte characters with encode 
+
 int ReadKey() 
 {
   char c; int nread;
   enableRawMode();
-  
+// Read one character (c) from standard input
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) 
+// if error in read 
   if (nread == -1 && errno != EAGAIN) die("terminated in readkey");
-  else ; // write(STDIN_FILENO,"*",1); 
+// if no erro write newline 
+  else ; 
   write(STDOUT_FILENO,"\n\r",2);
- 
+// test for exit command 
   if (c == (char) CTRL_Q) die("exiting at CTRL_q");  // CTRL-Q is 17 in decimal
-
+// c != ESCAPE no further processing 
   if (c != 27) {disableRawMode();return c;}
-
-  
+// ESCAPE found 
+// try to read a MultCharacter 
   char seq[3]={' ',' ',' '}; int count = 1;
   for (int n = 0; n < 3; ++n) 
    {if (read(STDIN_FILENO, &seq[n], 1) == 1) {count++;}
@@ -22,6 +28,7 @@ int ReadKey()
 
   int retval;
   if (count == 1) {retval = c; disableRawMode();return retval;}  
+// return not executed invoke encode
                    retval = encode(count, seq);
   disableRawMode(); return retval;
 }

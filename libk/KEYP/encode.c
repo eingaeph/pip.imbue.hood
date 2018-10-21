@@ -1,23 +1,16 @@
 #include "../libk.h"
 
-// handle escape sequences.
+// handle keyboard stream escape sequences.
+// encode multi-character escape sequences as a full word integer
 
 int encode (int count, char* seq)
 {
 
-/*
-  char buf[] = "   ";
-
-  buf[0] = seq[0] ; // write(STDOUT_FILENO,buf,1); 
-  buf[0] = seq[1] ; // write(STDOUT_FILENO,buf,1); 
-  buf[0] = seq[2] ; // write(STDOUT_FILENO,buf,1); 
-  write(1,"\n\r",2);
-*/
-
+// testa, testb, testc determine the cases handled by encode 
   int testa = ( (seq[0] == '[')); 
   int testb = ( (count < 4 ) );
   int testc = ( (seq[2] == '~') );
-
+// return ESC is the default (to handle unusual cases)
   if (count < 3 ) return ESC;  // this is unusual
    
   if (!testa)     return ESC;
@@ -40,7 +33,7 @@ int encode (int count, char* seq)
         case '6': return PAGE_DOWN;
                     }
              } // else return ESC;  
-     
+// return ESC is the default (to handle unusual cases)     
   return ESC; // this is unusual 
 }
 
