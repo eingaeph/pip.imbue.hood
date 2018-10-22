@@ -1,11 +1,10 @@
-#include "../allib.h"
-#include "../KEYP/KEYP.h"
-#include "../WARF/WARF.h"
-#include "../EDAL/EDAL.h"
-#include "../EDAL/VT100.h"
+#include "../libk.h"
 
-// given  text, ix,iy, jx,jy, numblines 
-// return xmin, xmax, ymin, ymax 
+// function setWindow.c 
+// given  struct *** text containing input file in line format
+//        ix,iy  *** insertion point
+// previous window xmin, xmax, ymin ymax 
+// return window   xmin, xmax, ymin, ymax 
 
 void setWindow(void)
 {
@@ -23,7 +22,7 @@ void setWindow(void)
     printf("retval = %d\n",retval);
     printf("rows   = %d\n",rows);
     printf("cols   = %d\n",cols);
-//Force Cursor Position	<ESC>[{ROW};{COLUMN}f
+//  Place  Cursor Position	<ESC>[{ROW};{COLUMN}f
     write(STDOUT_FILENO,"\x1b[50;168f",9);
     exit(0);
 
