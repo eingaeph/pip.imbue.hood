@@ -3,33 +3,35 @@
 // function setWindow.c 
 // given  struct *** text containing input file in line format
 //        ix,iy  *** insertion point
+// screensize rows, cols
 // previous window xmin, xmax, ymin ymax 
 // return window   xmin, xmax, ymin, ymax 
 
 void setWindow(void)
 {
-    static int jx = 0, jy = 0;
-
-    int rows, cols, retval;
-
-    enableRawMode();
-    int lena  = strlen(CursorToMaxForwardMaxDown);
-    if (write(STDOUT_FILENO, CursorToMaxForwardMaxDown,lena) != lena) exit(-1);
-    retval = getCursorPosition(STDIN_FILENO,STDOUT_FILENO,&rows,&cols);
-    disableRawMode();
-
-
-    printf("retval = %d\n",retval);
-    printf("rows   = %d\n",rows);
-    printf("cols   = %d\n",cols);
-//  Place  Cursor Position	<ESC>[{ROW};{COLUMN}f
-    write(STDOUT_FILENO,"\x1b[50;168f",9);
-    exit(0);
-
+ 
     int ix = glob.ix; int iy = glob.iy; 
-    possibleIxIy; int testy = iy; possibleLine;
+    int xmin = glob.xmin ; int xmax = glob.xmax ;
+    int ymin = glob.ymin ; int ymin = glob.ymax ;
+    int rows = glob.rows ; int cols = glob.cols ;
+    int numblines = glob.numblines;
 
-    if ((ix == jx) && (iy = jy)) return;
+    possibleIxIy; int testy = iy; possibleLine;
+    assert( xmax - xmin <= cols - 1);
+    assert( ymax - ymin <= rows - 1); 
+
+//  ix iy may have changed
+//  test whether window parameters must be changed
+
+    testa = (ix >= xmin);
+    testb = (ix <= xmax);
+    testc = (iy >= ymin);
+    testd = (iy <= ymax);
+    teste = (iy <= numblines -1);
+
+    if(testa && testb && testc && testd && teste) return; 
+
+    if ((ix == jx) && (iy x = jy)) return;
 
     int ysize; if   (glob.numbLines < glob.vmax ) ysize = glob.numbLines;
                else                               ysize = glob.vmax + 1;
