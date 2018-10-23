@@ -27,29 +27,38 @@ void setWindow(void)
     testb = (ix <= xmax);
     testc = (iy >= ymin);
     testd = (iy <= ymax);
-    teste = (iy <= numblines -1);
+    assert (iy <= numblines - 1);
 
-    if(testa && testb && testc && testd && teste) return; 
+    if(testa && testb && testc && testd ) return; 
 
-    if ((ix == jx) && (iy x = jy)) return;
+//  here setWindow attempts to reset the window edges, xmin etc.
 
-    int ysize; if   (glob.numbLines < glob.vmax ) ysize = glob.numbLines;
-               else                               ysize = glob.vmax + 1;
-
-    int xsize = glob.umax - glob.umin + 1 ;
-
-    if (glob.ix > glob.xmax)  {glob.xmax = glob.ix; glob.xmin = glob.xmax - xsize;}
-    if (glob.ix < glob.xmin)  {glob.xmin = glob.ix; glob.xmax = glob.xmin + xsize;}
-    if (glob.iy > glob.ymax)  
-                  {
-                       glob.ymax = glob.iy;    
-                       glob.ymin = glob.ymax - ysize;
-                   if (glob.ymin < 0) glob.ymin = 0; 
-                  }
+    if (!testa) {xmin = ix; xmax = xmin + rows - 1;}
+    if (!testb) {xmax = ix; xmin = xmax - rows + 1, if(xmin < 0) xmin = 0;}
+    if (!testc) {ymin = iy; ymax = ymin + cols - 1; if(ymax > numblines) ymax=numblines-1;}    
+    if (!testd) {ymax = iy; ymin = ymax - cols + 1; if(ymin < 0) ymin = 0;}
 
     glob.cu = glob.ix - glob.xmin;
     glob.cv = glob.iy - glob.ymin;
 
+//  after the above updates check for a valid window again
+    possibleIxIy; testy = iy; possibleLine;
+    assert( xmax - xmin <= cols - 1);
+    assert( ymax - ymin <= rows - 1); 
+
+
     testy = glob.iy; possibleLine;
+
+    assert( ymax - ymin <= rows - 1); 
+
+//  ix iy may have changed
+//  test whether window parameters must be changed
+    testa = (ix >= xmin);
+    testb = (ix <= xmax);
+    testc = (iy >= ymin);
+    testd = (iy <= ymax);
+    assert (iy <= numblines - 1);
+
+    if(testa && testb && testc && testd ) return; 
 
 }
