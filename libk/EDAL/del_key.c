@@ -3,9 +3,9 @@
 void del_key(int fetch)
 {
   possibleIxIy;
-  int testy = fetch; possibleLine;
+  int testy = fetch; testy = testy; possibleLine;
   int testa = (text[fetch].size == 0); // first edge case
-  if (testa) {assert(global.ix == 0);   
+  if (testa) {assert(glob.ix == 0);   
               assert(text[fetch].row == NULL);
               return;}
 
@@ -13,7 +13,7 @@ void del_key(int fetch)
   if (testb) {free(text[fetch].row);
               text[fetch].row = NULL;
               text[fetch].size = 0;
-              global.ix = 0; 
+              glob.ix = 0; 
               return;}
 
   assert(text[fetch].size > 1); assert(text[fetch].row != NULL);
@@ -27,16 +27,16 @@ void del_key(int fetch)
   int no; 
   for (no = 0 ; no <= limit; no++)
     {
-     if (no != global.ix)  {*chng = *orig; chng++; orig++;}
-     else                  { orig++ ;} // skipping
+     if (no != glob.ix)  {*chng = *orig; chng++; orig++;}
+     else                { orig++ ;} // skipping
     }
 
   free(text[fetch].row); 
   text[fetch].row = new; text[fetch].size = limit; 
 
-  if (global.ix >= limit) global.ix = limit - 1;
+  if (glob.ix >= limit) glob.ix = limit - 1;
 
-  assert(global.ix >= 0);
+  assert(glob.ix >= 0);
   testy = fetch; possibleLine;
 
   return;

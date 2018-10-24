@@ -2,17 +2,17 @@
 
 void enter(void)
 {
-  int ix = global.ix;              // text x insertion point
-  int iy = global.iy;              // text y insertion point
-  int lastline = global.lastline;  // number of rows in text
+  int ix = glob.ix;              // text x insertion point
+  int iy = glob.iy;              // text y insertion point
+  int numbLines = glob.numbLines;  // number of rows in text
   int lena = ix + 1;               // number of chars in newline firs
   int lenb = text[iy].size - lena; // number of chars in newline seco
   char *firs; char * seco;
 
-  int testy = iy; possibleLine;
+  int testy = iy; testy = testy; possibleLine;
 
   int testa = (text[iy].size == 0) ;
-  if (testa) assert(ix = 0);
+  if (testa) assert(ix == 0);
   if (testa) {lena = 0; lenb = 0; firs = NULL, seco = NULL;}
   if (testa) xline(iy, firs, lena, seco, lenb);
   if (testa) return;
@@ -37,11 +37,11 @@ void enter(void)
 
 //build aray of slots new with space for extra line
 
-  slot *new  = malloc((lastline+2)*sizeof(slot));
+  slot *new  = malloc((numbLines+2)*sizeof(slot));
                       
   int j; int k = 0;
 
-  for (j = 0; j <= lastline; j++)  //build an array of slots
+  for (j = 0; j <= numbLines; j++)  //build an array of slots
     {
      if (j != iy) { new[k] = text[j];   k++; }
      else         { 
@@ -51,14 +51,14 @@ void enter(void)
     }
 
 
-  if(text[iy].row != NULL); free(text[iy].row); 
+  if(text[iy].row != NULL) free(text[iy].row); 
 
-  global.lastline ++; lastline = global.lastline; 
-  global.ix = 0; global.iy++;
+  glob.numbLines ++; numbLines = glob.numbLines; 
+  glob.ix = 0; glob.iy++;
 
-  text = realloc(text,(lastline+2)*sizeof(slot));
-  for (j = 0; j <= lastline; j++) {text[j] = new[j];}
+  text = realloc(text,(numbLines+2)*sizeof(slot));
+  for (j = 0; j <= numbLines; j++) {text[j] = new[j];}
 
-  if (new != NULL); free(new);
+  if (new != NULL) free(new);
 
 }

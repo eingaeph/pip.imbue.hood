@@ -1,4 +1,4 @@
-stem    = /data.base/product/libk/
+stem    = /home/ubuntu/git/repo.1/libk/
 wdir = $(stem)WARF/
 kdir = $(stem)KEYP/
 udir = $(stem)UVSE/
@@ -8,13 +8,13 @@ cleano:
 	rm -f *.o *.a
 
 dryrun:
-        rm -f *.o *.a test.c
-        gcc -Wall -c $(edir)*.c
+	rm -f *.o *.a test.c
+	gcc -Wall -c $(edir)*.c
 
 linkall:
 	rm -f *.o *.a test.c
 	gcc -Wall -c $(edir)*.c
-        ar x         $(wdir)libWARF.a
+	ar x         $(wdir)libWARF.a
 	ar x         $(kdir)libKEYP.a
 	ar x         $(udir)libUVSE.a
 	ar rcs       $(edir)libEDAL.a *.o

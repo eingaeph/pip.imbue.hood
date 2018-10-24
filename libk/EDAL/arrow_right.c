@@ -3,9 +3,9 @@
 void arrow_right(void)
 {
   possibleIxIy;
-  if(global.ix < text[global.iy].size ) 
+  if(glob.ix < text[glob.iy].size ) 
     {
-     global.ix++;
+     glob.ix++;
      possibleIxIy;
     }
   return;
