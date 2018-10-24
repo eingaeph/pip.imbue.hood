@@ -1,4 +1,4 @@
-// xline
+// xline.c allocatge the space for a new line
 // build aray of slots new with space for extra line
 // free text[iy].row
 

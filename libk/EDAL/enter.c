@@ -1,15 +1,36 @@
+
+//  enter.c process ENTER returned by readKey.c  
+//  a new line is created leaving the EOL at ix
+//  newline firs is has length ix stored as lena
+//  newline seco has the remainder of the original line, stored as lenb  
+
 #include "../libk.h"
 
 void enter(void)
 {
+
+//  test for valid line in struct text
+
+  int testy = iy; testy = testy; possibleLine;
+ 
+//  retrieve insertion point variables from struct glob
+
   int ix = glob.ix;              // text x insertion point
   int iy = glob.iy;              // text y insertion point
   int numbLines = glob.numbLines;  // number of rows in text
-  int lena = ix + 1;               // number of chars in newline firs
+
+//  calculate length of new lines
+
+  int lena = ix;                   // number of chars in newline firs
   int lenb = text[iy].size - lena; // number of chars in newline seco
-  char *firs; char * seco;
+
+//  pointers to new lines
+
+  char *firs; char* seco;
 
   int testy = iy; testy = testy; possibleLine;
+
+//  case ix = 0, lena = 1 
 
   int testa = (text[iy].size == 0) ;
   if (testa) assert(ix == 0);
