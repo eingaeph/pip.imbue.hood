@@ -1,6 +1,4 @@
-#include "../EDAL/EDAL.h"
-#include "../KEYP/KEYP.h"
-
+#include "../libk.h"
 
 // edit a line defined by the insertion point ix,iy
 // edit operation is specified by int retval

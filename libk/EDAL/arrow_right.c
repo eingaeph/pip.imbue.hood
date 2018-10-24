@@ -1,3 +1,5 @@
+#include "../libk.h"
+
 void arrow_right(void)
 {
   possibleIxIy;

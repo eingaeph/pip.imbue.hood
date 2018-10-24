@@ -1,3 +1,5 @@
+#include "../libk.h"
+
 void enter(void)
 {
   int ix = global.ix;              // text x insertion point

@@ -1,7 +1,6 @@
 // chin  set insertion point after one byte character insert
 
-#include "../WARF/WARF.h"
-#include "EDAL.h"
+#include "../libk.h"
 
 void chin(char c, int fetch) //fetch text[fetch].row
 {

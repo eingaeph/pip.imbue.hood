@@ -1,3 +1,4 @@
+#include "../libk.h"
 
 void del_key(int fetch)
 {

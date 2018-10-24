@@ -1,6 +1,4 @@
-#include "../KEYP/KEYP.h"
-#include "../WARF/WARF.h"
-#include "EDAL.h"
+#include "../libk.h"
 
 int main(int arc, char** argv)
 {

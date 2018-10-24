@@ -1,4 +1,4 @@
-
+#include "../libk.h"
 
 int arrow_up(void)
 {

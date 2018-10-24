@@ -1,6 +1,5 @@
 
-#include "../KEYP/KEYP.h"
-#include "../EDAL/EDAL.h"
+#include "../libk.h"
 
 /* Use the ESC [6n escape sequence to query the horizontal cursor position
  * and return it. On error -1 is returned, on success the position of the

@@ -1,7 +1,6 @@
 // set insertion point on receiving <arrow_down>
 
-#include "../WARF/WARF.h"
-#include "EDAL.h"
+#include "../libk.h"
 
 int arrow_down(void)
 {

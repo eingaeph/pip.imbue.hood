@@ -1,3 +1,5 @@
+#include "../libk.h"
+
 int end_key(void)
 {
   possibleIxIy;
