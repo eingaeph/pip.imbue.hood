@@ -1,4 +1,8 @@
+// main.EDAL
+
 #include "../libk.h"
+
+//  test for routines editAline.c and setWindow.c
 
 int main(int arc, char** argv)
 {

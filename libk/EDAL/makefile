@@ -7,6 +7,10 @@ edir = $(stem)EDAL/
 cleano:
 	rm -f *.o *.a
 
+dryrun:
+        rm -f *.o *.a test.c
+        gcc -Wall -c $(edir)*.c
+
 linkall:
 	rm -f *.o *.a test.c
 	gcc -Wall -c $(edir)*.c

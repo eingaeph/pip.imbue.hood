@@ -1,6 +1,6 @@
 #include "../libk.h"
 
-// edit a line defined by the insertion point ix,iy
+// control editing a line defined by the insertion point ix,iy
 // edit operation is specified by int retval
 // int retval is taken sequentially from the keyboard
 //            or is supplied from replay.c
