@@ -1,16 +1,17 @@
+// setWindow.c
 #include "../libk.h"
 
-// function setWindow.c 
-// given  struct *** text containing input file in line format
-//        ix,iy  *** insertion point
-// screensize rows, cols
-// previous window xmin, xmax, ymin, ymax 
-// return window   xmin, xmax, ymin, ymax 
+// given    struct *** text containing input file in line format
+//          ix,iy  *** insertion point in text coordinates
+//          rows, cols *** screenszie
+//          xmin, xmax, ymin, ymax *** previous window edges in text coordinates 
+// return   xmin, xmax, ymin, ymax *** updated window edges
+//          cu, cv *** cursor position in screen coordinates 
 
 void setWindow(void)
 {
  
-//  initialize the variables used by 
+//  initialize the variables used by setWindow.c 
 
     int ix = glob.ix; int iy = glob.iy; 
     int xmin = glob.xmin ; int xmax = glob.xmax ;
@@ -24,23 +25,25 @@ void setWindow(void)
     assert( xmax - xmin <= cols - 1);
     assert( ymax - ymin <= rows - 1); 
 
-//  ix iy may have been changed in edal.c
+//  ix iy may have been changed in editAline.c
 //  test whether window parameters xmin etc. must be changed, as a consquence
 
     testa = (ix >= xmin); testb = (ix <= xmax);
     testc = (iy >= ymin); testd = (iy <= ymax);
     assert (iy <= numblines - 1);
 
+//  return if window edges are ok
+
     if(testa && testb && testc && testd ) return; 
 
-//  here setWindow resets the window edges, xmin etc.
+//  reset the window edges, xmin etc. to be consistent with ix, iy
 
     if (!testa) {xmin = ix; xmax = xmin + rows - 1;}
     if (!testb) {xmax = ix; xmin = xmax - rows + 1, if(xmin < 0) xmin = 0;}
     if (!testc) {ymin = iy; ymax = ymin + cols - 1; if(ymax > numblines) ymax=numblines-1;}    
     if (!testd) {ymax = iy; ymin = ymax - cols + 1; if(ymin < 0) ymin = 0;}
 
-//  after the updates check again for a valid window 
+//  after the window parm updates check again for a valid window 
 
     possibleIxIy; testy = iy; possibleLine;
     assert( xmax - xmin <= cols - 1);
@@ -51,16 +54,23 @@ void setWindow(void)
 
 //  set the glob struct variables cu,cv,xmin,xmax,ymin,ymax
 
-    glob.cu = glob.ix - glob.xmin;
-    glob.cv = glob.iy - glob.ymin;
     glob.xmin = xmin ; glob.xmax = xmax;
     glob.ymin = ymin ; glob.ymax = ymax;
+    int cu = glob.ix - glob.xmin; glob.cu = cu;
+    int cv = glob.iy - glob.ymin; glob.cv = cv;
 
-//  hopefully all this was a success and a return is appropiate
+//  move cursor to cu,cv (screen coordinates)
+
+    enableRawMode();
+    printf("\x1b[%d;%df",cu,cv); fflush(stdout);
+    disableRawMode();
+
+//  hopefully this was successful and a return is appropriate
 
     if (testa && testb && testc && testd ) return; 
 
-//  but now we write an error massage and terminate execution
+//  return was not executed
+//  write an error massage and terminate execution
 
-    die("logic error demonstrated in setWindow");
+    die("logic error in setWindow");
 }
