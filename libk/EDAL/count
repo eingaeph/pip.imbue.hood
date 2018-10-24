@@ -1,4 +1,0 @@
-cat ../KEYP/die.c  ../KEYP/disableRawMode.c ../KEYP/enableRawMode.c  ../KEYP/encode.c  ../KEYP/ReadKey.c \
-    ../WARF/readAfile.c  ../WARF/readAline.c  ../WARF/wind.c \
-    ../EDAL/setWindow.c ../EDAL/editAline.c ../EDAL/chin.c   \
-| wc
