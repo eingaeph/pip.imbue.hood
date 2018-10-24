@@ -15,9 +15,9 @@ void setWindow(void)
 
     int ix = glob.ix; int iy = glob.iy; 
     int xmin = glob.xmin ; int xmax = glob.xmax ;
-    int ymin = glob.ymin ; int ymin = glob.ymax ;
+    int ymin = glob.ymin ; int ymax = glob.ymax ;
     int rows = glob.rows ; int cols = glob.cols ;
-    int numblines = glob.numblines;
+    int numbLines = glob.numbLines;
 
 //  check the variables just initialized for consistency
     
@@ -28,9 +28,9 @@ void setWindow(void)
 //  ix iy may have been changed in editAline.c
 //  test whether window parameters xmin etc. must be changed, as a consquence
 
-    testa = (ix >= xmin); testb = (ix <= xmax);
-    testc = (iy >= ymin); testd = (iy <= ymax);
-    assert (iy <= numblines - 1);
+    int testa = (ix >= xmin); int testb = (ix <= xmax);
+    int testc = (iy >= ymin); int testd = (iy <= ymax);
+    assert (iy <= numbLines - 1);
 
 //  return if window edges are ok
 
@@ -39,8 +39,8 @@ void setWindow(void)
 //  reset the window edges, xmin etc. to be consistent with ix, iy
 
     if (!testa) {xmin = ix; xmax = xmin + rows - 1;}
-    if (!testb) {xmax = ix; xmin = xmax - rows + 1, if(xmin < 0) xmin = 0;}
-    if (!testc) {ymin = iy; ymax = ymin + cols - 1; if(ymax > numblines) ymax=numblines-1;}    
+    if (!testb) {xmax = ix; xmin = xmax - rows + 1; if(xmin < 0) xmin = 0;}
+    if (!testc) {ymin = iy; ymax = ymin + cols - 1; if(ymax > numbLines) ymax=numbLines-1;}    
     if (!testd) {ymax = iy; ymin = ymax - cols + 1; if(ymin < 0) ymin = 0;}
 
 //  after the window parm updates check again for a valid window 

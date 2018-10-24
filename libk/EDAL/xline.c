@@ -29,7 +29,7 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
                   }
     }
 
-  if(text[iy].row != NULL); free(text[iy].row); 
+  if(text[iy].row != NULL) free(text[iy].row); 
 
   slot *bigger = realloc(text,(glob.numbLines+2)*sizeof(slot));
   assert(bigger != NULL); text = bigger;

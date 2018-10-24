@@ -11,23 +11,23 @@ int pageUp(void)
 
 // default action
 
-   global.ymax = global.ymax - delta;
-   global.ymin = global.ymin - delta;
-   global.iy = global.ymin; global.ix = 0;
+   glob.ymax = glob.ymax - delta;
+   glob.ymin = glob.ymin - delta;
+   glob.iy = glob.ymin; glob.ix = 0;
 
 // edge cases 
 
-  if(global.ymin < 0) 
+  if(glob.ymin < 0) 
     {
-     global.ymin = 0; global.ymax = global.ymin + delta;
-     global.iy = 0;
-     global.ix = 0;
+     glob.ymin = 0; glob.ymax = glob.ymin + delta;
+     glob.iy = 0;
+     glob.ix = 0;
     }
 
-   if(global.ymax > global.lastline) global.ymax = global.lastline;
+   if(glob.ymax > glob.numbLines) glob.ymax = glob.numbLines;
 
                          possibleIxIy;
-  int testy = global.iy; possibleLine;
+  int testy = glob.iy; testy = testy; possibleLine;
 
   return 0;
 

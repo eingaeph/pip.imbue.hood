@@ -1,3 +1,5 @@
+// pageDown.c
+
 #include "../libk.h"
 
 int pageDown(void)
@@ -9,29 +11,29 @@ int pageDown(void)
 
 // default action
 
-   global.ymax = global.ymax + delta;
-   global.ymin = global.ymin + delta;
-   global.iy = global.ymin; global.ix = 0;
+   glob.ymax = glob.ymax + delta;
+   glob.ymin = glob.ymin + delta;
+   glob.iy = glob.ymin; glob.ix = 0;
 
 // edge cases 
 
-   if(global.ymax > global.lastline) 
+   if(glob.ymax > glob.numbLines) 
      {
-      global.ymax = global.lastline;
-      global.ymin = global.lastline - delta;
-      global.ix = 0;
-      global.iy = global.ymin;
+      glob.ymax = glob.numbLines;
+      glob.ymin = glob.numbLines - delta;
+      glob.ix = 0;
+      glob.iy = glob.ymin;
      }
   
-  if(global.ymin < 0) 
+  if(glob.ymin < 0) 
     {
-     global.ymin = 0; 
-     global.iy = 0;
-     global.ix = 0;
+     glob.ymin = 0; 
+     glob.iy = 0;
+     glob.ix = 0;
     }
 
                          possibleIxIy;
-  int testy = global.iy; possibleLine;
+  int testy = glob.iy; testy = testy; possibleLine;
 
   return 0;
 
