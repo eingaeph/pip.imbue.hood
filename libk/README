@@ -13,6 +13,10 @@ emphasizes one trunk which while demonstrating success at various points of the 
 
 5. EDAL Edit a line 
 
+6. REPL Begin testing editor features
+
+7. XLIN
+
 Design Problem:
 libFIRS and libSECO contain object decks with same name. Use the object deck from libSECO
 ignoring the data in libFIRS. In this way keep different versions of a function at
