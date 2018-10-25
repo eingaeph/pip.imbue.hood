@@ -1,4 +1,4 @@
-stem    = /data.base/product/libk/
+stem    = /home/ubuntu/git/repo.1/libk/
 kdir = $(stem)KEYP/
 udir = $(stem)UVSE/
 clib = KEYP
@@ -12,7 +12,7 @@ linkall:
 	ar x         $(udir)libUVSE.a
 	ar rcs       $(kdir)lib$(clib).a *.o
 	ar t         $(kdir)lib$(clib).a
-	rm -f *.o
+	rm -f *.o test
 	cp main.cold test.c
 	gcc -Wall test.c $(kdir)lib$(clib).a -o test
 	rm -f test.c

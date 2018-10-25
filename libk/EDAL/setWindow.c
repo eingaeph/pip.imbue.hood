@@ -21,7 +21,7 @@ void setWindow(void)
 
 //  check the variables just initialized for consistency
     
-    possibleIxIy; int testy = iy; possibleLine;
+    possibleIxIy; int testy = iy; testy=testy; possibleLine;
     assert( xmax - xmin <= cols - 1);
     assert( ymax - ymin <= rows - 1); 
 
@@ -45,7 +45,7 @@ void setWindow(void)
 
 //  after the window parm updates check again for a valid window 
 
-    possibleIxIy; testy = iy; possibleLine;
+    possibleIxIy; testy = iy; testy = testy; possibleLine;
     assert( xmax - xmin <= cols - 1);
     assert( ymax - ymin <= rows - 1); 
 

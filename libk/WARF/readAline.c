@@ -3,7 +3,7 @@
     malloc/realloc struct text
     text[line.count].row
     text[line.size].size
-
+*/
 int readAline(void)
 {
     line.row = NULL; linecap = 0;

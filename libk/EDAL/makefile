@@ -19,9 +19,9 @@ linkall:
 	ar x         $(udir)libUVSE.a
 	ar rcs       $(edir)libEDAL.a *.o
 	ar t         $(edir)libEDAL.a
-	rm -f *.o
+	rm -f *.o test
 	cp main.cold test.c
-	gcc -Wall test.c $(edir)libWARF.a -o test
+	gcc -Wall test.c $(edir)libEDAL.a -o test
 	rm -f test.c
 	./test test.dat
 

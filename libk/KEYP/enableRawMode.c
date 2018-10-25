@@ -1,4 +1,4 @@
-#include "KEYP.h"
+#include "../libk.h"
 
 /* Raw mode: 1960's magic numbers (grumble). */
 
