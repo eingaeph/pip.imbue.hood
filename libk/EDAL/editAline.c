@@ -25,7 +25,7 @@ int editAline(int retval, int fetch)
 /*
   if (retval == ARROW_RIGHT)            {arrow_right(); return 0;}
   if (retval == ARROW_UP   & iy != 0)   {arrow_up();    return 0;}
-  if (retval == ENTER)                  {enter();       return 0;}
+//  if (retval == ENTER)                  {enter();       return 0;}
   if (retval == CTRL_K)                 {delAline();    return 0;}
   if (retval == DEL_KEY)                {del_key(fetch);return 0;} 
   if (retval == HOME_KEY)               {global.ix = 0; return 0;} 

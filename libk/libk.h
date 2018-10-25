@@ -25,6 +25,11 @@ struct { int xmin; int xmax; int ymin; int ymax; } arg2;
                         assert( glob.iy >= 0); assert( glob.ix >= 0); \
                         assert( glob.ix <= text[glob.iy].size - 1 );
 
+// XLIN
+
+void enter(void);
+void xline(int iy, char* firs, int lena, char *seco, int lenb);
+
 // EDAL
 
 int arrow_down(void);
@@ -36,11 +41,9 @@ void chin(char c, int fetch);
 void del_key(int fetch);
 int editAline(int retval, int fetch);
 int end_key(void);
-void enter(void);
 int pageDown(void);
 int pageUp(void);
 void setWindow(void);
-void xline(int iy, char *firs, int lena, char *seco, int lenb);
 
 // WARF
 
