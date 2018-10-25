@@ -1,12 +1,28 @@
+// replay.c test a 
+#include "../libk.h"
 
-// replay.c Duplicates a keystroke stream 
+// replay.c returns retval identical readKey.c 
+// after a keystroke stream 
 // for testing purposes 
+
+// prata page 515, nocalls has file scope, internal linkage
+// nocalls is defined outside of all functions, with keyword static 
+// nocalls is private to the its (current) translation unit
+// by standard all global variables initialize to zero so presumably
+// the initialization of nocalls is not needed 
+
+static int nocalls = 0;
 
 int replay(void)
 {
+
+// call waiter for a pause before returning 
+
  int iw = 2234567; waiter(iw); // iw = 1234567;
 
  int store[200]; char c; int retval;
+
+// local variable store contains command test sequence
 
  int j = 1;
             store[j] = PAGE_DOWN;  j++;
@@ -28,9 +44,10 @@ int replay(void)
 
             store[j] = CTRL_Q;     j++;
 
- global.noscript++;
- if (global.noscript < j) retval = store[global.noscript];
- else die("ending in function replay");
+ nocalls ++;
+
+ if (nocalls < j) retval = store[nocalls];
+ else die("quitting after logic error in replay.c");
 
  return retval;
 

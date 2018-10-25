@@ -48,4 +48,4 @@ compileall:
 	./test test.dat
 
 count:
-	cat $(kdir)*.c $(udir)*.c $(wdir)*.c $(mdir)*.c | wc
+	cat $(kdir)*.c $(udir)*.c $(wdir)*.c $(mdir)*.c ../libk.h ../VT100.h | wc
