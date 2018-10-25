@@ -7,8 +7,8 @@
 
 // prata page 515, nocalls has file scope, internal linkage
 // nocalls is defined outside of all functions, with keyword static 
-// nocalls is private to the its (current) translation unit
-// by standard all global variables initialize to zero so presumably
+// nocalls is private its (current) translation unit
+// by standard all static file scope variables initialize to zero so presumably
 // the initialization of nocalls is not needed 
 
 static int nocalls = 0;
