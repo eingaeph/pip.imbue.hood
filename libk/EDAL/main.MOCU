@@ -1,51 +1,42 @@
-// test.EDAL
-
 #include "../libk.h"
 
+// test.MOCU
+
 //   uvset.c      query screen for size
-//     set rows, cols, 
+//     rows, cols
 //   readAfile.   read a file defined as a command line argument
-//     set numblines
+//     numblines
 //   editAline.c  process ReadKey code
 //     ix, iy 
 //   setWindow.c  build window to be displayed on the screen
-//     reset xmin, xmax, ymin, ymax
+//     xmin, xmax, ymin, ymax
 //   wind.c       write the window to the screen
-//     using 
 
 int main(int arc, char** argv)
 {
-
-//   set pointer to input filename
-
+//   set pointer to input filename string
     char *filename =argv[1];
 
-    printf("test.EDAL executing\n");
+    printf("test.MOCU executing\n");
     printf("filename = %s\n",filename);
 
-//  follwoing is the init segment, later move to init()
-
-    glob.numbLines = readAfile(filename);
-
-//   set rows, cols
-
     enableRawMode(); uvset(); disableRawMode();
-
-//  set initial window and insertion point
-
-    glob.xmin = 0; glob.xmax = cols -1;
-    glob.ymin = 0; glob.ymax = rows -1;
-  
+//   some variable initialization
+    glob.numbLines = readAfile(filename);
     glob.iy = 0; glob.ix = 0;
-    printf("\n%d lines were read\n\n",glob.numbLines);
+    arg2.xmin = 0; arg2.xmax = glob.cols - 1;
+    arg2.ymin = 0; arg2.ymax = glob.rows - 1;
 
+    printf("\n%d lines were read\n\n",glob.numbLines);
+//   perpertural loop ReadKey, process coded input 
     while(1)
    {
     int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
     editAline(retval, glob.iy); 
     setWindow();
-    wind(glob.xmin,glob.xmax, \
-         glob.ymin,glob.ymax, \
+    printf(ClearScreen);
+    wind(arg2.xmin,arg2.xmax, \
+         arg2.ymin,arg2.ymax, \
          glob.numbLines);
    }
 

@@ -1,0 +1,6 @@
+uvset.c
+
+//  query screen for size with getCursorPosition 
+    getCursorPosition(&rows,&cols);
+//  set struct glob variables rows, cols, umax, vmax
+

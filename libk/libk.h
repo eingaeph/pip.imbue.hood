@@ -9,7 +9,7 @@
 #include <string.h>
 #include <assert.h>
 
-//MOCU
+//EDAL
 
 struct { int xmin; int xmax; int ymin; int ymax; } arg2;
 
