@@ -52,10 +52,6 @@ void setWindow(void)
     {
     cu = glob.ix - glob.xmin; glob.cu = cu;
     cv = glob.iy - glob.ymin; glob.cv = cv;
-    enableRawMode();
-//  move cursort to insertion point
-    printf("\x1b[%d;%df",cu,cv); fflush(stdout);
-    disableRawMode();
     return;
     }
 
@@ -83,12 +79,6 @@ void setWindow(void)
     glob.ymin = ymin ; glob.ymax = ymax;
     cu = glob.ix - glob.xmin; glob.cu = cu;
     cv = glob.iy - glob.ymin; glob.cv = cv;
-
-//  move cursor to cu,cv (screen coordinates)
-
-    enableRawMode();
-    printf("\x1b[%d;%df",cu,cv); fflush(stdout);
-    disableRawMode();
 
 //  hopefully this was successful and a return is appropriate
 
