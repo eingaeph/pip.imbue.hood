@@ -4,9 +4,19 @@
 // given    struct *** text containing input file in line format
 //          ix,iy  *** insertion point in text coordinates
 //          rows, cols *** screenszie
+//          numblines *** number of lines in struct text
 //          xmin, xmax, ymin, ymax *** previous window edges in text coordinates 
+
 // return   xmin, xmax, ymin, ymax *** updated window edges
 //          cu, cv *** cursor position in screen coordinates 
+
+// four edge non corner possible test results
+//
+// the corner cases do not require separate treatment
+//   x test, then xmin, xmax set
+//   y test, then ymin, ymax set
+//   set cursor coordinates 
+//   assert possibleWindow and return
 
 void setWindow(void)
 {
@@ -18,6 +28,7 @@ void setWindow(void)
     int ymin = glob.ymin ; int ymax = glob.ymax ;
     int rows = glob.rows ; int cols = glob.cols ;
     int numbLines = glob.numbLines;
+    int cu, cv; //these will be initialized later
 
 //  check the variables just initialized for consistency
     
@@ -28,13 +39,27 @@ void setWindow(void)
 //  ix iy may have been changed in editAline.c
 //  test whether window parameters xmin etc. must be changed, as a consquence
 
-    int testa = (ix >= xmin); int testb = (ix <= xmax);
-    int testc = (iy >= ymin); int testd = (iy <= ymax);
+    int testa, testb, testc, testd, teste;
+
+    testa = (ix >= xmin); testb = (ix <= xmax); 
+    testc = (iy >= ymin); testd = (iy <= ymax);
+    teste = (testa && testb && testc && testd); 
     assert (iy <= numbLines - 1);
 
-//  return if window edges are ok
+//  return if unchanged window edges are ok
 
-    if(testa && testb && testc && testd ) return; 
+    if(teste) 
+    {
+    cu = glob.ix - glob.xmin; glob.cu = cu;
+    cv = glob.iy - glob.ymin; glob.cv = cv;
+    enableRawMode();
+//  move cursort to insertion point
+    printf("\x1b[%d;%df",cu,cv); fflush(stdout);
+    disableRawMode();
+    return;
+    }
+
+    assert(!testa && !testb && !testc && !testd);
 
 //  reset the window edges, xmin etc. to be consistent with ix, iy
 
@@ -56,8 +81,8 @@ void setWindow(void)
 
     glob.xmin = xmin ; glob.xmax = xmax;
     glob.ymin = ymin ; glob.ymax = ymax;
-    int cu = glob.ix - glob.xmin; glob.cu = cu;
-    int cv = glob.iy - glob.ymin; glob.cv = cv;
+    cu = glob.ix - glob.xmin; glob.cu = cu;
+    cv = glob.iy - glob.ymin; glob.cv = cv;
 
 //  move cursor to cu,cv (screen coordinates)
 
@@ -73,4 +98,5 @@ void setWindow(void)
 //  write an error massage and terminate execution
 
     die("logic error in setWindow");
+
 }
