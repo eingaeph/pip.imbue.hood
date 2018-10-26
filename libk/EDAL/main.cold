@@ -41,13 +41,18 @@ int main(int arc, char** argv)
 
     while(1)
    {
+//    enableRawMode(); printf(ClearScreen); fflush(stdout); disableRawMode();
     int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
     editAline(retval, glob.iy); 
     setWindow();
     wind(glob.xmin,glob.xmax, \
          glob.ymin,glob.ymax, \
          glob.numbLines);
-   }
 
+//  set cursor position
+
+    int cu = glob.cu; int cv = glob.cv;
+    enableRawMode(); printf("\x1b[%d;%df",cu,cv); fflush(stdout); disableRawMode();
+   }
     return 0;
- }
+}
