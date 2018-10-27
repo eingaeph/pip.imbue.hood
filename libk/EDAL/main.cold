@@ -49,7 +49,7 @@ int main(int arc, char** argv)
 
     enableRawMode(); printf(ClearScreen); fflush(stdout); disableRawMode();
     int cu = 0; int cv = 0;
-    enableRawMode(); printf("\x1b[%d;%df",cu,cv); fflush(stdout); disableRawMode();
+    enableRawMode(); printf("\x1b[%d;%df",cv,cu); fflush(stdout); disableRawMode();
 
 //  draw the window
 
@@ -60,7 +60,7 @@ int main(int arc, char** argv)
     cu = glob.cu; cv = glob.cv;
     assert(cu == glob.ix - glob.xmin);
     assert(cv == glob.iy - glob.ymin);
-    enableRawMode(); printf("\x1b[%d;%df",cu,cv); fflush(stdout); disableRawMode();
+    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
    }
     return 0;
 }
