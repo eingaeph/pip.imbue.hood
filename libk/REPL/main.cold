@@ -5,40 +5,27 @@ int main(int argc, char** argv)
 
   init(argc, argv);
 
-  die("temporary certain death");
-
-  setWindow();
-
-  window(global.xmin,global.xmax,
-         global.ymin,global.ymax);
+  setWindow(); draw();
 
   while (1) 
 
    {
-
-    int testa = 1; int retval;
-
-
-    if (testa)  retval = replay();
-    if (!testa) retval = ReadKey(); 
+    int retval;
+    retval = replay();
+//  retval = ReadKey(); 
 
     if (retval == CTRL_Q) die("\n\n\n\n\r") ;
 
-    int testb = (retval != CTRL_U);
+    editAline(retval, global.iy); 
+    setWindow(); draw();
 
-    if (testb)
-      {
-        edal(retval, global.iy);
+//  set cursor position corresponding to ix, iy
 
-        setWindow();
-
-        window(global.xmin,global.xmax,
-               global.ymin,global.ymax);
-      }
-
-    else sear();
-  
+    cu = glob.cu; cv = glob.cv;
+    assert(cu == glob.ix - glob.xmin);
+    assert(cv == glob.iy - glob.ymin);
+    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
    }
-
+  
   return 0; // this statement is never reached
 }
