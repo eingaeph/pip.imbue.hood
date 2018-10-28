@@ -47,4 +47,11 @@ compileall:
 	./test test.dat
 
 count:
-	cat $(kdir)*.c $(udir)*.c $(wdir)*.c | wc
+	cat $(kdir)*.c $(kdir)*.cold | wc
+	cat $(udir)*.c $(udir)*.cold | wc
+	cat $(wdir)*.c $(wdir)*.cold | wc
+	cat $(edir)*.c $(edir)*.cold | wc
+	cat $(rdir)*.c $(rdir)*.cold | wc
+	cat ../libk.h  ../VT100.h    | wc
+
+
