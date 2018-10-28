@@ -1,6 +1,8 @@
 // draw.c
 //    clear the screen and draw the window
 
+#include "../libk.h"
+
 void draw(void)
 {
 //  Clear the screen an place the cursor at the top left

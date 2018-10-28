@@ -11,11 +11,11 @@ cleano:
 
 dryrun:
 	rm -f *.o *.a test.c
-	gcc -Wall -c $(edir)*.c
+	gcc -Wall -c $(rdir)*.c
 
 linkall:
 	rm -f *.o *.a test.c
-        ar x         $(edir)libEDAL.a
+	ar x         $(edir)libEDAL.a
 	gcc -Wall -c $(rdir)*.c
 	ar rcs       $(rdir)libREPL.a *.o
 	ar t         $(rdir)libREPL.a

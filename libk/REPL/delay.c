@@ -1,3 +1,5 @@
+#include "../libk.h"
+
 void delay(void)
 {
   clock_t ticks1, ticks2;

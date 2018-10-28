@@ -8,6 +8,15 @@
 #include <ctype.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
+
+//REPLY
+
+void delay(void);
+void draw(void);
+void init(int argc, char** argv);
+int replay(void);
+void waiter(int iw);
 
 //EDAL
 
