@@ -1,3 +1,5 @@
+#include "../libk.h"
+
 void waiter(int iw)
 { 
   clock_t ticks1, ticks2;

@@ -20,7 +20,7 @@ int replay(void)
 
  int iw = 2234567; waiter(iw); // iw = 1234567;
 
- int store[200]; char c; int retval;
+ int store[200]; int retval;
 
 // local variable store contains command test sequence
 
