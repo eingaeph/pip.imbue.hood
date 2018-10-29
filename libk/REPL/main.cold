@@ -10,18 +10,18 @@ int main(int argc, char** argv)
   while (1) 
 
    {
-    int retval;
+    int retval; 
     retval = replay();
 //  retval = ReadKey(); 
 
     if (retval == CTRL_Q) die("\n\n\n\n\r") ;
 
-    editAline(retval, global.iy); 
+    editAline(retval, glob.iy); 
     setWindow(); draw();
 
 //  set cursor position corresponding to ix, iy
 
-    cu = glob.cu; cv = glob.cv;
+    int cu = glob.cu; int cv = glob.cv;
     assert(cu == glob.ix - glob.xmin);
     assert(cv == glob.iy - glob.ymin);
     enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
