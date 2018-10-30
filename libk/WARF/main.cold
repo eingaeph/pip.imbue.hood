@@ -15,7 +15,8 @@ int main(int arc, char** argv)
 
     printf("\n%d lines were read\n\n",numblines);
 
-    enableRawMode(); uvset(); screenTest(); disableRawMode();
+    enableRawMode(); uvset(); disableRawMode();
+    screenTest();
 
 /*
 
@@ -54,7 +55,7 @@ int main(int arc, char** argv)
 
    {
 
-    int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+    int retval = ReadKey(); if (retval == CTRL_Q) return 0;
 
     char c = retval;
 

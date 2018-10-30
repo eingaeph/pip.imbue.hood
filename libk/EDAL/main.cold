@@ -41,7 +41,7 @@ int main(int arc, char** argv)
 
     while(1)
    {
-    int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+    int retval = ReadKey(); if (retval == CTRL_Q) return 0;
     editAline(retval, glob.iy); 
     setWindow();
 
