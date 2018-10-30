@@ -4,7 +4,7 @@
 
 void enableRawMode() {
   if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) exit(0);
-  atexit(disableRawMode);
+//atexit(disableRawMode);
 
   struct termios raw = orig_termios;
   raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);

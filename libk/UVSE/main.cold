@@ -4,7 +4,12 @@
 
 int main(void)
 { 
-    enableRawMode(); uvset(); screenTest();
 
-    disableRawMode(); return 0;
+//  enter / leave raw mode to avoid echoing to the screen, 
+//  when the terminal sends information about its size
+
+    enableRawMode(); uvset(); disableRawMode(); return 0;
+    screenTest();
+
+    return 0;
  }
