@@ -1,27 +1,37 @@
 stem    = /home/ubuntu/git/repo.1/libk/
-wdir = $(stem)WARF/
-kdir = $(stem)KEYP/
-udir = $(stem)UVSE/
-edir = $(stem)EDAL/
+new = EDAL
+old = WARF
+nstem = $(stem)$(new)/
+ostem = $(stem)$(old)/
+libn =  $(nstem)lib$(new).a
+libo =  $(ostem)lib$(old).a
+
+firs:
+	echo $(new)     > /dev/null
+	echo $(old)     > /dev/null
+	echo $(nstem)   > /dev/null
+	echo $(ostem)   > /dev/null
+	echo $(libn)    > /dev/null
+	echo $(libo)    > /dev/null
 
 cleano:
-	rm -f *.o *.a
+	rm -f *.o *.a 
 
 dryrun:
 	rm -f *.o *.a test.c
-	gcc -Wall -c $(edir)*.c
+	gcc -Wall -c $(nstem)*.c
 
 linkall:
-	rm -f *.o *.a test.c
-	gcc -Wall -c $(edir)*.c
-	ar x         $(wdir)libWARF.a
-	ar x         $(kdir)libKEYP.a
-	ar x         $(udir)libUVSE.a
-	ar rcs       $(edir)libEDAL.a *.o
-	ar t         $(edir)libEDAL.a
+	rm -f *.o *.a $(libn) test.c
+	ar x          $(libo)
+	ar rcs        $(libn) *.o
+	rm -f *.o
+	gcc -Wall -c $(nstem)*.c
+	ar rs         $(libn) *.o
+	ar t          $(libn)
 	rm -f *.o test
 	cp main.cold test.c
-	gcc -Wall test.c $(edir)libEDAL.a -o test
+	gcc -Wall test.c $(libn) -o test
 	rm -f test.c
 	./test test.dat
 
