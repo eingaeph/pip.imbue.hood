@@ -15,9 +15,9 @@ int ReadKey()
 // if no erro write newline 
   else ; 
   write(STDOUT_FILENO,"\n\r",2);
-// test for exit command 
-  if (c == (char) CTRL_Q) die("exiting at CTRL_q");  // CTRL-Q is 17 in decimal
+
 // c != ESCAPE no further processing 
+
   if (c != 27) {disableRawMode();return c;}
 // ESCAPE found 
 // try to read a MultCharacter 

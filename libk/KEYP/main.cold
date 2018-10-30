@@ -3,13 +3,14 @@
 int main(int argc, char** argv)
 {
 
-    enableRawMode(); uvset(); screenTest(); disableRawMode();
+    enableRawMode(); uvset(); disableRawMode();
+    screenTest(); 
 // A perpetual loop, begining with reading a keyboard character
   while (1) 
 
    {
 
-    int retval = ReadKey(); if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+    int retval = ReadKey(); if (retval == CTRL_Q) exit(0) ;
 
     char c = retval;
 // print encoded multi character sequences as an integer 
