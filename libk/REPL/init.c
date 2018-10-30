@@ -7,8 +7,14 @@ void init(int argc, char** argv)
     char * filename = argv[1]; readAfile(filename); 
 
 //  query screen for size, write initial window using rows and cols
+//  uvset returns values through standard input
     
-    uvset(); printf("rows = %d\n\r",glob.rows); exit(0); screenTest();
+    enableRawMode(); uvset(); disableRawMode();
+
+//  write initial window using rows and cols, not xmin etc.
+
+    printf("rows = %d\n\r",glob.rows); exit(0); 
+    screenTest();
 
 //  set initial insertion point, in text coordinates of course
 

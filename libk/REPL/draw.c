@@ -7,9 +7,9 @@ void draw(void)
 {
 //  Clear the screen an place the cursor at the top left
 
-    enableRawMode(); printf(ClearScreen); fflush(stdout); 
+    printf(ClearScreen); fflush(stdout); 
     int cu = 0; int cv = 0;
-    printf("\x1b[%d;%df",cv,cu); fflush(stdout); disableRawMode();
+    printf("\x1b[%d;%df",cv,cu); fflush(stdout); 
 
 //  draw the window beginning at the cursor
 

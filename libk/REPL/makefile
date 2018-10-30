@@ -1,27 +1,37 @@
 stem    = /home/ubuntu/git/repo.1/libk/
+new = REPL
+old = EDAL
+nstem = $(stem)$(new)/
+ostem = $(stem)$(old)/
+libn =  $(nstem)lib$(new).a
+libo =  $(ostem)lib$(old).a
 
-kdir = $(stem)KEYP/
-udir = $(stem)UVSE/
-wdir = $(stem)WARF/
-edir = $(stem)EDAL/
-rdir = $(stem)REPL/
+firs:
+	echo $(new)     > /dev/null
+	echo $(old)     > /dev/null
+	echo $(nstem)   > /dev/null
+	echo $(ostem)   > /dev/null
+	echo $(libn)    > /dev/null
+	echo $(libo)    > /dev/null
 
 cleano:
-	rm -f *.o *.a
+	rm -f *.o *.a 
 
 dryrun:
 	rm -f *.o *.a test.c
-	gcc -Wall -c $(rdir)*.c
+	gcc -Wall -c $(nstem)*.c
 
 linkall:
-	rm -f *.o *.a test.c
-	ar x         $(edir)libEDAL.a
-	gcc -Wall -c $(rdir)*.c
-	ar rcs       $(rdir)libREPL.a *.o
-	ar t         $(rdir)libREPL.a
+	rm -f *.o *.a $(libn) test.c
+	ar x          $(libo)
+	ar rcs        $(libn) *.o
+	rm -f *.o
+	gcc -Wall -c $(nstem)*.c
+	ar rs         $(libn) *.o
+	ar t          $(libn)
 	rm -f *.o test
 	cp main.cold test.c
-	gcc -Wall test.c $(rdir)libREPL.a -o test
+	gcc -Wall test.c $(libn) -o test
 	rm -f test.c
 	./test test.dat
 
@@ -47,11 +57,4 @@ compileall:
 	./test test.dat
 
 count:
-	cat $(kdir)*.c $(kdir)*.cold | wc
-	cat $(udir)*.c $(udir)*.cold | wc
-	cat $(wdir)*.c $(wdir)*.cold | wc
-	cat $(edir)*.c $(edir)*.cold | wc
-	cat $(rdir)*.c $(rdir)*.cold | wc
-	cat ../libk.h  ../VT100.h    | wc
-
-
+	cat $(kdir)*.c $(udir)*.c $(wdir)*.c | wc
