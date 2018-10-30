@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     retval = replay();
 //  retval = ReadKey(); 
 
-    if (retval == CTRL_Q) die("\n\n\n\n\r") ;
+    if (retval == CTRL_Q) return 0;
 
     editAline(retval, glob.iy); 
     setWindow(); draw();

@@ -11,6 +11,8 @@ void draw(void)
     int cu = 0; int cv = 0;
     printf("\x1b[%d;%df",cv,cu); fflush(stdout);
     printf("xmin = %d xmax = %d\n\r", glob.xmin,glob.xmax); 
+    printf("ymin = %d ymax = %d\n\r", glob.ymin,glob.ymax);
+    printf("numblines = %d\n\r",glob.numbLines);
     exit(0);
 
 //  draw the window beginning at the cursor

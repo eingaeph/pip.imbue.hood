@@ -55,7 +55,7 @@ void setWindow(void)
     return;
     }
 
-    assert(!testa && !testb && !testc && !testd);
+    assert(!testa || !testb || !testc || !testd);
 
 //  reset the window edges, xmin etc. to be consistent with ix, iy
 
