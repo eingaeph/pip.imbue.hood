@@ -1,19 +1,20 @@
 stem    = /home/ubuntu/git/repo.1/libk/
+clib = WARF
+olib = KEYP
 wdir = $(stem)WARF/
 kdir = $(stem)KEYP/
 udir = $(stem)UVSE/
-clib = WARF
 
 cleano:
 	rm -f *.o *.a
 
 linkall:
-	rm -f *.o *.a test.c
-	gcc -Wall -c $(wdir)*.c
-	ar x         $(kdir)libKEYP.a
-	ar x         $(udir)libUVSE.a
-	ar rcs       $(wdir)lib$(clib).a *.o
-	ar t         $(wdir)lib$(clib).a
+	rm -f *.o *.a $(wdir)lib$(clib).a test.c
+	ar x          $(kdir)lib$(olib).a 	
+	ar rcs        $(wdir)lib$(clib).a *.o
+	gcc -Wall -c  $(wdir)*.c
+	ar rs         $(wdir)lib$(clib).a *.o
+	ar t          $(wdir)lib$(clib).a
 	rm -f *.o test
 	cp main.cold test.c
 	gcc -Wall test.c $(wdir)lib$(clib).a -o test
