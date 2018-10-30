@@ -15,7 +15,8 @@ int main(int argc, char** argv)
 //  retval = ReadKey(); 
 
     if (retval == CTRL_Q) return 0;
-
+printf("retval = %d\n\r",retval);
+exit(0);
     editAline(retval, glob.iy); 
     setWindow(); draw();
 

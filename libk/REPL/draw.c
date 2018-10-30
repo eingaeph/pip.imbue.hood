@@ -13,10 +13,10 @@ void draw(void)
     printf("xmin = %d xmax = %d\n\r", glob.xmin,glob.xmax); 
     printf("ymin = %d ymax = %d\n\r", glob.ymin,glob.ymax);
     printf("numblines = %d\n\r",glob.numbLines);
-    exit(0);
 
 //  draw the window beginning at the cursor
 
     wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
+    
     return;
 }
