@@ -4,10 +4,11 @@
 
 int pageDown(void)
 {
-
+   printf("ymax =%d, ymin = %d\n\r",glob.ymax, glob.ymin);
+   exit(0);
 // delta = ymax - ymin 
 
-  int delta = 24;
+  int delta = glob.rows;
 
 // default action
 
@@ -17,9 +18,9 @@ int pageDown(void)
 
 // edge cases 
 
-   if(glob.ymax > glob.numbLines) 
+   if(glob.ymax >=  glob.numbLines) 
      {
-      glob.ymax = glob.numbLines;
+      glob.ymax = glob.numbLines -1;
       glob.ymin = glob.numbLines - delta;
       glob.ix = 0;
       glob.iy = glob.ymin;
@@ -32,9 +33,11 @@ int pageDown(void)
      glob.ix = 0;
     }
 
-                         possibleIxIy;
+  possibleIxIy;
   int testy = glob.iy; testy = testy; possibleLine;
 
+  printf("ymax =%d ymin = %d\n\r",glob.ymax, glob.ymin);
+  exit(0);
   return 0;
 
 }

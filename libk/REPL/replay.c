@@ -26,6 +26,8 @@ int replay(void)
  
  int j = 1;
             store[j] = PAGE_DOWN;  j++;
+            store[j] = PAGE_DOWN;  j++;
+            store[j] = CTRL_Q;     j++;
 
             store[j] = ARROW_DOWN; j++;
             store[j] = ARROW_DOWN; j++;
@@ -45,7 +47,6 @@ int replay(void)
             store[j] = CTRL_Q;     j++;
 
  nocalls ++;
-
  if (nocalls < j) retval = store[nocalls];
  else die("quitting after logic error in replay.c");
 
