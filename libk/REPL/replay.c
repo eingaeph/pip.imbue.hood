@@ -23,7 +23,7 @@ int replay(void)
  int store[200]; int retval;
 
 // local variable store contains command test sequence
-
+ 
  int j = 1;
             store[j] = PAGE_DOWN;  j++;
 

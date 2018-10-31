@@ -18,13 +18,13 @@ enum KEY_CODES
          * terminal as groups of glyphs. */
 
         ARROW_LEFT = 1000,
-        ARROW_RIGHT,
-        ARROW_UP,
-        ARROW_DOWN,
-        INSERT_KEY,
-        DEL_KEY,
-        HOME_KEY,
-        END_KEY,
-        PAGE_UP,
-        PAGE_DOWN
+/*1001*/ARROW_RIGHT,
+/*1002*/ARROW_UP,
+/*1003*/ARROW_DOWN,
+/*1004*/INSERT_KEY,
+/*1005*/DEL_KEY,
+/*1006*/HOME_KEY,
+/*1007*/END_KEY,
+/*1008*/PAGE_UP,
+/*1009*/PAGE_DOWN
 };

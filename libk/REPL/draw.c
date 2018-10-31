@@ -10,10 +10,7 @@ void draw(void)
     printf(ClearScreen); fflush(stdout); 
     int cu = 0; int cv = 0;
     printf("\x1b[%d;%df",cv,cu); fflush(stdout);
-    printf("xmin = %d xmax = %d\n\r", glob.xmin,glob.xmax); 
-    printf("ymin = %d ymax = %d\n\r", glob.ymin,glob.ymax);
-    printf("numblines = %d\n\r",glob.numbLines);
-
+   
 //  draw the window beginning at the cursor
 
     wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);

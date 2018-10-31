@@ -15,8 +15,7 @@ void init(int argc, char** argv)
     
     enableRawMode(); uvset(); disableRawMode();
 
-//  write initial window using rows and cols, not xmin etc.
-//  printf("rows = %d\n\r",glob.rows); exit(0); 
+//  write initial window using rows and cols, not using xmin etc.
 
     screenTest();
 

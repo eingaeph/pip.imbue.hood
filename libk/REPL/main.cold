@@ -4,8 +4,10 @@ int main(int argc, char** argv)
 {
 
   init(argc, argv);
-  setWindow();  
-  draw(); 
+  setWindow();  draw(); 
+
+// the following perpetural loop waits till
+// it gets a value of retval
 
   while (1) 
 
@@ -15,17 +17,20 @@ int main(int argc, char** argv)
 //  retval = ReadKey(); 
 
     if (retval == CTRL_Q) return 0;
-printf("retval = %d\n\r",retval);
-exit(0);
     editAline(retval, glob.iy); 
-    setWindow(); draw();
-
+    setWindow();
+    draw();
 //  set cursor position corresponding to ix, iy
 
     int cu = glob.cu; int cv = glob.cv;
-    assert(cu == glob.ix - glob.xmin);
-    assert(cv == glob.iy - glob.ymin);
+    cu = 0; cv =24;
+//    assert(cu == glob.ix - glob.xmin);
+//    assert(cv == glob.iy - glob.ymin);
     enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
+    printf("retval = %d",retval);
+    cu = glob.cu; cv = glob.cv;
+    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
+
    }
   
   return 0; // this statement is never reached
