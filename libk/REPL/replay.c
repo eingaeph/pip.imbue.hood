@@ -18,7 +18,7 @@ int replay(void)
 
 // call waiter for a pause before returning 
 
- int iw = 2234567; waiter(iw); // iw = 1234567;
+ int iw = 3234567; waiter(iw); // iw = 1234567;
 
  int store[200]; int retval;
 
@@ -46,7 +46,7 @@ int replay(void)
             store[j] = CTRL_Q;     j++;
 
  nocalls ++;
-j = 2;
+j = 3;
  if (nocalls < j) retval = store[nocalls];
  else die("quitting after logic error in replay.c");
 
