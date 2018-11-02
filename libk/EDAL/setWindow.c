@@ -33,6 +33,10 @@ void setWindow(void)
 //  check the variables just initialized for consistency
     
     possibleIxIy; int testy = iy; testy=testy; possibleLine;
+    printf("rows = %d\n\r",rows);
+    printf("iy   = %d\n\r", iy);
+    printf("ymax = %d\n\r", ymax);
+    printf("ymin = %d\n\r", ymin);
     assert( xmax - xmin <= cols - 1);
     assert( ymax - ymin <= rows - 1); 
 
@@ -59,17 +63,17 @@ void setWindow(void)
 
 //  reset the window edges, xmin etc. to be consistent with ix, iy
 
-    if (!testa) {xmin = ix; xmax = xmin + rows - 1;}
-    if (!testb) {xmax = ix; xmin = xmax - rows + 1; if(xmin < 0) xmin = 0;}
-    if (!testc) {ymin = iy; ymax = ymin + cols - 1; if(ymax > numbLines) ymax=numbLines-1;}    
-    if (!testd) {ymax = iy; ymin = ymax - cols + 1; if(ymin < 0) ymin = 0;}
+    if (!testa) {xmin = ix; xmax = xmin + cols - 1;}
+    if (!testb) {xmax = ix; xmin = xmax - cols + 1; if(xmin < 0) xmin = 0;}
+    if (!testc) {ymin = iy; ymax = ymin + rows - 1; if(ymax > numbLines) ymax=numbLines-1;}    
+    if (!testd) {ymax = iy; ymin = ymax - rows + 1; if(ymin < 0) ymin = 0;}
 
 //  after the window parm updates check again for a valid window 
 
     possibleIxIy; testy = iy; testy = testy; possibleLine;
     assert( xmax - xmin <= cols - 1);
     assert( ymax - ymin <= rows - 1); 
-
+    
     testa = (ix >= xmin); testb = (ix <= xmax);
     testc = (iy >= ymin); testd = (iy <= ymax);
 

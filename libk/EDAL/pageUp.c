@@ -5,7 +5,7 @@ int pageUp(void)
 
 // delta = ymax - ymin 
 
-   int delta = 24;
+   int delta = glob.rows - 1;
 
    possibleIxIy;
 

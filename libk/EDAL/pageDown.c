@@ -4,11 +4,9 @@
 
 int pageDown(void)
 {
-   printf("ymax =%d, ymin = %d\n\r",glob.ymax, glob.ymin);
-   exit(0);
 // delta = ymax - ymin 
 
-  int delta = glob.rows;
+  int delta = glob.rows -1;
 
 // default action
 
@@ -36,8 +34,6 @@ int pageDown(void)
   possibleIxIy;
   int testy = glob.iy; testy = testy; possibleLine;
 
-  printf("ymax =%d ymin = %d\n\r",glob.ymax, glob.ymin);
-  exit(0);
   return 0;
 
 }

@@ -22,10 +22,8 @@ int main(int argc, char** argv)
     draw();
 //  set cursor position corresponding to ix, iy
 
-    int cu = glob.cu; int cv = glob.cv;
-    cu = 0; cv =24;
-    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
-    printf("retval = %d",retval);
+    int cu, cv;
+
     cu = glob.cu; cv = glob.cv;
     enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
 
