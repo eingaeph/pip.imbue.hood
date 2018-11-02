@@ -33,10 +33,6 @@ void setWindow(void)
 //  check the variables just initialized for consistency
     
     possibleIxIy; int testy = iy; testy=testy; possibleLine;
-    printf("rows = %d\n\r",rows);
-    printf("iy   = %d\n\r", iy);
-    printf("ymax = %d\n\r", ymax);
-    printf("ymin = %d\n\r", ymin);
     assert( xmax - xmin <= cols - 1);
     assert( ymax - ymin <= rows - 1); 
 

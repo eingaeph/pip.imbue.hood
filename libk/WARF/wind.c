@@ -13,8 +13,6 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
     assert(ymin >= 0); assert(ymax < glob.numbLines);
     assert(ymax >= ymin); assert((ymax - ymin) < glob.rows);
 
-    printf("wind.c starting"); fflush(stdout); exit(0); 
-
     for (int y = ymin; y <= ymax; y++) 
     {
 
@@ -28,9 +26,9 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
         if (*s == '\n')       {break;};
         printf("%c",*s); s++;
       }
-      printf("\n");
+      if(y != ymax) printf("\n");
     }
-   
+     
 }
 
 

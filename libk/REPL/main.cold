@@ -1,10 +1,14 @@
 #include "../libk.h"
 
+void drawer(void);
+
 int main(int argc, char** argv)
 {
 
   init(argc, argv);
-  setWindow();  draw(); 
+
+  setWindow();  
+  draw(); 
 
 // the following perpetural loop waits till
 // it gets a value of retval
