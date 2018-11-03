@@ -30,12 +30,12 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
 //  the next statement serves to omit the newline after writing the
 //    last line of the window
 //  otherwise the top line of the window gets pushed off the screen
-//    when the window exactly fits the screen
+//    when the window should exactly fit the screen
 
       if(y != ymax) printf("\n"); else fflush(stdout);
 
-//  the final else fflush prints the last line without a newline which
-//  moves the cursor to the next line
+//  the final else fflush displays the last line without a newline 
+//  which would move the cursor to the next line
     }
      
 }

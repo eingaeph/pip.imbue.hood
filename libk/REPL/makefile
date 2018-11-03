@@ -35,6 +35,15 @@ linkall:
 	rm -f test.c
 	./test test.dat
 
+count:
+	cat ../UVSE/*c >  counter
+	cat ../KEYP/*c >> counter 
+	cat ../WARF/*c >> counter
+	cat ../EDAL/*c >> counter
+	cat ../REPL/*c >> counter
+	wc counter
+	rm -f counter
+
 compileall:
 	rm -f *.o *.a
 	gcc -Wall -c $(kdir)ReadKey.c
@@ -56,5 +65,3 @@ compileall:
 	rm test.c
 	./test test.dat
 
-count:
-	cat $(kdir)*.c $(udir)*.c $(wdir)*.c | wc
