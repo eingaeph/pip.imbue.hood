@@ -24,17 +24,16 @@ int replay(void)
 
 // local variable store contains command test sequence
  
-
- int j = 1;
-            store[j] = PAGE_DOWN;  j++;
-            store[j] = PAGE_DOWN;  j++;
-            store[j] = PAGE_DOWN;  j++;
-            store[j] = PAGE_DOWN;  j++;
-            store[j] = CTRL_Q;     j++;
  
-//  page down 4 times
-//
-//  display 01-24, 24-48, 48-70, 48-70; 
+ int j = 1;
+            store[j] = ARROW_DOWN; j++;
+            store[j] = ARROW_DOWN; j++;
+            store[j] = ARROW_DOWN; j++;
+            store[j] = ARROW_UP;   j++;
+
+            store[j] = CTRL_Q;     j++;
+
+//  move the cursor arround (the MOCU testing)
 
  nocalls ++;
 
