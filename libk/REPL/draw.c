@@ -5,6 +5,12 @@
 
 void draw(void)
 {
+
+//  Call setWindow to updae xmin, xmax, ymin, ymax 
+//    to agree with the insertion point ix, iy
+
+    setWindow();
+
 //  Clear the screen an place the cursor at the top left
 
     printf(ClearScreen); fflush(stdout); 

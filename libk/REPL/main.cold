@@ -5,13 +5,14 @@
 int main(int argc, char** argv)
 {
 
-  init(argc, argv);
+   init(argc, argv);
 
-  setWindow();  
-  draw(); 
+// display the first lines of input file in struct text
+
+   draw(); 
 
 // the following perpetural loop waits till
-// it gets a value of retval
+// it reads a keystroke which is encode and returned as retval
 
   while (1) 
 
@@ -21,9 +22,16 @@ int main(int argc, char** argv)
 //  retval = ReadKey(); 
 
     if (retval == CTRL_Q) return 0;
+
+//  editAline changes the line at the insertion point ix iy
+//  and moves the insertion point to a new ix,iy 
+
     editAline(retval, glob.iy); 
-    setWindow();
+
+//  display text in window containing the insertion pont ix iy 
+
     draw();
+
 //  set cursor position corresponding to ix, iy
 
     int cu, cv;
