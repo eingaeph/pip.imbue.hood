@@ -19,7 +19,7 @@ int pageDown(void)
    if(glob.ymax >=  glob.numbLines) 
      {
       glob.ymax = glob.numbLines -1;
-      glob.ymin = glob.numbLines - delta;
+      glob.ymin = glob.ymax - delta;
       glob.ix = 0;
       glob.iy = glob.ymin;
      }

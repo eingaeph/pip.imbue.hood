@@ -24,30 +24,20 @@ int replay(void)
 
 // local variable store contains command test sequence
  
+
  int j = 1;
             store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
-            store[j] = ARROW_DOWN; j++;
-            store[j] = ARROW_DOWN; j++;
-            store[j] = ARROW_DOWN; j++;
-            store[j] = END_KEY;    j++;
-            store[j] = ARROW_UP;   j++;
-            store[j] = ARROW_UP;   j++;
-            store[j] = PAGE_DOWN;  j++;
-            store[j] = ARROW_UP;   j++;
-            store[j] = ARROW_UP;   j++;
-            store[j] = END_KEY;    j++;
-            store[j] = ENTER;      j++;
-            store[j] = PAGE_UP;    j++;
-            store[j] = PAGE_UP;    j++;
-            store[j] = PAGE_UP;    j++;
-
             store[j] = CTRL_Q;     j++;
+ 
+//  page down 4 times
+//
+//  display 01-24, 24-48, 48-70, 48-70; 
 
  nocalls ++;
-j = 6;
+
  if (nocalls < j) retval = store[nocalls];
  else die("quitting after logic error in replay.c");
 

@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     if (retval == CTRL_Q) return 0;
     editAline(retval, glob.iy); 
     setWindow();
-    draw(); exit(0);
+    draw();
 //  set cursor position corresponding to ix, iy
 
     int cu, cv;

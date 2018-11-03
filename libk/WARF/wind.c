@@ -33,6 +33,9 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
 //    when the window exactly fits the screen
 
       if(y != ymax) printf("\n"); else fflush(stdout);
+
+//  the final else fflush prints the last line without a newline which
+//  moves the cursor to the next line
     }
      
 }
