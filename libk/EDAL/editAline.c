@@ -9,10 +9,6 @@ int editAline(int retval, int fetch)
 { 
   char c = retval;         // retrieve a 1 byte character 
                            // from a 4 byte integer
-
-  int ix   = glob.ix;      // initial values of insertion point
-  int iy   = glob.iy;      //  coordinates ix, iy
-
   assert(glob.iy == fetch);
 
 
@@ -23,7 +19,7 @@ int editAline(int retval, int fetch)
   if (retval == ARROW_LEFT)             {arrow_left();  return 0;}
   if (retval == ARROW_DOWN )            {arrow_down();  return 0;}
   if (retval == ARROW_RIGHT)            {arrow_right(); return 0;}
-  if (retval == ARROW_UP   & glob.iy != 0)   
+  if (retval == ARROW_UP && glob.iy != 0)   
                                         {arrow_up();    return 0;}
   if (retval == ENTER)                  {               return 0;}
 //  if (retval == CTRL_K)                 {delAline();    return 0;}

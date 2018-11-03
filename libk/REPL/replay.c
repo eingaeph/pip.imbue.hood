@@ -18,13 +18,14 @@ int replay(void)
 
 // call waiter for a pause before returning 
 
- int iw = 3234567; waiter(iw); // iw = 1234567;
+ int iw = 4234567; waiter(iw); // iw = 1234567;
 
  int store[200]; int retval;
 
 // local variable store contains command test sequence
  
  int j = 1;
+            store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
@@ -46,7 +47,7 @@ int replay(void)
             store[j] = CTRL_Q;     j++;
 
  nocalls ++;
-j = 3;
+j = 6;
  if (nocalls < j) retval = store[nocalls];
  else die("quitting after logic error in replay.c");
 

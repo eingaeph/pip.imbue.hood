@@ -1,7 +1,7 @@
 #include "../libk.h"
 /*
     wind.c
-    function print window into text onto screen 
+    write a window into text to the screen 
     window coordinates require intital cursor at top left
     that is text coordinate position xmin, ymin 
       is at the top left at the screen
@@ -16,7 +16,7 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
     for (int y = ymin; y <= ymax; y++) 
     {
 
-//  description of for idiom
+//  description of <for> idiom
 //  for (once first; before each conditional exec; after exec)
 
       int x; char* s = xmin + text[y].row;
@@ -26,6 +26,12 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
         if (*s == '\n')       {break;};
         printf("%c",*s); s++;
       }
+
+//  the next statement serves to omit the newline after writing the
+//    last line of the window
+//  otherwise the top line of the window gets pushed off the screen
+//    when the window exactly fits the screen
+
       if(y != ymax) printf("\n");
     }
      
