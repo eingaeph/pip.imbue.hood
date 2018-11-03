@@ -32,7 +32,7 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
 //  otherwise the top line of the window gets pushed off the screen
 //    when the window exactly fits the screen
 
-      if(y != ymax) printf("\n");
+      if(y != ymax) printf("\n"); else fflush(stdout);
     }
      
 }
