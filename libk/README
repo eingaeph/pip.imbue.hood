@@ -1,6 +1,10 @@
+The motivation and justification for this work is contained in subk.pdf stored in this
+directory. 
+
 Directory libk contains the build path for subkilo library of functions. The build path
 model may be thought of as slightly different from the git tree model. The build path 
 emphasizes one trunk which while demonstrating success at various points of the build.
+That is the emphasis is based on successful tests, rather than dates of completion.
  
 1. UVSE Set limits rows, cols for coordinates u and v. Test the values by writing 
    to the screen.

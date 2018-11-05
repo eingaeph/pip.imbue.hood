@@ -1,8 +1,14 @@
 # Project pip.imbue.hood 
 
-  Build illustrative code snippets to highlight a subset of idioms
+  The following write is over a year old and does not describe the 
+  current stage of the project. The recent work is contained in 
+  directory libk, and is slightly documented in libk.pdf store in
+  that directory. 
+
+  Previously the project sought to
+  build illustrative code snippets to highlight a subset of idioms
   used in kilo.c. Snippet codes should execute without warnings and
-  should be of a size readable in hour.  
+  should be of a size readable in hour. 
 
   Illustrate GNU/Linux library calls sufficient to 
   display and edit text files without dependencies beyond the choice 
