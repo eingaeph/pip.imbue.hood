@@ -1,12 +1,12 @@
 #include "../libk.h"
 
-#define extern
-
 int main(void)
 { 
 
-//  enter / leave raw mode to avoid echoing to the screen, 
-//  when the terminal sends information about its size
+//  enter/leave raw mode when calling uvset.c 
+//  otherwise the terminal writes to screen (echoing)
+//  when sending the information about the screen size 
+//  to standard input. 
 
     enableRawMode(); uvset(); disableRawMode(); return 0;
     screenTest();
