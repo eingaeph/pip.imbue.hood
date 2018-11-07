@@ -7,12 +7,13 @@ libn =  $(nstem)lib$(new).a
 libo =  $(ostem)lib$(old).a
 
 firs:
-	echo $(new)     > /dev/null
-	echo $(old)     > /dev/null
-	echo $(nstem)   > /dev/null
-	echo $(ostem)   > /dev/null
-	echo $(libn)    > /dev/null
-	echo $(libo)    > /dev/null
+	echo $(new)      > /dev/null
+	echo $(old)      > /dev/null
+	echo $(nstem)    > /dev/null
+	echo $(ostem)    > /dev/null
+	echo $(libn)     > /dev/null
+	echo $(libo)     > /dev/null
+	echo $(testnumb) > /dev/null
 
 cleano:
 	rm -f *.o *.a 
