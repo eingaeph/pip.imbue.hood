@@ -1,0 +1,45 @@
+#include "../libk.h"
+
+//   main.REPL
+
+int main(int argc, char** argv)
+{
+
+   init(argc, argv);
+
+// display the first lines of input file in struct text
+
+   draw(); 
+
+// the following perpetural loop waits till
+// it reads a keystroke which is encode and returned as retval
+
+  while (1) 
+
+   {
+    int retval; 
+    retval = replay();
+//  retval = ReadKey(); 
+
+    if (retval == CTRL_Q) return 0;
+
+//  editAline changes the line at the insertion point ix iy
+//  and moves the insertion point to a new ix,iy 
+
+    editAline(retval, glob.iy); 
+
+//  display text in window containing the insertion pont ix iy 
+
+    draw();
+
+//  set cursor position corresponding to ix, iy
+
+    int cu, cv;
+
+    cu = glob.cu; cv = glob.cv;
+    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
+
+   }
+  
+  return 0; // this statement is never reached
+}

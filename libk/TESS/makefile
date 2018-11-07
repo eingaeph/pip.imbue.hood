@@ -1,6 +1,6 @@
 stem    = /home/ubuntu/git/repo.1/libk/
-new = REPL
-old = EDAL
+new = TESS
+old = REPL
 nstem = $(stem)$(new)/
 ostem = $(stem)$(old)/
 libn =  $(nstem)lib$(new).a
@@ -21,19 +21,23 @@ dryrun:
 	rm -f *.o *.a test.c
 	gcc -Wall -c $(nstem)*.c
 
-linkall:
-	rm -f *.o *.a $(libn) test.c
+test.1:
+	rm -f *.o *.a $(libn) test.c inpu.dat
 	ar x          $(libo)
 	ar rcs        $(libn) *.o
 	rm -f *.o
+	#retrieve replay.1 to serve as replay.c during this test
+	cp replay.1 replay.c 
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
 	ar t          $(libn)
-	rm -f *.o test
-	cp main.cold test.c
+	rm -f *.o *.c test
+	#retreive test.1 to serve as main during this test
+	cp main.1 test.c
 	gcc -Wall test.c $(libn) -o test
-	rm -f test.c
-	./test test.dat
+	rm -f test.c $(libn)
+	cp inpu.1 inpu.dat
+	./test inpu.dat 
 
 count:
 	cat ../UVSE/*c >  counter
@@ -47,24 +51,4 @@ count:
 	wc counter
 	rm -f counter
 
-compileall:
-	rm -f *.o *.a
-	gcc -Wall -c $(kdir)ReadKey.c
-	gcc -Wall -c $(kdir)die.c
-	gcc -Wall -c $(udir)disableRawMode.c
-	gcc -Wall -c $(udir)enableRawMode.c
-	gcc -Wall -c $(kdir)encode.c
-	gcc -Wall -c $(udir)getCursorPosition.c
-	gcc -Wall -c $(wdir)readAfile.c
-	gcc -Wall -c $(wdir)readAline.c
-	gcc -Wall -c $(udir)screenTest.c
-	gcc -Wall -c $(udir)uvset.c
-	gcc -Wall -c $(wdir)wind.c
-	ar  rcs       $(wdir)libWARF.a *.o
-	ar  t         $(wdir)libWARF.a
-	rm -f *.o
-	cp main.cold test.c
-	gcc -Wall test.c $(wdir)libWARF.a -o test
-	rm test.c
-	./test test.dat
 
