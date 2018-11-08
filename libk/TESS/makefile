@@ -22,22 +22,22 @@ dryrun:
 	rm -f *.o *.a test.c
 	gcc -Wall -c $(nstem)*.c
 
-test.1:
-	rm -f *.o *.a $(libn) test.c inpu.dat
+tester:
+	rm -f *.o *.a $(libn) test.c inpu.dat replay.c
 	ar x          $(libo)
 	ar rcs        $(libn) *.o
 	rm -f *.o
-	#retrieve replay.1 to serve as replay.c during this test
-	cp replay.1 replay.c 
+	#retrieve replay.$(testnumb) to serve as replay.c during this test
+	cp replay.$(testnumb) replay.c 
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
 	ar t          $(libn)
 	rm -f *.o *.c test
-	#retreive test.1 to serve as main during this test
-	cp main.1 test.c
+	#retreive test.$(testnumb) to serve as main during this test
+	cp main.$(testnumb) test.c
 	gcc -Wall test.c $(libn) -o test
 	rm -f test.c $(libn)
-	cp inpu.1 inpu.dat
+	cp inpu.$(testnumb) inpu.dat
 	./test inpu.dat 
 
 count:
