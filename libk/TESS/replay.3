@@ -18,7 +18,7 @@ int replay(void)
 
 // call waiter for a pause before returning 
 
- int iw = 4234567; waiter(iw); // iw = 1234567;
+// int iw = 4234567; waiter(iw); // iw = 1234567;
 
  int store[200]; int retval;
 
@@ -26,16 +26,9 @@ int replay(void)
  
  
  int j = 1; char c;
-            store[j] = ARROW_DOWN; j++;
-//            store[j] = ARROW_DOWN; j++;
-// c = 'a';   store[j] = c;          j++;  
-// c = 'b';   store[j] = c;          j++;
-//            store[j] = ARROW_DOWN; j++;
-// c = 'c';   store[j] = c;          j++;
-// c = 'd';   store[j] = c;          j++;
-//            store[j] = ARROW_DOWN; j++;
-//            store[j] = ARROW_UP;   j++;
-            store[j] = PAGE_DOWN;  j++;
+            store[j] = ARROW_DOWN; j++;       // cursor at 01 screen col  = 02
+            store[j] = PAGE_DOWN;  j++;       // cursor at 01 screen col  = 24
+            store[j] = CTRL_Q;     j++;       // end
             store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
             store[j] = PAGE_DOWN;  j++;
