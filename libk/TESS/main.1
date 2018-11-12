@@ -6,12 +6,13 @@ int main(int argc, char** argv)
 {
 
    init(argc, argv);
-   int iw = 4234567; 
-   waiter(iw); // iw = 1234567;
 
 // display the first lines of input file in struct text
      
-   draw();
+    draw();
+    int iw = 4234567; 
+    waiter(iw); // iw = 1234567;
+
 
 // the following perpetural loop waits till
 // it reads a keystroke which is encode and returned as retval
@@ -30,12 +31,11 @@ int main(int argc, char** argv)
 
     editAline(retval, glob.iy); 
 
-    printf("retval = %d, ymin = %d, ymax = %d\n\r", retval,glob.ymin,glob.ymax);
-    waiter(iw);
+    
 //  display text in window containing the insertion pont ix iy 
 
     draw();
-    waiter(iw);
+    waiter(iw); // iw = 1234567;
 
 //  set cursor position corresponding to ix, iy
 
