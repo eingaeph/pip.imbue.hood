@@ -1,3 +1,6 @@
 ln -s ../WARF/readAfile.c readAfile.c
 ln -s ../WARF/readAline.c readAline.c
 ln -s ../REPL/init.c      init.c
+ln -s ../REPL/draw.c      draw.c
+ln -s ../REPL/waiter.c    waiter.c
+

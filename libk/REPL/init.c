@@ -10,16 +10,16 @@ void init(int argc, char** argv)
     glob.numbLines = readAfile(filename); 
     assert(glob.numbLines >= 0);
 
-//  query screen for size, write initial window using rows and cols
+//  queryscreen for size, write initial window using rows and cols
 //  uvset returns values through standard input
     
-    enableRawMode(); uvset(); disableRawMode();
+    enableRawMode(); uvset(); disableRawMode(); 
 
 //  write initial window using rows and cols, not using xmin etc.
 
     if(glob.numbLines == 0) {screenTest(); exit(0);}
     assert(glob.numbLines > 0);
-
+    
 //  set initial insertion point, in text coordinates of course
 
     glob.ix = 0; glob.iy = 0;
