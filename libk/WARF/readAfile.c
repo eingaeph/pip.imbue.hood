@@ -3,7 +3,7 @@
 int readAfile(char *filename)
 {
     fp = fopen(filename,"r");
-    if(fp == NULL) die("failed to open input file \n\r");
+    if(fp == NULL) {return 0;}
     int numb; int retval; int lastline;
 
     line.count = 0;

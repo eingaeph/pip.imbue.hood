@@ -26,18 +26,11 @@ int replay(void)
  
  
  int j = 1;
-            store[j] = ARROW_DOWN; j++;
-            store[j] = ARROW_DOWN; j++;
-            store[j] = ARROW_DOWN; j++;
-            store[j] = ARROW_UP;   j++;
-
             store[j] = CTRL_Q;     j++;
-
-//  move the cursor arround (the MOCU testing)
 
  nocalls ++;
 
- if (nocalls < j) retval = store[nocalls];
+ if (nocalls <= j) retval = store[nocalls];
  else die("quitting after logic error in replay.c");
 
  return retval;
