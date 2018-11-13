@@ -3,10 +3,14 @@
 void arrow_right(void)
 {
   possibleIxIy;
-  if(glob.ix < text[glob.iy].size ) 
-    {
+
+//  max ix is text[glob.iy].size
+  
+  if(glob.ix == text[glob.iy].size) return;
+
      glob.ix++;
      possibleIxIy;
-    }
+   
   return;
 }
+

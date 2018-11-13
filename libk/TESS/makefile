@@ -33,7 +33,7 @@ tester:
 	ar rs         $(libn) *.o
 	ar t          $(libn)
 	rm -f *.o *.c test
-	#retreive test.$(testnumb) to serve as main during this test
+	#retreive main.$(testnumb) to serve as main during this test
 	cp main.$(testnumb) test.c
 	gcc -Wall test.c $(libn) -o test
 	rm -f test.c $(libn)

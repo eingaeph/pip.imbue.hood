@@ -1,0 +1,27 @@
+firs test matrix keystrokes
+ int store[200]; int retval;
+// local variable store contains command test sequence
+            store[j] = CTRL_Q;     j++;
+ if (nocalls <= j) retval = store[nocalls];
+
+seco test matrix keystrokes
+ int store[200]; int retval;
+// local variable store contains command test sequence
+            store[j] = PAGE_DOWN;  j++;
+            store[j] = PAGE_DOWN;  j++;
+            store[j] = ARROW_DOWN; j++;
+            store[j] = CTRL_Q;     j++;
+// printf("retval  = %d\n\r",store[nocalls]);
+ if (nocalls < j) retval = store[nocalls];
+
+thir test matrix keystrokes
+ int store[200]; int retval;
+// local variable store contains command test sequence
+            store[j] = ARROW_DOWN;   j++;       // cursor at 01 screen col  = 02
+            store[j] = PAGE_DOWN;    j++;       // cursor at 01 screen col  = 24
+            store[j] = ARROW_UP;     j++;       
+            store[j] = ARROW_RIGHT;  j++;
+            store[j] = ARROW_RIGHT;  j++;
+            store[j] = ARROW_RIGHT;  j++;
+            store[j] = CTRL_Q;     j++;
+ if (nocalls < j) retval = store[nocalls];
