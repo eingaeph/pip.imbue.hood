@@ -6,6 +6,11 @@ int main(int argc, char** argv)
 {
 
    init(argc, argv);
+   int iy; 
+   for(iy=0; iy < glob.numbLines; iy++)
+   printf("%d   %lu",iy,text[glob.iy].size);
+   printf("glob.numbLines = %d\n\r",glob.numbLines);
+   exit(0);
 
    int iw = 4234567; 
 // waiter(iw); // iw = 1234567;
