@@ -3,7 +3,7 @@
 void arrow_right(void)
 {
   possibleIxIy;
-  printf("ix = %d  iy =  %d  size = %d\n\r",glob.ix,text[glob.iy].size);
+  printf("ix = %d  iy =  %d  size = %lu\n\r",glob.ix,glob.iy, text[glob.iy].size);
 
 //  max ix is text[glob.iy].size
   

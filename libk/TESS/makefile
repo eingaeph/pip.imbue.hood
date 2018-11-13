@@ -30,6 +30,8 @@ tester:
 	#retrieve replay.$(testnumb) to serve as replay.c during this test
 	cp replay.$(testnumb) replay.c 
 	cp arrow_right.tst arrow.right.c
+	cp init.tst init.c
+	cp readAline.tst readAline.c
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
 	ar t          $(libn)
