@@ -26,8 +26,9 @@ int replay(void)
  
  
  int j = 1; char c;
-            store[j] = ARROW_DOWN;   j++;       // cursor at 01 screen col  = 02
-            store[j] = PAGE_DOWN;    j++;       // cursor at 01 screen col  = 24
+            store[j] = CTRL_Q;       j++;
+            store[j] = ARROW_DOWN;   j++;       // cursor at col 01 row 02
+            store[j] = PAGE_DOWN;    j++;       // cursor at col 01 row 24
             store[j] = ARROW_UP;     j++;       
             store[j] = ARROW_RIGHT;  j++;
             store[j] = ARROW_RIGHT;  j++;

@@ -11,10 +11,9 @@ int main(int arc, char** argv)
     printf("test.WARF executing\n");
     printf("filename = %s\n",filename);
 
-    int numblines = readAfile(filename);
+    int numblines = readAfile(filename); glob.numbLines = numblines;
 
     printf("\n%d lines were read\n\n",numblines);
-
     enableRawMode(); uvset(); disableRawMode();
     screenTest();
 
@@ -49,7 +48,18 @@ int main(int arc, char** argv)
                             gmin       assert(v == g + gmin);
                             fmax       assert(      
 */
-    wind(0,80,0,24,numblines);
+    glob.ymin = 0;
+    glob.ymax = glob.rows -1;
+printf("ymax  %d  numbLines %d \n\r",glob.ymax,glob.numbLines);
+    if (glob.ymax > glob.numbLines -1) {glob.ymax = glob.numbLines -1;
+    printf("ymax  %d  numbLines %d \n\r",glob.ymax,glob.numbLines);}
+printf("ymax  %d  numbLines %d \n\r",glob.ymax,glob.numbLines);
+    int testa = (glob.ymax < glob.numbLines);
+printf("testa %d \n\r",testa);
+    assert(glob.ymin >= 0); assert(glob.ymax < glob.numbLines);
+    assert(glob.ymax >= glob.ymin); assert((glob.ymax - glob.ymin) < glob.rows);
+
+    wind(0,glob.rows-1,0,glob.ymax,glob.numbLines);
 
   while (1) 
 

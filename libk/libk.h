@@ -10,7 +10,12 @@
 #include <assert.h>
 #include <time.h>
 
-//REPLY
+// XLIN
+
+void enter(void);
+void xline(int iy, char* firs, int lena, char *seco, int lenb);
+
+//REPL
 
 void delay(void);
 void draw(void);
@@ -34,12 +39,6 @@ struct { int xmin; int xmax; int ymin; int ymax; } arg2;
                         assert( glob.iy >= 0); assert( glob.ix >= 0); \
                         assert( glob.ix <= text[glob.iy].size);
 
-// XLIN
-
-void enter(void);
-void xline(int iy, char* firs, int lena, char *seco, int lenb);
-
-// EDAL
 
 int arrow_down(void);
 void arrow_left(void);

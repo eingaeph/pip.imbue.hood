@@ -6,26 +6,19 @@ int main(int argc, char** argv)
 {
 
    init(argc, argv);
-   int iy; 
-   for(iy=0; iy < glob.numbLines; iy++)
-   printf("%d   %lu",iy,text[glob.iy].size);
-   printf("glob.numbLines = %d\n\r",glob.numbLines);
-   exit(0);
-
-   int iw = 4234567; 
-// waiter(iw); // iw = 1234567;
-
+   int cu, cv; printf("after init cu = %d  cv = %d\n\r",cu,cv);
+   int iw = 4234567; // waiter(iw); // iw = 1234567;
 
 // display the first lines of input file in struct text
 
    draw();
 //  set cursor position corresponding to ix, iy
 
-    int cu, cv;
+//   int cu, cv;
 
-    cu = glob.cu; cv = glob.cv;
-    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
-  
+   cu = glob.cu; cv = glob.cv;
+   printf("before while cu = %d  cv = %d\n\r",cu,cv);
+   enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
    waiter(iw);
 
 // the following perpetural loop waits till

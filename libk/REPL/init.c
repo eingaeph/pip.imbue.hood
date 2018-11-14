@@ -20,9 +20,13 @@ void init(int argc, char** argv)
     if(glob.numbLines == 0) {screenTest(); exit(0);}
     assert(glob.numbLines > 0);
     
-//  set initial insertion point, in text coordinates of course
+//  set initial insertion point, use text coordinates
 
     glob.ix = 0; glob.iy = 0;
+
+//  set initial cursor position
+
+    glob.cu = 0; glob.cv = 0;
 
 //  set xmin, xmax, ymin, ymax
 
