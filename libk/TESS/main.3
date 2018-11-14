@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 //   int cu, cv;
 
    cu = glob.cu; cv = glob.cv;
-   printf("before while cu = %d  cv = %d\n\r",cu,cv);
+
    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
    waiter(iw);
 
