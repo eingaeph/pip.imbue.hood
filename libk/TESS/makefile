@@ -31,7 +31,7 @@ tester:
 	cp replay.$(testnumb) replay.c 
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
-	ar t          $(libn)
+	# ar t        $(libn)
 	rm -f *.o *.c test
 	#retreive main.$(testnumb) to serve as main during this test
 	cp main.$(testnumb) test.c

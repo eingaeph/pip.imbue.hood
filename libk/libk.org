@@ -1,0 +1,73 @@
+typedef struct {ssize_t size; char *row; int count;}   slot;
+
+    slot line;
+    slot *text;
+
+
+struct { int xmin; int xmax; int ymin; int ymax; } arg2;
+
+typedef struct 
+{
+
+    int rows,cols;             /* window rows 1...rows, cols 1...cols */
+    int x,y;                   /* char no, line no, text coordinates */
+    int ix,iy;                 /* insertion point, text coordinates */
+
+    int xmin,xmax,ymin,ymax;   /* window edges in text coordinates  */ 
+
+    int u,v;                   /* char no, line no */
+    int cu,cv;                 /* cursor position in screen coordinates */
+
+    int umin,umax,vmin,vmax;   /* window edges in screen coordinates */
+
+    int numbLines;             /* number of lines in text */
+
+} global;
+
+global glob;
+
+
+
+#define possibleLine    assert(       ((text[(glob.iy)].row  == NULL) &&       \
+                                       (text[(glob.iy)].size == 0  ))          \
+                                 ||                                            \
+                                      ((text[(glob.iy)].row  != NULL)  &&      \
+                                       (text[(glob.iy)].size  >  0  ))         \
+                               );
+
+
+#define possibleIxIy    assert( glob.iy <= glob.numbLines);            \
+                        assert( glob.iy >= 0); assert( glob.ix >= 0); \
+                        assert( glob.ix <= text[glob.iy].size);
+
+//  EDAL/setWindow.c
+
+    possibleIxIy; int testy = iy; testy=testy; possibleLine;
+    assert( xmax - xmin <= cols - 1);
+    assert( ymax - ymin <= rows - 1); 
+
+    int testa, testb, testc, testd, teste;
+
+    testa = (ix >= xmin); testb = (ix <= xmax); 
+    testc = (iy >= ymin); testd = (iy <= ymax);
+    teste = (testa && testb && testc && testd); 
+    assert (iy <= numbLines - 1);
+
+
+//  reset the window edges, xmin etc. to be consistent with ix, iy
+
+    if (!testa) {xmin = ix; xmax = xmin + cols - 1;}
+    if (!testb) {xmax = ix; xmin = xmax - cols + 1; if(xmin < 0) xmin = 0;}
+    if (!testc) {ymin = iy; ymax = ymin + rows - 1; if(ymax > numbLines) ymax=numbLines-1;}    
+    if (!testd) {ymax = iy; ymin = ymax - rows + 1; if(ymin < 0) ymin = 0;}
+
+    possibleIxIy; testy = iy; testy = testy; possibleLine;
+    assert( xmax - xmin <= cols - 1);
+    assert( ymax - ymin <= rows - 1); 
+    
+    testa = (ix >= xmin); testb = (ix <= xmax);
+    testc = (iy >= ymin); testd = (iy <= ymax);
+
+
+    if (testa && testb && testc && testd ) return; 
+
