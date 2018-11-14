@@ -7,11 +7,12 @@ int main(int argc, char** argv)
 
    init(argc, argv);
    int cu, cv; printf("after init cu = %d  cv = %d\n\r",cu,cv);
-   int iw = 4234567; // waiter(iw); // iw = 1234567;
 
 // display the first lines of input file in struct text
 
    draw();
+   int iw = 4234567;  waiter(iw); // iw = 1234567;
+
 //  set cursor position corresponding to ix, iy
 
 //   int cu, cv;
@@ -19,7 +20,6 @@ int main(int argc, char** argv)
    cu = glob.cu; cv = glob.cv;
 
    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
-   waiter(iw);
 
 // the following perpetural loop waits till
 // it reads a keystroke which is encode and returned as retval
