@@ -6,20 +6,17 @@ int main(int argc, char** argv)
 {
 
    init(argc, argv);
-   int cu, cv; printf("after init cu = %d  cv = %d\n\r",cu,cv);
 
 // display the first lines of input file in struct text
 
    draw();
-   int iw = 4234567;  waiter(iw); // iw = 1234567;
+   int cu, cv; cu = glob.cu; cv = glob.cv;
 
-//  set cursor position corresponding to ix, iy
-
-//   int cu, cv;
-
-   cu = glob.cu; cv = glob.cv;
+//  set cursor position corresponding to ix iy after first write to screen
 
    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
+
+   int iw = 4234567;  waiter(iw); // iw = 1234567;
 
 // the following perpetural loop waits till
 // it reads a keystroke which is encode and returned as retval
@@ -28,8 +25,7 @@ int main(int argc, char** argv)
 
    {
     int retval; 
-    retval = replay();
-//  retval = ReadKey(); 
+    retval = replay();  //  retval = ReadKey(); 
 
     if (retval == CTRL_Q) return 0;
 
@@ -42,8 +38,7 @@ int main(int argc, char** argv)
 
     draw();
 
-//  set cursor position corresponding to ix, iy
-
+//  set cursor position corresponding to ix, iy after screen refresh
     cu = glob.cu; cv = glob.cv;
     enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
     waiter(iw);

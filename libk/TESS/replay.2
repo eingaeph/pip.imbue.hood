@@ -22,11 +22,13 @@ int replay(void)
  
  
  int j = 1; char c;
-            store[j] = PAGE_DOWN;  j++;
-            store[j] = PAGE_DOWN;  j++;
-            store[j] = ARROW_DOWN; j++;
+            store[j] = PAGE_DOWN;   j++;
+            store[j] = PAGE_DOWN;   j++;
+            store[j] = ARROW_DOWN;  j++;
+            store[j] = END_KEY;     j++;
+            store[j] = ARROW_RIGHT; j++;
 
-            store[j] = CTRL_Q;     j++;
+            store[j] = CTRL_Q;      j++;
 
  nocalls ++;
 
