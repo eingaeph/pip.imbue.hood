@@ -31,6 +31,7 @@ tester:
 	cp replay.$(testnumb) replay.c 
 	cp setWindow.4        setWindow.c
 	cp draw.4             draw.c
+	cp wind.4             wind.c
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
 	# ar t        $(libn)
