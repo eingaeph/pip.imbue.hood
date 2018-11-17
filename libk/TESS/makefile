@@ -29,6 +29,8 @@ tester:
 	rm -f *.o
 	#retrieve replay.$(testnumb) to serve as replay.c during this test
 	cp replay.$(testnumb) replay.c 
+	cp setWindow.4        setWindow.c
+	cp draw.4             draw.c
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
 	# ar t        $(libn)
