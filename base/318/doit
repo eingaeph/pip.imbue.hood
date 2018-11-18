@@ -1,4 +1,0 @@
-rm deck.c
-cat 318.h *c > deck.c
-chmod +x deck.c
-./deck.c test.dat
