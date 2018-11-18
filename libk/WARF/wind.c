@@ -22,8 +22,15 @@ void wind(int xmin, int xmax, int ymin, int ymax, int numbLines)
       int x; char* s = xmin + text[y].row;
       for ( x = xmin; x <= xmax; x++)   
       {
-        if ((x - xmin + 1)>text[y].size ) {break;}; 
-        if (*s == '\n')       {break;};
+
+//  following are two tests to determine whether *s should be written
+//  to the screen
+
+        if (x>=text[y].size )  {break;}; 
+        if (*s == '\n')        {break;};
+
+//  *s tests ok, write it to the screen
+
         printf("%c",*s); s++;
       }
 
