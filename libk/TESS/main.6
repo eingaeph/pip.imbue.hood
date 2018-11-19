@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 
    enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
 
-   int iw = 4234567;  waiter(iw); // iw = 1234567;
+   int iw = 1234567;  waiter(iw); // iw = 1234567;
 
 // the following perpetural loop waits till
 // it reads a keystroke which is encode and returned as retval
