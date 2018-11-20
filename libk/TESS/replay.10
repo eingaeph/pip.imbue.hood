@@ -26,11 +26,6 @@ int replay(void)
  
  
  int j = 1; char c;
-            store[j] = END_KEY;      j++;
-c = 'a';    store[j] = c;            j++;
-c = 'a';    store[j] = c;            j++;
-c = 'b';    store[j] = c;            j++;
-            store[j] = ARROW_RIGHT;  j++;
             store[j] = DEL_KEY;      j++;
             store[j] = DEL_KEY;      j++;
             store[j] = DEL_KEY;      j++;
