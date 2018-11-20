@@ -35,7 +35,7 @@ struct { int xmin; int xmax; int ymin; int ymax; } arg2;
                                );
 
 
-#define possibleIxIy    assert( glob.iy <= glob.numbLines);            \
+#define possibleIxIy    assert( glob.iy < glob.numbLines);            \
                         assert( glob.iy >= 0); assert( glob.ix >= 0); \
                         assert( glob.ix <= text[glob.iy].size);
 
