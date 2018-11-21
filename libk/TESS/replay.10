@@ -28,12 +28,12 @@ int replay(void)
  int j = 1; char c;
             store[j] = DEL_KEY;      j++;
             store[j] = DEL_KEY;      j++;
-            store[j] = DEL_KEY;      j++;
-            store[j] = DEL_KEY;      j++;
-            store[j] = DEL_KEY;      j++;
-            store[j] = DEL_KEY;      j++;
-            store[j] = ARROW_DOWN;   j++;
-            store[j] = ARROW_UP;     j++;
+//            store[j] = DEL_KEY;      j++;
+//            store[j] = DEL_KEY;      j++;
+//            store[j] = DEL_KEY;      j++;
+//            store[j] = DEL_KEY;      j++;
+//            store[j] = ARROW_DOWN;   j++;
+//            store[j] = ARROW_UP;     j++;
 c = 'a';    store[j] = c;            j++;
 c = 'a';    store[j] = c;            j++;
 c = 'b';    store[j] = c;            j++;

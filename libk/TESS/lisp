@@ -6,6 +6,9 @@
 #echo                               >> lisp.out
 #echo "thir test matrix keystrokes" >> lisp.out
 #grep -i store replay.3             >> lisp.out
-echo                               >> lisp.out
-echo "four test matrix keystrokes" >> lisp.out
-grep -i store replay.4             >> lisp.out
+#echo                               >> lisp.out
+#echo "four test matrix keystrokes" >> lisp.out
+#grep -i store replay.4             >> lisp.out
+echo                                >> lisp.out
+echo "ten test matrix keystrokes"   >> lisp.out
+grep -i store replay.10             >> lisp.out

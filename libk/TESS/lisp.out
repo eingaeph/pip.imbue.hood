@@ -36,3 +36,20 @@ four test matrix keystrokes
             store[j] = ARROW_UP;     j++;
             store[j] = CTRL_Q;       j++;
  if (nocalls < j) retval = store[nocalls];
+
+ten test matrix keystrokes
+ int store[200]; int retval;
+// local variable store contains command test sequence
+            store[j] = DEL_KEY;      j++;
+            store[j] = DEL_KEY;      j++;
+            store[j] = DEL_KEY;      j++;
+            store[j] = DEL_KEY;      j++;
+            store[j] = DEL_KEY;      j++;
+            store[j] = DEL_KEY;      j++;
+            store[j] = ARROW_DOWN;   j++;
+            store[j] = ARROW_UP;     j++;
+c = 'a';    store[j] = c;            j++;
+c = 'a';    store[j] = c;            j++;
+c = 'b';    store[j] = c;            j++;
+            store[j] = CTRL_Q;       j++;
+ if (nocalls < j) retval = store[nocalls];
