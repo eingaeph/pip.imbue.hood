@@ -1,18 +1,22 @@
-// xline.c allocatge the space for a new line
-// build aray of slots new with space for extra line
+// xline.c 
+// receive two character things, firs, seco 
+// allocate the space for a new array of slots <temp>
+// initialize the new array of slots, inserting firs and seco
+// realloc text to the larger size then re initialize text 
+// free temp
 // free text[iy].row
 
 #include "../libk.h"
 
 void xline(int iy, char *firs, int lena, char *seco, int lenb)
 {
-  assert (iy >= 0); assert (iy <= glob.numbLines);
+  assert (iy >= 0); assert (iy < glob.numbLines);
   if  (text[iy].row != NULL) 
        assert(text[iy].size > 0);
   else assert(text[iy].size == 0); 
   assert (lena >= 0); assert (lenb >= 0);
 
-  slot *temp   = malloc((glob.numbLines+2)*sizeof(slot *));
+  slot *temp   = malloc((glob.numbLines+1)*sizeof(slot *));
   assert(temp != NULL);
 
 // initialize the slots pointed to by array of pointers temp
@@ -36,6 +40,6 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
 
   for (j = 0; j <= glob.numbLines; j++) text[j] = temp[j];
 
-  free(temp); glob.numbLines ++; glob.ix = 0; glob.iy++;
+  free(temp); glob.numbLines ++; glob.ix = 0; glob.iy++; possibleIxIy;
 
 }
