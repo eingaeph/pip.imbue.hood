@@ -4,8 +4,7 @@
 
 void chin(char c, int fetch) //fetch text[fetch].row
 {
-  assert(glob.iy == fetch);
-  int testy = fetch; testy = testy; possibleLine;
+  assert(glob.iy == fetch); possibleLine; possibleIxIy;
   
   int limit = text[fetch].size + 1 ; 
   char *new = malloc((limit)*sizeof(char));
@@ -21,9 +20,9 @@ void chin(char c, int fetch) //fetch text[fetch].row
   if (text[fetch].row != NULL) free(text[fetch].row); 
   text[fetch].row = new; 
   text[fetch].size = limit; 
-  glob.ix++; if(limit == 1) glob.ix = 0;
+  glob.ix++; 
 
-  testy = fetch; possibleLine;
+  possibleLine; possibleIxIy;
   return;
 
 }
