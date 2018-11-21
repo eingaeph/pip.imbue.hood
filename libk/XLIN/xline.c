@@ -10,6 +10,7 @@
 
 void xline(int iy, char *firs, int lena, char *seco, int lenb)
 {
+printf("entering xline the value of text is %p\n\r",text);
   assert (iy >= 0); assert (iy < glob.numbLines);
   if  (text[iy].row != NULL) 
        assert(text[iy].size > 0);
@@ -23,8 +24,9 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
 // intitialize two new slots when j = iy
                      
   int j; int k = 0;
-
-  for (j = 0; j <= glob.numbLines; j++) 
+printf("before temp initialization the value of text is %p\n\r",text);
+printf("and the value of temp is %p\n\r",temp);
+  for (j = 0; j < glob.numbLines; j++) 
     {
      if (j != iy) { temp[k] = text[j];   k++; }
      else         { 
@@ -32,12 +34,12 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
                     temp[k].row = seco; temp[k].size = lenb; k++; 
                   }
     }
-
-  if(text[iy].row != NULL) free(text[iy].row); 
-
-  slot *bigger = realloc(text,(glob.numbLines+2)*sizeof(slot));
+printf("before attempting the free the value of text is %p\n\r",text);
+  if(text!= NULL) free(text); 
+exit(0);
+printf("numbLines = %d\n\r",glob.numbLines);
+  slot *bigger = realloc(text,(glob.numbLines+1)*sizeof(slot));
   assert(bigger != NULL); text = bigger;
-
   for (j = 0; j <= glob.numbLines; j++) text[j] = temp[j];
 
   free(temp); glob.numbLines ++; glob.ix = 0; glob.iy++; possibleIxIy;
