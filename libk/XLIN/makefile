@@ -1,5 +1,5 @@
 stem    = /home/ubuntu/git/repo.1/libk/
-new = TESS
+new = XLIN
 old = REPL
 nstem = $(stem)$(new)/
 ostem = $(stem)$(old)/
@@ -7,13 +7,12 @@ libn =  $(nstem)lib$(new).a
 libo =  $(ostem)lib$(old).a
 
 firs:
-	echo $(new)      > /dev/null
-	echo $(old)      > /dev/null
-	echo $(nstem)    > /dev/null
-	echo $(ostem)    > /dev/null
-	echo $(libn)     > /dev/null
-	echo $(libo)     > /dev/null
-	echo $(testnumb) > /dev/null
+	echo $(new)     > /dev/null
+	echo $(old)     > /dev/null
+	echo $(nstem)   > /dev/null
+	echo $(ostem)   > /dev/null
+	echo $(libn)    > /dev/null
+	echo $(libo)    > /dev/null
 
 cleano:
 	rm -f *.o *.a 
@@ -22,26 +21,19 @@ dryrun:
 	rm -f *.o *.a test.c
 	gcc -Wall -c $(nstem)*.c
 
-tester:
-	rm -f *.o *.a $(libn) test.c inpu.dat replay.c
+linkall:
+	rm -f *.o *.a $(libn) test.c
 	ar x          $(libo)
 	ar rcs        $(libn) *.o
 	rm -f *.o
-	#retrieve replay.$(testnumb) to serve as replay.c during this test
-	cp replay.$(testnumb) replay.c 
-	cp arrow_left.chg     arrow_left.c
-	cp arrow_right.chg    arrow_right.c
-	cp chin.chg           chin.c
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
-	# ar t        $(libn)
-	rm -f *.o *.c test
-	#retreive main.$(testnumb) to serve as main during this test
-	cp main.$(testnumb) test.c
+	ar t          $(libn)
+	rm -f *.o test
+	cp main.cold test.c
 	gcc -Wall test.c $(libn) -o test
-	rm -f test.c $(libn)
-	cp inpu.$(testnumb) inpu.dat
-	./test inpu.dat 
+	rm -f test.c
+	./test test.dat
 
 count:
 	cat ../UVSE/*c >  counter
@@ -55,4 +47,24 @@ count:
 	wc counter
 	rm -f counter
 
+compileall:
+	rm -f *.o *.a
+	gcc -Wall -c $(kdir)ReadKey.c
+	gcc -Wall -c $(kdir)die.c
+	gcc -Wall -c $(udir)disableRawMode.c
+	gcc -Wall -c $(udir)enableRawMode.c
+	gcc -Wall -c $(kdir)encode.c
+	gcc -Wall -c $(udir)getCursorPosition.c
+	gcc -Wall -c $(wdir)readAfile.c
+	gcc -Wall -c $(wdir)readAline.c
+	gcc -Wall -c $(udir)screenTest.c
+	gcc -Wall -c $(udir)uvset.c
+	gcc -Wall -c $(wdir)wind.c
+	ar  rcs       $(wdir)libWARF.a *.o
+	ar  t         $(wdir)libWARF.a
+	rm -f *.o
+	cp main.cold test.c
+	gcc -Wall test.c $(wdir)libWARF.a -o test
+	rm test.c
+	./test test.dat
 
