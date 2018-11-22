@@ -35,9 +35,8 @@ printf("and the value of temp is %p\n\r",temp);
                   }
     }
 printf("before attempting the free the value of text is %p\n\r",text);
-  if(text!= NULL) free(text); 
-exit(0);
 printf("numbLines = %d\n\r",glob.numbLines);
+exit(0);
   slot *bigger = realloc(text,(glob.numbLines+1)*sizeof(slot));
   assert(bigger != NULL); text = bigger;
   for (j = 0; j <= glob.numbLines; j++) text[j] = temp[j];

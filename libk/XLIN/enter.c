@@ -52,6 +52,7 @@ void enter(void)
 //realloc reinitialize text including extra line
 
 printf("in <enter> the value of text = %p\n\r",text);
+
    xline(glob.iy, firs, lena, seco, lenb);
 
 }
