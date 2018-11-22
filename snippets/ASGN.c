@@ -1,4 +1,4 @@
-#! /usr/bin/tcc -run
+//#! /usr/bin/tcc -run
 
 //replace assignments with memcpy
 

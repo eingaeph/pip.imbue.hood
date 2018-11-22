@@ -11,6 +11,7 @@
 void xline(int iy, char *firs, int lena, char *seco, int lenb)
 {
 printf("entering xline the value of text is %p\n\r",text);
+  slot *bigger = realloc(text,(glob.numbLines+1)*sizeof(slot));
   assert (iy >= 0); assert (iy < glob.numbLines);
   if  (text[iy].row != NULL) 
        assert(text[iy].size > 0);
@@ -36,11 +37,11 @@ printf("and the value of temp is %p\n\r",temp);
     }
 printf("before attempting the free the value of text is %p\n\r",text);
 printf("numbLines = %d\n\r",glob.numbLines);
-exit(0);
-  slot *bigger = realloc(text,(glob.numbLines+1)*sizeof(slot));
+
+//  slot *bigger = realloc(text,(glob.numbLines+1)*sizeof(slot));
   assert(bigger != NULL); text = bigger;
   for (j = 0; j <= glob.numbLines; j++) text[j] = temp[j];
 
   free(temp); glob.numbLines ++; glob.ix = 0; glob.iy++; possibleIxIy;
-
+exit(0);
 }

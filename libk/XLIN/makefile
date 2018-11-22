@@ -21,6 +21,13 @@ dryrun:
 	rm -f *.o *.a test.c
 	gcc -Wall -c $(nstem)*.c
 
+asgn:
+	rm -f test asgn.c
+	cp ASGN.cold asgn.c
+	gcc -Wall $(nstem)asgn.c -o test
+	./test
+	rm -f test asgn.c
+
 linkall:
 	rm -f *.o *.a $(libn) test.c
 	ar x          $(libo)
