@@ -19,6 +19,16 @@ int main(void)
   cline.row = "sorry charlie";        //memory for string allocated here
   cline.size = strlen(cline.row);
 
+  bline = aline;
+  printf("%s\n\r",bline.row);
+
+  slot *test = malloc(5*sizeof(slot));
+  test[1] = bline;
+  test[0] = cline;
+  printf("%s\n\r",test[1].row);
+  printf("%s\n\r",test[0].row);
+  exit(0);
+
 // use memcpy instead of assignment operator = to iniitialize a slot
 // void *memcpy(void *dest, const void *src, size_t n);
 
