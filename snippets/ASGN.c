@@ -50,6 +50,20 @@ int main(void)
   printf("%s\n",book[2].row);
   printf("\n");
 
+  slot *tabl = malloc(5*sizeof(slot));
+  memcpy(tabl+2,book+2,sizeof(slot));
+  printf("%s\n",tabl[2].row);
+  printf("\n");
+
+  assert( (book+2) == &book[2] );
+  assert( (tabl+2) == &tabl[2] );
+
+  memcpy(&tabl[2],&book[2],sizeof(slot));
+  printf("almost\n\r");
+  printf("%s\n",tabl[2].row);
+  printf("\n");
+  
+  
   printf("stopping\n");
   return 0;
 }
