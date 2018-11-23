@@ -1,9 +1,14 @@
 # Project pip.imbue.hood 
 
-  The following write is over a year old and does not describe the 
+  The writeup below is over a year old and does not describe the 
   current stage of the project. The recent work is contained in 
-  directory libk, and is slightly documented in libk.pdf store in
-  that directory. 
+  directory libk, and is slightly documented in libk.pdf stored in
+  that directory. The functionality of the library in libk/REPL is
+  1) read an input text file, 2) function as a pager to display the 
+  input file with horizontal and vertical scrolling 3) perform several 
+  text editing functions. 
+
+# Code Snippets to Ilustrate C Idioms 
 
   Previously the project sought to
   build illustrative code snippets to highlight a subset of idioms
@@ -12,8 +17,9 @@
 
   Illustrate GNU/Linux library calls sufficient to 
   display and edit text files without dependencies beyond the choice 
-  of terminal emulator (gnome-terminal tested). Construct explanatory 
-  html pages stored in tutor.zip.
+  of terminal emulator (gnome-terminal tested) and the widely available
+  gcc standard libraries. Construct explanatory html pages stored in 
+  tutor.zip.
 
   The project wishes to support kilo.c as a preliminary archive of 
   working C idioms. The present work is explicitly not an attempt to 
