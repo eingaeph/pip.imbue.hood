@@ -33,9 +33,12 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
                   }
     }
 
+
   slot *bigger = realloc(text,(glob.numbLines+1)*sizeof(slot));
   assert(bigger != NULL); text = bigger;
   for (j = 0; j <= glob.numbLines; j++) text[j] = temp[j];
 
+  if (text[glob.iy].size == 0) assert(text[glob.iy].row == NULL);
   free(temp); glob.numbLines ++; glob.ix = 0; glob.iy++; possibleIxIy;
+  if (text[glob.iy].size == 0) assert(text[glob.iy].row == NULL);
 }

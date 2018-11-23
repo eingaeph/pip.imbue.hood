@@ -25,7 +25,7 @@ void enter(void)
 
   if (text[glob.iy].size == 0)
      {
-      assert(glob.ix == 0); assert(glob.rows == NULL);
+      assert(glob.ix == 0); assert(text[glob.iy].row == NULL);
       assert(lena == 0); assert(lenb == 0); firs = NULL; seco = NULL;
       xline(glob.iy, firs, lena, seco, lenb);
       return;
