@@ -4,9 +4,10 @@
   current stage of the project. The recent work is contained in 
   directory libk, and is slightly documented in libk.pdf stored in
   that directory. The functionality of the library in libk/REPL is
-  1) read an input text file, 2) function as a pager to display the 
-  input file with horizontal and vertical scrolling 3) perform several 
-  text editing functions. 
+  1) read an input text file, 
+  2) function as a pager to display the  input file with horizontal 
+and vertical scrolling 
+  3) perform several text editing functions. 
 
 # Code Snippets to Ilustrate C Idioms 
 
