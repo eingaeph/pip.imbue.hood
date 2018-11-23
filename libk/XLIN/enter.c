@@ -49,9 +49,7 @@ void enter(void)
   for (no = lena; no < lena + lenb; no++)
     {*chng = *orig; chng++; orig++;}
 
-//realloc reinitialize text including extra line
-
-printf("in <enter> the value of text = %p\n\r",text);
+//xline, realloc, reallocate text to include extra line
 
    xline(glob.iy, firs, lena, seco, lenb);
 

@@ -1,0 +1,35 @@
+//#! /usr/bin/tcc -run
+
+//test assigments 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+typedef struct {ssize_t size; char *row; int count;} slot; slot line; slot *text;
+
+int main(void)
+{
+  slot aline, bline, cline;
+
+  aline.row = "sing that story";      //memory for string allocated here
+  aline.size = strlen(aline.row);
+
+  cline.row = "sorry charlie";        //memory for string allocated here
+  cline.size = strlen(cline.row);
+
+  bline = aline;
+  printf("%s\n\r",bline.row);
+
+  slot *test = malloc(5*sizeof(slot));
+  test[1] = bline;
+  test[0] = cline;
+  test[2] = test[1];
+  printf("%s\n\r",test[0].row);
+  printf("%s\n\r",test[1].row);
+  printf("%s\n\r",test[2].row);
+  exit(0);
+
+  return 0;
+}

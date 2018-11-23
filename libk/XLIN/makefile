@@ -23,7 +23,8 @@ dryrun:
 
 asgn:
 	rm -f test asgn.c
-	cp ASGN.cold asgn.c
+	#cp ASGN.cold   asgn.c
+	cp  assign.cold asgn.c
 	gcc -Wall $(nstem)asgn.c -o test
 	./test
 	rm -f test asgn.c
