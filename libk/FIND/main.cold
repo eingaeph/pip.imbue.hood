@@ -1,0 +1,50 @@
+// test.FIND
+
+#include "../libk.h"
+
+//   uvset.c      query screen for size
+//     set rows, cols, 
+//   readAfile.   read a file defined as a command line argument
+//     set numblines
+//   editAline.c  process ReadKey code
+//     ix, iy 
+//   setWindow.c  build window to be displayed on the screen
+//     reset xmin, xmax, ymin, ymax
+//   wind.c       write the window to the screen
+//     using 
+
+int main(int arc, char** argv)
+{
+
+//   set pointer to input filename
+
+    char *filename =argv[1];
+
+    printf("test.EDAL executing\n");
+    printf("filename = %s\n",filename);
+
+//  following is the init segment, later move to init()
+
+    glob.numbLines = readAfile(filename);
+
+//   set rows, cols
+
+    enableRawMode(); uvset(); disableRawMode();
+
+//  set initial window and insertion point
+
+    glob.xmin = 0; glob.xmax = glob.cols -1;
+    glob.ymin = 0; glob.ymax = glob.rows -1; 
+    if(glob.ymax > glob.numbLines -1) glob.ymax = glob.numbLines -1;
+  
+    glob.iy = 0; glob.ix = 0;
+    printf("\n%d lines were read\n\n",glob.numbLines);
+
+    while(1)
+   {
+    int retval = ReadKey(); if (retval == CTRL_Q) return 0;
+    if (retval != CTRL_S) moda(retval);
+    if (retval == CTRL_S) modb();
+   }
+    return 0;
+}

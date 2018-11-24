@@ -1,13 +1,20 @@
 # Project pip.imbue.hood 
 
-  The writeup below is over a year old and does not describe the 
-  current stage of the project. The recent work is contained in 
+  The writeup in the next section 
+  is over a year old and does not describe the current 
+  direction of the project. The recent work is contained in 
   directory libk, and is slightly documented in libk.pdf stored in
   that directory. The functionality of the library in libk/REPL is
   1) read an input text file, 
   2) function as a pager to display the  input file with horizontal 
 and vertical scrolling 
   3) perform several text editing functions. 
+
+  Project pip/imbue/hood forked from the antirez writing at the data
+  structure level. subKilo deals with text coordinates, x and y, and
+  and window coordinates, u and v, while Kilo works with the offset 
+  between those alternative coordinates.  We are irrationally attached
+  to our choice of data structure, because reasons.
 
 # Code Snippets to Ilustrate C Idioms 
 
