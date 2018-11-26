@@ -1,0 +1,30 @@
+setWindow.c
+    39	//  ix iy may have been changed in editAline.c
+    40	//  test whether window parameters xmin etc. must be changed, as a consquence
+    41	
+    42	    int testa, testb, testc, testd, teste;
+    43	
+    44	    testa = (ix >= xmin); testb = (ix <= xmax); 
+    45	    testc = (iy >= ymin); testd = (iy <= ymax);
+    46	    teste = (testa && testb && testc && testd); 
+    47	    assert (iy <= numbLines - 1);
+    48	
+    49	//  return if unchanged window edges are ok
+    50	
+    51	    if(teste) 
+    52	    {
+    53	    cu = glob.ix - glob.xmin; glob.cu = cu;
+    54	    cv = glob.iy - glob.ymin; glob.cv = cv;
+    55	    return;
+    56	    }
+    57	
+    58	    assert(!testa || !testb || !testc || !testd);
+    59	
+    60	//  reset the window edges, xmin etc. to be consistent with ix, iy
+    61	
+    62	    if (!testa) {xmin = ix; xmax = xmin + cols - 1;}
+    63	    if (!testb) {xmax = ix; xmin = xmax - cols + 1; if(xmin < 0) xmin = 0;}
+    64	    if (!testc) {ymin = iy; ymax = ymin + rows - 1; if(ymax > numbLines) ymax=numbLines-1;}    
+    65	    if (!testd) {ymax = iy; ymin = ymax - rows + 1; if(ymin < 0) ymin = 0;}
+    66	
+    67	//  after the window parm updates check again for a valid window 
