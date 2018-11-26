@@ -1,0 +1,14 @@
+ln -s ../libk/EDAL/arrow_down.c
+ln -s ../libk/EDAL/arrow_left.c
+ln -s ../libk/EDAL/arrow_right.c
+ln -s ../libk/EDAL/arrow_up.c
+ln -s ../libk/EDAL/backspace.c
+ln -s ../libk/EDAL/chin.c
+ln -s ../libk/EDAL/del_key.c
+ln -s ../libk/EDAL/editAline.c
+ln -s ../libk/EDAL/end_key.c
+ln -s ../libk/EDAL/enter.c
+ln -s ../libk/EDAL/pageDown.c
+ln -s ../libk/EDAL/pageUp.c
+ln -s ../libk/EDAL/setWindow.c
+ln -s ../libk/EDAL/xline.c
