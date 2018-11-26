@@ -1,0 +1,5 @@
+ln -s ../libk/REPL/delay.c          delay.c
+ln -s ../libk/REPL/draw.c           draw.c
+ln -s ../libk/REPL/init.c           init.c
+ln -s ../libk/REPL/replay.c         replay.c
+ln -s ../libk/REPL/waiter.c         waiter.c
