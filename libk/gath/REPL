@@ -1,0 +1,5 @@
+ln -s ../REPL/delay.c          delay.c
+ln -s ../REPL/draw.c           draw.c
+ln -s ../REPL/init.c           init.c
+ln -s ../REPL/replay.c         replay.c
+ln -s ../REPL/waiter.c         waiter.c

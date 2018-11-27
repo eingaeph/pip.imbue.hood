@@ -1,0 +1,2 @@
+ln -s ../XLIN/enter.c       enter.c
+ln -s ../XLIN/xline.c       xline.c

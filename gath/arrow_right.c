@@ -1,1 +1,0 @@
-../libk/EDAL/arrow_right.c

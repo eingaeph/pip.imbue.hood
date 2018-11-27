@@ -1,1 +1,0 @@
-../libk/EDAL/chin.c

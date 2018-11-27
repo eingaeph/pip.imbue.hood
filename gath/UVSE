@@ -1,5 +1,0 @@
-ln -s ../libk/UVSE/disableRawMode.c       disableRawMode.c
-ln -s ../libk/UVSE/enableRawMode.c        enableRawMode.c
-ln -s ../libk/UVSE/getCursorPosition.c    getCursorPosition.c
-ln -s ../libk/UVSE/screenTest.c           screentest.c
-ln -s ../libk/UVSE/uvset.c                uvset.c

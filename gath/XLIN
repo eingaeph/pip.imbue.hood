@@ -1,2 +1,0 @@
-ln -s ../libk/XLIN/enter.c       enter.c
-ln -s ../libk/XLIN/xline.c       xline.c

@@ -1,1 +1,0 @@
-../libk/UVSE/getCursorPosition.c

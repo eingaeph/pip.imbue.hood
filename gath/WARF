@@ -1,3 +1,0 @@
-ln -s ../libk/WARF/readAfile.c          readAfile.c
-ln -s ../libk/WARF/readAline.c          readAline.c
-ln -s ../libk/WARF/wind.c               wind.c

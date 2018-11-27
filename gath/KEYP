@@ -1,3 +1,0 @@
-ln -s ../libk/KEYP/ReadKey.c     ReadKey.c
-ln -s ../libk/KEYP/die.c         die.c
-ln -s ../libk/KEYP/encode.c      encode.c
