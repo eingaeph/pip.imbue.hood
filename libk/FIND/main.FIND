@@ -2,16 +2,8 @@
 
 #include "../libk.h"
 
-//   uvset.c      query screen for size
-//     set rows, cols, 
-//   readAfile.   read a file defined as a command line argument
-//     set numblines
-//   editAline.c  process ReadKey code
-//     ix, iy 
-//   setWindow.c  build window to be displayed on the screen
-//     reset xmin, xmax, ymin, ymax
-//   wind.c       write the window to the screen
-//     using 
+void moda(int retval);
+void modb(int retval);
 
 int main(int arc, char** argv)
 {
@@ -43,8 +35,7 @@ int main(int arc, char** argv)
     while(1)
    {
     int retval = ReadKey(); if (retval == CTRL_Q) return 0;
-    if (retval != CTRL_S) moda(retval);
-    if (retval == CTRL_S) modb();
+    if (retval != CTRL_S) moda(retval); else modb(retval);
    }
     return 0;
 }

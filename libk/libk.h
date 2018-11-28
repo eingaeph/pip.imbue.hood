@@ -71,8 +71,6 @@ void wind(int xmin, int xmax, int ymin, int ymax, int lastline);
 
 // KEYP
 
-/* global vars */
-
 int  ReadKey(void);
 void die(const char *s);
 int  encode (int count, char* seq);

@@ -1,4 +1,0 @@
-#include "../libk.h/"
-
-void modb(void) {}
-
