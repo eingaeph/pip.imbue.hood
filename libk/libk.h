@@ -10,6 +10,12 @@
 #include <assert.h>
 #include <time.h>
 
+// FIND
+
+#define _GNU_SOURCE 
+
+void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
+
 // XLIN
 
 void enter(void);

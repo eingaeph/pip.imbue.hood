@@ -24,7 +24,7 @@ void modb(int retval)
               {
                 glob.iy = j; 
                 glob.ix = (int) (match - text[j].row);
-                printf("match = %zu\n\r",match);
+                printf("match = %d\n\r", *match);
                 printf("ix = %d\n\r",glob.ix);
                 return;
               }
