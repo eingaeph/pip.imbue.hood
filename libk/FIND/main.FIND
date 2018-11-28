@@ -23,7 +23,7 @@ int main(int arc, char** argv)
 
     enableRawMode(); uvset(); disableRawMode();
 
-//  set initial window and insertion point
+//  set initial window parms and insertion point
 
     glob.xmin = 0; glob.xmax = glob.cols -1;
     glob.ymin = 0; glob.ymax = glob.rows -1; 
@@ -34,17 +34,7 @@ int main(int arc, char** argv)
 
     while(1)
    {
-    setWindow();
-
-//  Clear the screen an place the cursor at the top left
-
-    enableRawMode(); printf(ClearScreen); fflush(stdout); disableRawMode();
-    int cu = 0; int cv = 0;
-    enableRawMode(); printf("\x1b[%d;%df",cv,cu); fflush(stdout); disableRawMode();
-
-//  draw the window when changing between modes
-
-    wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
+    callWind(glob.ix -glob.xmin, glob.iy -glob.ymin);
 
     int retval = ReadKey(); if (retval == CTRL_Q) return 0;
     if (retval != CTRL_S) moda(retval); else modb(retval);

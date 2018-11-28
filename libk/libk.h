@@ -15,6 +15,9 @@
 #define _GNU_SOURCE 
 
 void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
+void callWind(int cu, int cv);
+void moda(int retval);
+void modb(int retval);
 
 // XLIN
 

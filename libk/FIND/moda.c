@@ -4,6 +4,7 @@
 
 void moda(int retval)
 {
+/*
 //    editAline(retval, glob.iy); 
     setWindow();
 
@@ -23,6 +24,8 @@ void moda(int retval)
     assert(cu == glob.ix - glob.xmin);
     assert(cv == glob.iy - glob.ymin);
     enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
+*/
+    callWind(glob.cu,glob.cv);
 
     editAline(retval, glob.iy); 
 
