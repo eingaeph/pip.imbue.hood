@@ -23,14 +23,6 @@ dryrun:
 	gcc -Wall -c $(nstem)*.c
 	rm -f *.o test.c
 
-asgn:
-	rm -f test asgn.c
-	#cp ASGN.cold   asgn.c
-	cp  assign.cold asgn.c
-	gcc -Wall $(nstem)asgn.c -o test
-	./test
-	rm -f test asgn.c
-
 linkall:
 	rm -f *.o *.a $(libn) test.c
 	ar x          $(libo)
@@ -40,7 +32,7 @@ linkall:
 	ar rs         $(libn) *.o
 	ar t          $(libn)
 	rm -f *.o test
-	cp main.cold test.c
+	cp main.FIND test.c
 	gcc -Wall test.c $(libn) -o test
 	rm -f test.c
 	./test test.dat
