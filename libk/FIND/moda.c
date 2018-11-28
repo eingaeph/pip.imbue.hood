@@ -4,7 +4,7 @@
 
 void moda(int retval)
 {
-    editAline(retval, glob.iy); 
+//    editAline(retval, glob.iy); 
     setWindow();
 
 //  Clear the screen an place the cursor at the top left
@@ -23,6 +23,8 @@ void moda(int retval)
     assert(cu == glob.ix - glob.xmin);
     assert(cv == glob.iy - glob.ymin);
     enableRawMode(); printf("\x1b[%d;%df",(cv+1),(cu+1)); fflush(stdout); disableRawMode();
+
+    editAline(retval, glob.iy); 
 
     return;
 }
