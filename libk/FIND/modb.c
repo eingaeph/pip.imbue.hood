@@ -24,7 +24,7 @@ printf("here i am\n\r");
               {
                 glob.iy = j; 
                 glob.ix = (int) (match - text[j].row);
-                break;
+                return;
               }
     }
 
