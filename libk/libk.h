@@ -45,9 +45,20 @@ struct { int xmin; int xmax; int ymin; int ymax; } arg2;
 
 
 #define possibleIxIy    assert( glob.iy < glob.numbLines);            \
-                        assert( glob.iy >= 0); assert( glob.ix >= 0); \
+                        assert( glob.iy >= 0);                        \
+                        assert( glob.ix >= 0);                        \
                         assert( glob.ix <= text[glob.iy].size);
 
+#define possibleWindow  assert(glob.xmin >= 0);                         \
+                        assert(glob.xmin < glob.xmax);                  \
+                        assert(glob.ymin >= 0);                         \
+                        assert(glob.ymax < glob.numbLines);             \
+                        assert(glob.xmax - glob.xmin <= glob.cols - 1); \
+                        assert(glob.ymax - glob.ymin <= glob.rows - 1); \
+                        assert(glob.ix >= 0);                           \
+                        assert(glob.iy >= 0);                           \
+                        assert(glob.ix <= glob.xmax);                   \
+                        assert(glob.iy <= glob.ymax);
 
 int arrow_down(void);
 void arrow_left(void);
