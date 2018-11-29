@@ -18,8 +18,9 @@ cleano:
 	rm -f *.o *.a 
 
 dryrun:
-	rm -f *.o *.a test.c
+	rm -f *.o test,c
 	gcc -Wall -c $(nstem)*.c
+	rm -f *.o
 
 linkall:
 	rm -f *.o *.a $(libn) test.c

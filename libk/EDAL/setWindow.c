@@ -21,37 +21,25 @@
 void setWindow(void)
 {
  
-//  initialize the variables used by setWindow.c 
-
-    int ix = glob.ix; int iy = glob.iy; 
-    int xmin = glob.xmin ; int xmax = glob.xmax ;
-    int ymin = glob.ymin ; int ymax = glob.ymax ;
-    int rows = glob.rows ; int cols = glob.cols ;
-    int numbLines = glob.numbLines;
-    int cu, cv; //these will be initialized later
-
-//  check the variables just initialized for consistency
     
-    possibleIxIy; int testy = iy; testy=testy; possibleLine;
-    assert( xmax - xmin <= cols - 1);
-    assert( ymax - ymin <= rows - 1); 
+    possibleIxIy; possibleLine;
 
 //  ix iy may have been changed in editAline.c
 //  test whether window parameters xmin etc. must be changed, as a consquence
 
     int testa, testb, testc, testd, teste;
 
-    testa = (ix >= xmin); testb = (ix <= xmax); 
-    testc = (iy >= ymin); testd = (iy <= ymax);
+    testa = (glob.ix >= glob.xmin); testb = (glob.ix <= glob.xmax); 
+    testc = (glob.iy >= glob.ymin); testd = (glob.iy <= glob.ymax);
     teste = (testa && testb && testc && testd); 
-    assert (iy <= numbLines - 1);
 
 //  return if unchanged window edges are ok
 
     if(teste) 
     {
-    cu = glob.ix - glob.xmin; glob.cu = cu;
-    cv = glob.iy - glob.ymin; glob.cv = cv;
+      possibleWindow;
+      glob.cu = glob.ix - glob.xmin; 
+      glob.cv = glob.iy - glob.ymin; 
     return;
     }
 
@@ -59,30 +47,43 @@ void setWindow(void)
 
 //  reset the window edges, xmin etc. to be consistent with ix, iy
 
-    if (!testa) {xmin = ix; xmax = xmin + cols - 1;}
-    if (!testb) {xmax = ix; xmin = xmax - cols + 1; if(xmin < 0) xmin = 0;}
-    if (!testc) {ymin = iy; ymax = ymin + rows - 1; if(ymax > numbLines) ymax=numbLines-1;}    
-    if (!testd) {ymax = iy; ymin = ymax - rows + 1; if(ymin < 0) ymin = 0;}
+    if (!testa) {
+                 glob.xmin = glob.ix; 
+                 glob.xmax = glob.xmin + glob.cols - 1;
+                }
+    if (!testb) {
+                 glob.xmax = glob.ix; 
+                 glob.xmin = glob.xmax - glob.cols + 1; 
+                 if(glob.xmin < 0) glob.xmin = 0;
+                }
+    if (!testc) {
+                 glob.ymin = glob.iy; 
+                 glob.ymax = glob.ymin + glob.rows - 1; 
+                 if(glob.ymax > glob.numbLines) 
+                 glob.ymax=glob.numbLines-1;
+                }    
+    if (!testd) {
+                 glob.ymax = glob.iy; 
+                 glob.ymin = glob.ymax - glob.rows + 1; 
+                 if(glob.ymin < 0) glob.ymin = 0;
+                 }
 
 //  after the window parm updates check again for a valid window 
 
-    possibleIxIy; testy = iy; testy = testy; possibleLine;
-    assert( xmax - xmin <= cols - 1);
-    assert( ymax - ymin <= rows - 1); 
-    
-    testa = (ix >= xmin); testb = (ix <= xmax);
-    testc = (iy >= ymin); testd = (iy <= ymax);
+    possibleIxIy; possibleLine; possibleWindow;
 
-//  set the glob struct variables cu,cv,xmin,xmax,ymin,ymax
+//  set the glob struct variables cu,cv
 
-    glob.xmin = xmin ; glob.xmax = xmax;
-    glob.ymin = ymin ; glob.ymax = ymax;
-    cu = glob.ix - glob.xmin; glob.cu = cu;
-    cv = glob.iy - glob.ymin; glob.cv = cv;
+    glob.cu = glob.ix - glob.xmin; 
+    glob.cv = glob.iy - glob.ymin;
 
 //  hopefully this was successful and a return is appropriate
 
-    if (testa && testb && testc && testd ) return; 
+    possibleWindow;
+    testa = (glob.ix >= glob.xmin); testb = (glob.ix <= glob.xmax); 
+    testc = (glob.iy >= glob.ymin); testd = (glob.iy <= glob.ymax);
+    teste = (testa && testb && testc && testd); 
+    if(testa && testb && testc && testd) return;
 
 //  return was not executed
 //  write an error massage and terminate execution
