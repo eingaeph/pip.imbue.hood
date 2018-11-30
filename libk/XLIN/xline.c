@@ -10,11 +10,7 @@
 
 void xline(int iy, char *firs, int lena, char *seco, int lenb)
 {
-
-  assert (iy >= 0); assert (iy < glob.numbLines);
-  if  (text[iy].row != NULL) 
-       assert(text[iy].size > 0);
-  else assert(text[iy].size == 0); 
+  possibleLine; possibleIxIy; 
   assert (lena >= 0); assert (lenb >= 0);
 
   slot *temp   = malloc((glob.numbLines+1)*sizeof(slot));
@@ -38,7 +34,8 @@ void xline(int iy, char *firs, int lena, char *seco, int lenb)
   assert(bigger != NULL); text = bigger;
   for (j = 0; j <= glob.numbLines; j++) text[j] = temp[j];
 
-  if (text[glob.iy].size == 0) assert(text[glob.iy].row == NULL);
-  free(temp); glob.numbLines ++; glob.ix = 0; glob.iy++; possibleIxIy;
-  if (text[glob.iy].size == 0) assert(text[glob.iy].row == NULL);
+  possibleLine;
+  free(temp); glob.numbLines ++; glob.ix = 0; glob.iy++; 
+  possibleLine; possibleIxIy;
+
 }

@@ -2,8 +2,8 @@
 
 void del_key(int fetch)
 {
-  possibleIxIy;
-  int testy = fetch; testy = testy; possibleLine;
+  fetch = glob.iy;
+  possibleIxIy; possibleLine;
   int testa = (text[fetch].size == 0); // first edge case
   if (testa) {assert(glob.ix == 0);   
               assert(text[fetch].row == NULL);
@@ -36,8 +36,7 @@ void del_key(int fetch)
 
   if (glob.ix >= limit) glob.ix = limit - 1;
 
-  assert(glob.ix >= 0);
-  testy = fetch; possibleLine;
+  possibleLine; possibleIxIy;
 
   return;
 

@@ -14,12 +14,29 @@ void modb(int retval)
     printf("query = %s\n\r",query); 
    }
 
-// loop through text searching for query
+// check the current line for the search string
+
+   char *s = text[glob.iy].row + glob.ix;
+   int size = text[glob.iy].size - glob.ix;
+   char *match = memmem(s,size,query,strlen(query)); 
+
+   int testa = (int) (match - text[glob.iy].row);
+   int testb = (match != NULL);
+   int testc = (testa != glob.ix);        
+   if (testb && testc) // match occurs but not at the insertion point
+        {
+         glob.ix = (int) (match -text[glob.iy].row);
+         possibleLine; possibleIxIy;
+         return;
+        } 
+
+// loop through text searching for query, not to be found in the first line i=0
+
   int i;
-  for (i = 0; i < glob.numbLines; i++) 
+  for (i = 1; i < glob.numbLines; i++) 
    {int j = i + glob.iy; 
     if (j >= glob.numbLines) j = j - glob.numbLines; 
-    char *match = memmem(text[j].row, text[j].size, query,strlen(query));
+    match = memmem(text[j].row, text[j].size, query,strlen(query));
     if (match) 
               {
                 glob.iy = j; 
