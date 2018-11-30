@@ -39,37 +39,32 @@ void modb(int retval)
                         strlen(query));
 
 // starting search in a line containing query
-int iw = 4234567; printf("at a\n\r"); waiter(iw);
 
    if (match != NULL) 
       { 
-printf("at b\n\r"); 
         int ndx = (int) (match - text[glob.iy].row);
-        int testa = (ndx == glob.ix);  //check for immediate find
-printf("testa = %d ndx = %d\n\r",testa,ndx);
-printf("ix = %d\n\r",glob.ix); waiter(iw);
+        int testa = (ndx <= glob.ix);  //check for immediate find
         if (!testa) 
               {
                glob.ix = ndx;
                possibleLine; possibleIxIy;
                return;
               }
-printf("at c\n\r");  waiter(iw);
+
 // tests for immediate find
 
-        int lenrest = text[glob.iy].size - 2*strlen(query) -glob.ix;
-        int testb = (lenrest <=0 );
-        char* rest  = text[glob.iy].row + glob.ix + strlen(query);
+        int lentest = text[glob.iy].size - 2*strlen(query) - glob.ix;
+        char* rest  = text[glob.iy].row + glob.ix + (int) strlen(query);
         char* natch = NULL;
-        if (!testb) natch = memmem(rest,
-                                   lenrest,
-                                   query,
-                                   strlen(query));
-        int testc = (natch == NULL); 
+
+        if (lentest > 0) natch = memmem(rest,
+                                        text[glob.iy].size - glob.ix - strlen(query),
+                                        query,
+                                        strlen(query));
 
 // skip immediate find in first line check 
 
-         if (!testb && !testc )
+         if ( natch != NULL )
              {
                assert( (int) (natch - rest) > 0);
                glob.ix = glob.ix + strlen(query) + (int) (natch - rest); 
