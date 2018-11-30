@@ -11,7 +11,7 @@ void modb(int retval)
                              // from a 4 byte intege
     *s = c; s++;
     *s = '\0';
-    printf("query = %s\n\r",query); 
+    printf(CursorToTopLeft "\x1b[999B" "query = %s",query);  fflush(stdout);
    }
 
 // check for a valid query
@@ -43,12 +43,14 @@ int iw = 4234567; printf("at a\n\r"); waiter(iw);
 
    if (match != NULL) 
       { 
-printf("at b\n\r"); waiter(iw);
-        int testa = ( (int) (match - text[glob.iy].row) == 0); //check for immediate find
-printf("testa = %d\n\r",testa); waiter(iw);
+printf("at b\n\r"); 
+        int ndx = (int) (match - text[glob.iy].row);
+        int testa = (ndx == glob.ix);  //check for immediate find
+printf("testa = %d ndx = %d\n\r",testa,ndx);
+printf("ix = %d\n\r",glob.ix); waiter(iw);
         if (!testa) 
               {
-               glob.ix = (int) (match - text[glob.iy].row);
+               glob.ix = ndx;
                possibleLine; possibleIxIy;
                return;
               }
