@@ -8,7 +8,7 @@ int main(void)
 //  when sending the information about the screen size 
 //  to standard input. 
 
-    enableRawMode(); uvset(); disableRawMode(); return 0;
+    enableRawMode(); uvset(); disableRawMode();
     screenTest();
 
     return 0;

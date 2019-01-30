@@ -1,0 +1,6 @@
+stem=/home/ubuntu/git/repo.1/libk/
+clib=UVSE
+cd $stem$clib
+ls
+back
+
