@@ -25,10 +25,18 @@ einr 'return to directory gath'
 
 back ; paus 'pwd; echo'
 
-einr 'subKilo build step one: directory UVSE'
+einr 'subKilo build step one: directory KEYP'
 
 cd "$stem"KEYP
 
 paus 'pwd' ; paus 'make linkall'; paus 'clear'
 
-back ; paus 'pwd'
+back ; paus 'pwd echo'
+
+einr 'subKilo build step one: directory WARF'
+
+cd "$stem"WARF
+
+paus 'pwd' ; paus 'make linkall'; paus 'clear'
+
+back ; paus 'pwd; echo'

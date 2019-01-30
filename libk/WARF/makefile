@@ -15,11 +15,11 @@ linkall:
 	gcc -Wall -c  $(wdir)*.c
 	ar rs         $(wdir)lib$(clib).a *.o
 	ar t          $(wdir)lib$(clib).a
-	rm -f *.o test
-	cp main.cold test.c
-	gcc -Wall test.c $(wdir)lib$(clib).a -o test
+	rm -f *.o test$(clib)
+	cp main.$(clib) test.c
+	gcc -Wall test.c $(wdir)lib$(clib).a -o test$(clib)
 	rm -f test.c
-	./test test.dat
+	./test$(clib) test.dat
 
 count:
 	cat ../*.h $(kdir)*.c $(udir)*.c $(wdir)*.c | wc

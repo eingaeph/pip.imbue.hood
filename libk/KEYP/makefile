@@ -3,7 +3,7 @@ clib = KEYP
 olib = UVSE
 kdir = $(stem)KEYP/
 udir = $(stem)UVSE/
-clib = KEYP
+
 
 cleano:
 	rm -f *.o *.a
