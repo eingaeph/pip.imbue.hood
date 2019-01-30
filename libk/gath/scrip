@@ -4,21 +4,31 @@ einr() {
         NC='\033[0m' # No Color
         printf "${RED}$1${NC}\n"
        }
-
-
+paus () 
+       { 
+        echo;
+        echo $1;
+        pause;
+        eval $1
+       }
+pause () 
+        { 
+         read ignore
+        }
 echo
 
-einr 'begin build using directory UVSE'
+einr 'begin subKilo build in directory UVSE'
 
-paus 'clib=UVSE'
-
-paus 'cd $stem$clib'
-
-paus 'ls'
+cd $stem"UVSE" ; paus 'pwd' ; paus 'make linkall' ; paus 'clear'
 
 einr 'return to directory gath'
 
-paus 'back'
+back ; paus 'pwd; echo'
 
-paus 'ls'
+einr 'subKilo build step one: directory UVSE'
 
+cd "$stem"KEYP
+
+paus 'pwd' ; paus 'make linkall'; paus 'clear'
+
+back ; paus 'pwd'
