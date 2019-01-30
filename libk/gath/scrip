@@ -36,3 +36,14 @@ einr 'subKilo build step one: directory EDAL'
 cd "$stem"EDAL
 paus 'pwd' ; paus 'make linkall'; paus 'clear'
 back ; paus 'pwd; echo'
+
+einr 'subKilo build step one: directory REPL'
+cd "$stem"REPL
+paus 'pwd' ; paus 'make linkall'; paus 'clear'
+back ; paus 'pwd; echo'
+
+einr 'subKilo build step one: directory XLIN'
+cd "$stem"XLIN
+paus 'pwd' ; paus 'make linkall'; paus 'clear'
+back ; paus 'pwd; echo'
+
