@@ -10,11 +10,19 @@
 and vertical scrolling 
   3) perform several text editing functions. 
 
+# The Build
+
+  The library build is accomplished by the bash script gath/scrip. The
+  build performs test exercises on test executables, and requires user
+  input to exit test editors and before proceeding to the next step. This 
+  will probably irritate folks who are not an author, but we love the slight 
+  gain in assurance that the build is going correctly. 
+
   Project pip/imbue/hood forked from the antirez writing at the data
   structure level. subKilo deals with text coordinates, x and y, and
   and window coordinates, u and v, while Kilo works with the offset 
   between those alternative coordinates.  We are irrationally attached
-  to our choice of data structure, because reasons.
+  to our choice of data structure, because, reasons.
 
 # Code Snippets to Ilustrate C Idioms 
 
