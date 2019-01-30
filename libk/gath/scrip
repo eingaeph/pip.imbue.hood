@@ -1,6 +1,24 @@
 stem=/home/ubuntu/git/repo.1/libk/
-clib=UVSE
-cd $stem$clib
-ls
-back
+einr() {
+        RED='\033[1;31m'
+        NC='\033[0m' # No Color
+        printf "${RED}$1${NC}\n"
+       }
+
+
+echo
+
+einr 'begin build using directory UVSE'
+
+paus 'clib=UVSE'
+
+paus 'cd $stem$clib'
+
+paus 'ls'
+
+einr 'return to directory gath'
+
+paus 'back'
+
+paus 'ls'
 
