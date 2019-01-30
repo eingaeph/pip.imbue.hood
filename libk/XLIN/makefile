@@ -49,6 +49,7 @@ count:
 	cat ../WARF/*c >> counter
 	cat ../EDAL/*c >> counter
 	cat ../REPL/*c >> counter
+	cat ../XLIN/*c >> counter
 	cat ../VT100.h >> counter
 	cat ../keyvals.h >> counter
 	cat ../libk.h  >> counter
