@@ -14,65 +14,64 @@ void modb(int retval)
     printf(CursorToTopLeft "\x1b[999B" "query = %s",query);  fflush(stdout);
    }
 
-// check for a valid query
+// check for a valid query, or a zero length query
 
    assert(strlen(query) >= 0);
    if (strlen(query) == 0) 
         {
           possibleLine; possibleIxIy;
-          return;
+          return;    //  query length is zero so return, without changing ix,iy
         }
 
-// check that the current line is long enough to contain query
+// following is a do {} while(0) containg the initial line edge case
+// exit the do while curly brackets by returns or breaks 
 
-   if(text[glob.iy].size - strlen(query) <= 0)
-         {
-           possibleLine; possibleIxIy;
-           return;
-         }
+do {
+   
+// check the first line for the search string
 
-// check the current line for the search string
+    char* match = memmem(text[glob.iy].row,
+                         text[glob.iy].size,
+                         query,
+                         strlen(query));
 
-   char* match = memmem(text[glob.iy].row,
-                        text[glob.iy].size,
-                        query,
-                        strlen(query));
+    if (match == NULL) break; // keep looking in other lines
 
 // starting search in a line containing query
 
-   if (match != NULL) 
-      { 
-        int ndx = (int) (match - text[glob.iy].row);
-        int testa = (ndx <= glob.ix);  //check for immediate find
-        if (!testa) 
+    int ndx = (int) (match - text[glob.iy].row);
+
+//  check for a match after the insertion point, which would be a valid find 
+
+    int testa = (ndx > glob.ix);  //check for match after the cursor
+    if (testa)   //match after the cursor 
               {
-               glob.ix = ndx;
+               glob.ix = ndx;   // valid match, reset cursor position ix
                possibleLine; possibleIxIy;
                return;
               }
 
-// tests for immediate find
+// an invalid match was found but there still may be 
+// a valid match 
+// toward the end of the firs line
+ 
+// look for the index of query in the rest of the line 
 
-        int lentest = text[glob.iy].size - 2*strlen(query) - glob.ix;
-        char* rest  = text[glob.iy].row + glob.ix + (int) strlen(query);
-        char* natch = NULL;
+    char* rest = text[glob.iy].row + glob[ix]; 
+    int leng = text[glob.iy].size - glob[ix] - 1;   
 
-        if (lentest > 0) natch = memmem(rest,
-                                        text[glob.iy].size - glob.ix - strlen(query),
-                                        query,
-                                        strlen(query));
+    if (leng >= strlen(query)) {break;} // keep looking in other lines 
 
-// skip immediate find in first line check 
+    match = memmem(rest,leng,query,strlen(query));
 
-         if ( natch != NULL )
-             {
-               assert( (int) (natch - rest) > 0);
-               glob.ix = glob.ix + strlen(query) + (int) (natch - rest); 
-               possibleLine; possibleIxIy;
-               return;  
-              } 
-   
-       }
+    if (match == NULL) break;  // keep looking in other lines 
+
+// now there is a valid match, reset glob.ix and return 
+    glob.ix = glob.ix + int(match - rest)
+
+   } while (0)  // end of the first line edge case
+
+
 // loop through text searching for query, not to be found in the first line i=0
 
   int i;
