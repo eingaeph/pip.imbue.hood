@@ -26,11 +26,11 @@ void modb(int retval)
           return;    //  query length is zero so return, without changing ix,iy
         }
 
-// immediately following is the edge case, the initial line edge case
+// immediately following is the initial line edge case
 // the segment is placed in a do {} while(0) block
-// exiting the block is by breaks and returns
+// exiting the {} block is by 3 breaks and 2 returns
 
-do { //beginning of the initial line edge case
+do { //this block checks the line at glob.iy for a valid query match
    
 // check the first line for the search string
 
@@ -60,10 +60,10 @@ do { //beginning of the initial line edge case
  
 // look for a query match in the rest of the line 
 
-    char* rest = text[glob.iy].row + glob.ix; 
+    char* rest = text[glob.iy].row + glob.ix +1; 
     int leng = text[glob.iy].size - glob.ix - 1;   
 
-    if (leng >= strlen(query)) {break;} // keep looking in other lines 
+    if (leng < strlen(query)) {break;} // keep looking in other lines 
 
     match = memmem(rest,leng,query,strlen(query));
 
@@ -78,7 +78,7 @@ do { //beginning of the initial line edge case
 
 
 // loop through text searching for valid query match, 
-// fwhich math was found in the first line i=0
+// which match was found in the first line i=0
 
   int i;
   for (i = 1; i < glob.numbLines; i++) 

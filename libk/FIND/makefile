@@ -31,11 +31,11 @@ linkall:
 	gcc -Wall -c $(nstem)*.c
 	ar rs         $(libn) *.o
 	ar t          $(libn)
-	rm -f *.o test
-	cp main.FIND test.c
-	gcc -Wall test.c $(libn) -o test
+	rm -f *.o test.c
+	cp main.$(new) test.c
+	gcc -Wall test.c $(libn) -o test$(new)
 	rm -f test.c
-	./test test.dat
+	./test$(new) test.dat
 
 count:
 	cat ../UVSE/*c >  counter
