@@ -1,9 +1,12 @@
 #include "../libk.h"
 
+// modb.c: a driver routine: controls the query find functionality
+
 void modb(int retval)
 {
    char query[100]; char *s = &query[0];
-   printf("search mode\n\r"); 
+   char* match;
+ 
    while(1)
    {
     int retval = ReadKey(); if (retval == CTRL_S) break;
@@ -23,17 +26,18 @@ void modb(int retval)
           return;    //  query length is zero so return, without changing ix,iy
         }
 
-// following is a do {} while(0) containg the initial line edge case
-// exit the do while curly brackets by returns or breaks 
+// immediately following is the edge case, the initial line edge case
+// the segment is placed in a do {} while(0) block
+// exiting the block is by breaks and returns
 
-do {
+do { //beginning of the initial line edge case
    
 // check the first line for the search string
 
-    char* match = memmem(text[glob.iy].row,
-                         text[glob.iy].size,
-                         query,
-                         strlen(query));
+    match = memmem(text[glob.iy].row,
+                   text[glob.iy].size,
+                   query,
+                   strlen(query));
 
     if (match == NULL) break; // keep looking in other lines
 
@@ -43,22 +47,21 @@ do {
 
 //  check for a match after the insertion point, which would be a valid find 
 
-    int testa = (ndx > glob.ix);  //check for match after the cursor
-    if (testa)   //match after the cursor 
+    int testa = (ndx > glob.ix);  
+    if (testa)   //valid match after the cursor 
               {
                glob.ix = ndx;   // valid match, reset cursor position ix
                possibleLine; possibleIxIy;
                return;
               }
 
-// an invalid match was found but there still may be 
-// a valid match 
-// toward the end of the firs line
+// the previous query math was invalid but there still may be 
+// a valid match further toward the end of the first line
  
-// look for the index of query in the rest of the line 
+// look for a query match in the rest of the line 
 
-    char* rest = text[glob.iy].row + glob[ix]; 
-    int leng = text[glob.iy].size - glob[ix] - 1;   
+    char* rest = text[glob.iy].row + glob.ix; 
+    int leng = text[glob.iy].size - glob.ix - 1;   
 
     if (leng >= strlen(query)) {break;} // keep looking in other lines 
 
@@ -67,12 +70,15 @@ do {
     if (match == NULL) break;  // keep looking in other lines 
 
 // now there is a valid match, reset glob.ix and return 
-    glob.ix = glob.ix + int(match - rest)
 
-   } while (0)  // end of the first line edge case
+    glob.ix = (int) (match - text[glob.iy].row); possibleLine; possibleIxIy;
+    return;
+
+   } while (0);  // end of the first line edge case
 
 
-// loop through text searching for query, not to be found in the first line i=0
+// loop through text searching for valid query match, 
+// fwhich math was found in the first line i=0
 
   int i;
   for (i = 1; i < glob.numbLines; i++) 
