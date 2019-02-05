@@ -12,7 +12,7 @@ void callWind(int cu, int cv)
 
 //  draw the window when changing between modes
 
-    wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
+    rend(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
 
 //  Place the cursor in its final position
 

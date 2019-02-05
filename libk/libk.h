@@ -10,6 +10,10 @@
 #include <assert.h>
 #include <time.h>
 
+// REND
+
+void rend(int xmin, int xmax, int ymin, int ymax, int numbLines);
+
 // FIND
 
 #define _GNU_SOURCE 
