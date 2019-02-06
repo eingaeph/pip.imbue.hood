@@ -16,6 +16,7 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
      maxindex = maxindex + text[y].size;
     }
      maxindex = maxindex + 1000; rbuff = malloc(sizeof(char)*maxindex);
+     assert(rbuff != NULL);
 
     for (y = ymin; y <= ymax; y++) 
     {
@@ -23,22 +24,25 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
       for ( x = xmin; x <= xmax; x++)
       {
 
-//  following are two tests to determine whether *s should be written
-//  to the screen
+//  following are two tests to determine whether *s should be stored in rbuf
 
-        if (x>=text[y].size )  break;
-        if (*s == '\n')        break;
+        if (x>=text[y].size )  break; 
+        assert(*s != '\n');
 
-//  *s tests ok, write it, move it to rbuff[]
+//  *s tests ok, assign it to rbuff[]
+
 
         rbuff[count] = *s; s++; count++; assert(count < maxindex);
        }
 
 //  display the last line without a newline  which would move the cursor
-//  below the window (virtural screen) causing a virtual screen actual screen
-//  mismatch
+//  below the window (virtural screen) possibly causing a virtual screen 
+//  mismatch with the actual screen
 
     if(y != ymax) {count++; rbuff[count] = '\n';};
+    
+    printf("x = %d size = %d  count = %d  ",x, (int) text[y].size, count); 
+    rbuff[count + 1] = '\0'; printf("%s", rbuff); exit(0);
 
      }
 
