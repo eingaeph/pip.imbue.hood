@@ -39,11 +39,12 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
 //  below the window (virtural screen) possibly causing a virtual screen 
 //  mismatch with the actual screen
 
-    if(y != ymax) rbuff[count] = '\n';
+    if(y != ymax) {rbuff[count] = '\n'; count++;}
     
-//    printf("x = %d size = %d  count = %d  ",x, (int) text[y].size, count); 
-//    rbuff[count + 1] = '\0'; printf("%s", rbuff); 
-//    if(y > 0) exit(0);
+//   printf("y = %d  x = %d size = %d  count = %d  \n",
+//           y,x, (int) text[y].size, count); 
+//   rbuff[count] = '\0'; printf("%s \n", rbuff); 
+//   if(y > 2) exit(0);
 
      }
 
