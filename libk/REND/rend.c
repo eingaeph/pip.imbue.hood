@@ -33,21 +33,19 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
 
         rbuff[count] = *s; s++; count++; assert(count < maxindex);
        }
-     }
 
-//  the next statement serves to omit the newline after writing the
-//    last line of the window (virtual screen)
-//  otherwise the top line of the window gets pushed off the screen
-//    when the virtual screen should exactly fit the actual bscreen
-
-      if(y != ymax) {count++; rbuff[count] = '\n';};
-      assert(count<maxindex);
-
-      rbuff[count] = '\0'; printf("%s",rbuff);
-
-//  displays the last line without a newline  which would move the cursor
+//  display the last line without a newline  which would move the cursor
 //  below the window (virtural screen) causing a virtual screen actual screen
 //  mismatch
+
+    if(y != ymax) {count++; rbuff[count] = '\n';};
+
+     }
+
+   count++; assert(count < maxindex);
+
+   rbuff[count] = '\0'; printf("%s",rbuff);
+
 
     if(rbuff != NULL) free(rbuff);
 
