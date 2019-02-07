@@ -9,14 +9,17 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
     assert(ymin >= 0); assert(ymax < glob.numbLines);
     assert(ymax >= ymin); assert((ymax - ymin) < glob.rows);
 
-    int count = 0; char* rbuff;
+    int count = 0; char* abuff; char* rbuff;
     int y; int maxindex = 0;
     for (y =  ymin; y <= ymax; y++)
     {
      maxindex = maxindex + text[y].size;
     }
-     maxindex = maxindex + 1000; rbuff = malloc(sizeof(char)*maxindex);
-     assert(rbuff != NULL);
+     maxindex = maxindex + 1000; 
+     abuff = malloc(sizeof(char)*maxindex); assert(abuff != NULL);
+
+     rbuff = malloc(sizeof(char)*maxindex); assert(rbuff != NULL);
+
 
     for (y = ymin; y <= ymax; y++) 
     {
@@ -32,14 +35,14 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
 //  *s tests ok, assign it to rbuff[]
 
 
-        rbuff[count] = *s; s++; count++; assert(count < maxindex);
+        abuff[count] = *s; s++; count++; assert(count < maxindex);
        }
 
 //  display the last line without a newline  which would move the cursor
 //  below the window (virtural screen) possibly causing a virtual screen 
 //  mismatch with the actual screen
 
-    if(y != ymax) {rbuff[count] = '\n'; count++;}
+    if(y != ymax) {abuff[count] = '\n'; count++;}
     
 //   printf("y = %d  x = %d size = %d  count = %d  \n",
 //           y,x, (int) text[y].size, count); 
@@ -49,10 +52,23 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
      }
 
    count++; assert(count < maxindex);
+   abuff[count] = '\0'; 
 
-   rbuff[count] = '\0'; printf("%s",rbuff);
+// precede it with  the <esc>[31m escape sequence
+// and follow it by the <esc>[39m sequence.
 
+   int na; int nr = 0;
+   for( na = 0; na <= count; na ++)
+   {
+     if (na ==5 )  { memcpy(rbuf+nr,"\x1b[31m", 5); nr = nr + 5;}
+     if (na ==15 ) { memcpy(rbuf+nr,"\x1b[39m", 5); nr = nr + 5;}
+     rbuff[nr] = abuff[na]; nr++;
+   }
 
+   assert(nr < maxindex);
+   printf("%s",rbuff);
+
+    if(abuff != NULL) free(abuff);
     if(rbuff != NULL) free(rbuff);
 
 }
