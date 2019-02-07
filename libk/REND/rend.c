@@ -57,6 +57,18 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
 // precede it with  the <esc>[31m escape sequence
 // and follow it by the <esc>[39m sequence.
 
+ 
+   char* query = "find";
+   int jndex, next;
+   next = 0;
+   while(strstr(abuff + next,query) != NULL) 
+     {
+      jndex = (int) (strstr(abuff + next,query) - abuff);
+      printf("index = %d  next = %d\n",jndex,next);
+      next = jndex + strlen(query);
+      } 
+   exit(0);    
+
    int na; int nr = 0;
    for( na = 0; na <= count; na ++)
    {
