@@ -60,8 +60,8 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
    int na; int nr = 0;
    for( na = 0; na <= count; na ++)
    {
-     if (na ==5 )  { memcpy(rbuf+nr,"\x1b[31m", 5); nr = nr + 5;}
-     if (na ==15 ) { memcpy(rbuf+nr,"\x1b[39m", 5); nr = nr + 5;}
+     if (na ==5 )  { memcpy(rbuff+nr,"\x1b[31m", 5); nr = nr + 5;}
+     if (na ==15 ) { memcpy(rbuff+nr,"\x1b[39m", 5); nr = nr + 5;}
      rbuff[nr] = abuff[na]; nr++;
    }
 
