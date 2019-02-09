@@ -57,6 +57,8 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
 // precede it with  the <esc>[31m escape sequence
 // and follow it by the <esc>[39m sequence.
 
+
+   struct {int index; char color[10]; int leng;} hl[20];
  
    char* query = "find";
    int jndex, next;
@@ -66,6 +68,7 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
       jndex = (int) (strstr(abuff + next,query) - abuff);
       printf("index = %d  next = %d\n",jndex,next);
       next = jndex + strlen(query);
+      hl[0].index = next;
       } 
    exit(0);    
 
