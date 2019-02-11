@@ -57,28 +57,32 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
 // precede it with  the <esc>[31m escape sequence
 // and follow it by the <esc>[39m sequence.
 
-
-   struct {int index; char color[10]; int leng;} hl[20];
+   char* red     = "\x1b[31m";
+   char* revert  = "\x1b[39m";
+   typedef struct {int index; char* change; int leng;} high;
+   high hl[50];
  
    char* query = "find";
-   int jndex, next;
-   next = 0;
+   int jndex, next, counter;
+   next = 0; counter = 0;
    while(strstr(abuff + next,query) != NULL) 
      {
       jndex = (int) (strstr(abuff + next,query) - abuff);
       printf("index = %d  next = %d\n",jndex,next);
       next = jndex + strlen(query);
-      hl[0].index = next;
-      } 
-   exit(0);    
+      hl[counter].index = next;     hl[counter].change = red;    counter++;
+      hl[counter].index = next + 5; hl[counter].change = revert; counter++;
+      }    
 
    int na; int nr = 0;
    for( na = 0; na <= count; na ++)
    {
-     if (na ==5 )  { memcpy(rbuff+nr,"\x1b[31m", 5); nr = nr + 5;}
-     if (na ==15 ) { memcpy(rbuff+nr,"\x1b[39m", 5); nr = nr + 5;}
+     if (na ==5 )  { memcpy(rbuff+nr,red,   strlen(red)   ); nr = nr + strlen(red   );}
+     if (na ==15 ) { memcpy(rbuff+nr,revert,strlen(revert)); nr = nr + strlen(revert);}
      rbuff[nr] = abuff[na]; nr++;
    }
+
+   exit(0);
 
    assert(nr < maxindex);
    printf("%s",rbuff);
