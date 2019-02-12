@@ -63,16 +63,26 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
    high hl[50];
  
    char* query = "find";
-   int jndex, next, counter;
-   next = 0; counter = 0;
-   while(strstr(abuff + next,query) != NULL) 
+   int look = 0;      //the offset to start looking for the next occurence of query
+   int ndex;          //the index of the current found query
+   int counter = 0;   //the number of occurrences, before the current 
+  
+   while(strstr(abuff + look,query) != NULL) 
      {
-      jndex = (int) (strstr(abuff + next,query) - abuff);
-//      printf("index = %d  next = %d\n",jndex,next);
-      next = jndex + strlen(query);
-      hl[counter].index = next;     hl[counter].change = red;    counter++;
-      hl[counter].index = next + 5; hl[counter].change = revert; counter++;
+      ndex = (int) (strstr(abuff + look,query) - abuff);
+
+      hl[counter].index = ndex;     hl[counter].change = red;    counter++;
+      look = ndex + strlen(query);
+      hl[counter].index = look;     hl[counter].change = revert; counter++;
       }    
+/*
+   int arb;
+   for (arb = 0; arb < counter; arb++)
+   {
+    printf("%d\n",hl[arb].index);
+   }
+   exit(0);
+*/
 
    int na; int nr = 0; counter = 0;
    for( na = 0; na <= count; na ++)
