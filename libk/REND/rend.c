@@ -68,21 +68,27 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
    while(strstr(abuff + next,query) != NULL) 
      {
       jndex = (int) (strstr(abuff + next,query) - abuff);
-      printf("index = %d  next = %d\n",jndex,next);
+//      printf("index = %d  next = %d\n",jndex,next);
       next = jndex + strlen(query);
       hl[counter].index = next;     hl[counter].change = red;    counter++;
       hl[counter].index = next + 5; hl[counter].change = revert; counter++;
       }    
 
-   int na; int nr = 0;
+   int na; int nr = 0; counter = 0;
    for( na = 0; na <= count; na ++)
    {
-     if (na ==5 )  { memcpy(rbuff+nr,red,   strlen(red)   ); nr = nr + strlen(red   );}
-     if (na ==15 ) { memcpy(rbuff+nr,revert,strlen(revert)); nr = nr + strlen(revert);}
+//     if (na ==5 )  { memcpy(rbuff+nr,red,   strlen(red)   ); nr = nr + strlen(red   );}
+//     if (na ==15 ) { memcpy(rbuff+nr,revert,strlen(revert)); nr = nr + strlen(revert);}
+
+     if (na ==hl[counter].index)  
+        { 
+          char* ptr = hl[counter].change;
+          memcpy(rbuff+nr,ptr,strlen(ptr)); 
+          nr = nr + strlen(ptr);
+          counter++;
+        }
      rbuff[nr] = abuff[na]; nr++;
    }
-
-   exit(0);
 
    assert(nr < maxindex);
    printf("%s",rbuff);
