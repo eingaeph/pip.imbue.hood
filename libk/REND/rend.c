@@ -32,8 +32,7 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
         if (x>=text[y].size )  break; 
         assert(*s != '\n');
 
-//  *s tests ok, assign it to rbuff[]
-
+//  *s tests ok, assign it to abuff[]
 
         abuff[count] = *s; s++; count++; assert(count < maxindex);
        }
@@ -44,16 +43,12 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
 
     if(y != ymax) {abuff[count] = '\n'; count++;}
     
-//   printf("y = %d  x = %d size = %d  count = %d  \n",
-//           y,x, (int) text[y].size, count); 
-//   rbuff[count] = '\0'; printf("%s \n", rbuff); 
-//   if(y > 2) exit(0);
-
      }
 
    count++; assert(count < maxindex);
    abuff[count] = '\0'; 
 
+// build hl[]
 // precede it with  the <esc>[31m escape sequence
 // and follow it by the <esc>[39m sequence.
 
