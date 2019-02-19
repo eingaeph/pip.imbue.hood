@@ -48,7 +48,7 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
  
    int rlim;
    char* rbuff = malloc(maxindex*sizeof(char));
-   bildHL(abuff, &rbuff, &rlim);
+   bildHL(abuff, rbuff, &rlim);
 
    assert(rlim < maxindex);
    printf("%s",rbuff);

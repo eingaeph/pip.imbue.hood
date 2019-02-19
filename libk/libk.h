@@ -13,7 +13,7 @@
 // REND
 
 void rend(int xmin, int xmax, int ymin, int ymax, int numbLines);
-void bildHL(char* abuff, char** xbuff, int* rlim);
+void bildHL(char* abuff, char* rbuff, int* rlim);
 
 // FIND
 

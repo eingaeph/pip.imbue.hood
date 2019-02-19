@@ -1,6 +1,6 @@
 #include "../libk.h"
 
-void bildHL(char* abuff, char** xbuff, int* rlim)
+void bildHL(char* abuff, char* rbuff, int* rlim)
 {
 // build hl[]
 // precede it with  the <esc>[31m escape sequence
@@ -25,9 +25,8 @@ void bildHL(char* abuff, char** xbuff, int* rlim)
       hl[counter].index = look;     hl[counter].change = revert; counter++;
       }    
 
-   char* rbuff = *xbuff; //rbuf is made available in the calling routine
 
-   int na; int nr = 0; int limit = counter; counter = 0; 
+   int na; int nr = 0; int limit = strlen(abuff); counter = 0; 
    for( na = 0; na <= limit; na ++)
    {
 
@@ -42,5 +41,6 @@ void bildHL(char* abuff, char** xbuff, int* rlim)
    }
  
    *rlim = nr;
+
 
 }
