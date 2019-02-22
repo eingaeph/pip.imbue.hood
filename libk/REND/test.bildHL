@@ -1,0 +1,47 @@
+#include "../libk.h"
+
+void bildHL(int option, char* hltest, char* hlrepl, int look)
+{
+// build hltest[] and hlrepl[]
+// precede highlight segment with  the <esc>[31m escape sequence
+// and follow highligh segment  by the <esc>[39m sequence.
+
+   char* red     = "\x1b[31m";
+   char* revert  = "\x1b[39m";
+   typedef struct {int index; char* change; int leng;} high;
+   high hl[50];
+
+   if (option == 1)   // highlight query (FIND)
+   {
+      char* query = "find";
+      // int look  **      the offset to start looking for the next occurence of query
+      int ndex;          //the index of the current found query
+      int counter = 0;   //the number of occurrences, before the current 
+  
+      while(strstr(abuff + look,query) != NULL) 
+        {
+         ndex = (int) (strstr(abuff + look,query) - abuff);
+
+         hltest[counter] = ndex;     hlrepl[counter] = red;    counter++;
+         look = ndex + strlen(query);
+         hlrepl[counter] = look;     hlrepl[counter] = revert; counter++;
+        }   
+      return; 
+   }
+
+   if (option == 2)   // highlight braces (BRAS)
+   {
+        s = abuf;
+        i=0; int k = 0;
+        for (j=0; s[j];) 
+          {
+           if (s[j]=='{')  {i++; k++;}
+           if (s[j]=='}')  i--;
+           if ((i == 0) && (k > 0)) break;
+           j++;
+          };
+        if (i == 0) printf("the bracket was closed with k = %d \n",k);
+        return;
+   }
+   return; // the default noaction 
+}
