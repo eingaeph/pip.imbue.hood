@@ -1,6 +1,6 @@
 #include "../libk.h"
 
-void bildHL(int option, char* hltest, char* hlrepl, int look)
+void bildHL(int option, int look)
 {
 // build hltest[] and hlrepl[]
 // precede highlight segment with  the <esc>[31m escape sequence
@@ -8,8 +8,8 @@ void bildHL(int option, char* hltest, char* hlrepl, int look)
 
    char* red     = "\x1b[31m";
    char* revert  = "\x1b[39m";
-   typedef struct {int index; char* change; int leng;} high;
-   high hl[50];
+//   typedef struct {int HLindex; char* HLchange;} high;
+//   high arg2[50];
 
    if (option == 1)   // highlight query (FIND)
    {
@@ -22,9 +22,11 @@ void bildHL(int option, char* hltest, char* hlrepl, int look)
         {
          ndex = (int) (strstr(abuff + look,query) - abuff);
 
-         hltest[counter] = ndex;     hlrepl[counter] = red;    counter++;
+         arg2.HLindex[counter] = ndex;     arg2.HLchange[counter] = red;    
+         counter++;
          look = ndex + strlen(query);
-         hlrepl[counter] = look;     hlrepl[counter] = revert; counter++;
+         arg2.HLindex[counter] = look;     arg2.HLchange[counter] = revert; 
+         counter++;
         }   
       return; 
    }
@@ -32,16 +34,20 @@ void bildHL(int option, char* hltest, char* hlrepl, int look)
    if (option == 2)   // highlight braces (BRAS)
    {
         s = abuf;
-        i=0; int k = 0;
-        for (j=0; s[j];) 
+        i=0;       /* i indicates the depth of bracketing */ 
+        int k = 0; /* k indicates the number of bracket initiated */  
+        int ndex;  /* ndex is the index into abuf (and s) */
+        for (ndex=0; s[ndex]; ndex++) 
           {
-           if (s[j]=='{')  {i++; k++;}
-           if (s[j]=='}')  i--;
+           if ( (s[ndex]== '{') && (k != 0)) 
+             {arg2.HLindex[0] = ndex;    arg2.HLchange[0] = red; }
+           if (s[ndex]=='{')  {i++; k++;}
+           if (s[ndex]=='}')  i--;
            if ((i == 0) && (k > 0)) break;
-           j++;
-          };
-        if (i == 0) printf("the bracket was closed with k = %d \n",k);
+          };    
+        arg2.HLindex[1] = ndex;    arg2.HLchange[1] = revert; 
+//      if (i == 0) printf("the bracket was closed with k = %d \n",k);
         return;
    }
-   return; // the default noaction 
+   return; // the default (noaction)
 }
