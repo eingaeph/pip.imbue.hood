@@ -2,6 +2,8 @@
 
 void callWind(int cu, int cv)
 {
+    printf("in call Wind\n");
+    exit(0);
     setWindow();
 
 //  Clear the screen; temporarily place the cursor at the top left

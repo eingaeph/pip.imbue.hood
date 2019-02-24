@@ -46,7 +46,8 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
    abuff[count] = '\0'; 
 
 /*******************************************************************************/
-   bildHL(1, look, abuff);
+printf("in bildHL"); exit(0);
+   bildHL(2, look, abuff);
 /*******************************************************************************/
  
    char* rbuff = malloc(maxindex*sizeof(char));
