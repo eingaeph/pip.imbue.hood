@@ -12,8 +12,19 @@
 
 // REND
 
+/*
+typedef struct {ssize_t size; char *row; int count;}   slot;
+
+    slot line;
+    slot *text;
+*/
+
+
+typedef struct {int HLindex; char* HLchange;} highlight;
+highlight* arg3;
+
 void rend(int xmin, int xmax, int ymin, int ymax, int numbLines);
-void bildHL(char* abuff, char* rbuff, int* rlim);
+void bildHL(int option, int look, char* abuf);
 
 // FIND
 
