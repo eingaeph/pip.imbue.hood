@@ -1,13 +1,17 @@
 #include "../libk.h"
 
-void bildHL(int option, int look)
-{
-// build hltest[] and hlrepl[]
-// precede highlight segment with  the <esc>[31m escape sequence
-// and follow highligh segment  by the <esc>[39m sequence.
+// build arg2.HLindex and arg2.HLchange
+// int look is the offset: where to start looking for the next occurence of query
+// of an opening brace
 
-   char* red     = "\x1b[31m";
-   char* revert  = "\x1b[39m";
+void bildHL(int option, int look, char* abuff)
+{
+
+// highlight segment with  the <esc>[31m escape sequence and <esc>[39m sequence.
+
+   char* red     = "\x1b[31m"; //precede HL sequence 
+   char* revert  = "\x1b[39m"; //follow  HL sequence
+ 
 //   typedef struct {int HLindex; char* HLchange;} high;
 //   high arg2[50];
 
@@ -31,7 +35,7 @@ void bildHL(int option, int look)
       return; 
    }
 
-   if (option == 2)   // highlight braces (BRAS)
+   if (option == 2)   // highlight completed braces sequence (BRAS)
    {
         s = abuf;
         i=0;       /* i indicates the depth of bracketing */ 
