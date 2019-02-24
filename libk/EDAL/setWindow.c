@@ -21,8 +21,9 @@
 void setWindow(void)
 {
  
-    
+printf("in setWindow\n"); // exit(0);    
     possibleIxIy; possibleLine;
+printf("in setWindow\n"); exit(0);
 
 //  ix iy may have been changed in editAline.c
 //  test whether window parameters xmin etc. must be changed, as a consquence
