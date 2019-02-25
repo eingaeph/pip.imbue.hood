@@ -46,7 +46,6 @@ void rend(int xmin, int xmax, int ymin, int ymax, int numbLines)
    abuff[count] = '\0'; 
 
 /*******************************************************************************/
-printf("in bildHL"); exit(0);
    bildHL(2, look, abuff);
 /*******************************************************************************/
  

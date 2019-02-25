@@ -14,5 +14,11 @@ int readAfile(char *filename)
     lastline = line.count;
     }
     if (fp != NULL) fclose(fp); else exit(1);
+
+    for(int i = 0; i < lastline; i++)
+      {
+        if(text[i].size == 0) assert(text[i].row == NULL);
+      }
+
     return lastline;
 }
