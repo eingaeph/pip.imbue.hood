@@ -35,7 +35,7 @@ linkall:
 	cp main.$(new) test.c
 	gcc -Wall test.c $(libn) -o test$(new)
 	rm -f test.c
-	./test$(new) test.2
+	./test$(new) test.$(NUMB)
 
 count:
 	cat ../UVSE/*c >  counter
