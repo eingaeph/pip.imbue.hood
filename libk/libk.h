@@ -25,6 +25,7 @@ highlight* arg3;
 
 void rend(int xmin, int xmax, int ymin, int ymax, int numbLines);
 void bildHL(int option, int look, char* abuf);
+int choi(int flag, char option[5]);
 
 // FIND
 

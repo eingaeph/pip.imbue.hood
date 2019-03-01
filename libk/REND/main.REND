@@ -9,7 +9,7 @@ int main(int arc, char** argv)
 
     char *filename =argv[1];
 
-    printf("test.EDAL executing\n");
+    printf("test.REND executing\n");
     printf("filename = %s\n",filename);
 
 //  following is the init segment, later move to init()
