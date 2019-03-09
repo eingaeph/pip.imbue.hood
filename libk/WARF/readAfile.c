@@ -9,7 +9,7 @@ int readAfile(char *filename)
     line.count = 0;
     for (numb = 0 ; numb < 200; numb++) 
     {
-    retval=readAline(); 
+    int retval=readAline(); 
     if (retval == -1) {break;}
     lastline = line.count;
     }
