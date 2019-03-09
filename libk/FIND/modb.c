@@ -19,7 +19,6 @@ void modb(int retval)
 
 // check for a valid query, or a zero length query
 
-   assert(strlen(query) >= 0);
    if (strlen(query) == 0) 
         {
           possibleLine; possibleIxIy;

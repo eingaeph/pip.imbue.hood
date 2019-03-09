@@ -81,7 +81,7 @@ void setWindow(void)
     possibleWindow;
     testa = (glob.ix >= glob.xmin); testb = (glob.ix <= glob.xmax); 
     testc = (glob.iy >= glob.ymin); testd = (glob.iy <= glob.ymax);
-    teste = (testa && testb && testc && testd); 
+//   teste = (testa && testb && testc && testd); 
     if(testa && testb && testc && testd) return;
 
 //  return was not executed
