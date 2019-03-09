@@ -21,12 +21,12 @@ void bildHL(int option, int look, char* abuff)
    {
       char* query = "find";
       // int look  **      the offset to start looking for the next occurence of query
-      int ndex;          //the index of the current found query
+      // int ndex;         the index of the current found query
       int counter = 0;   //the number of occurrences, before the current 
   
       while(strstr(abuff + look,query) != NULL) 
         {
-         ndex = (int) (strstr(abuff + look,query) - abuff);
+         int ndex = (int) (strstr(abuff + look,query) - abuff);
 
          arg3[counter].HLindex = ndex;     arg3[counter].HLchange = red;    
          counter++;

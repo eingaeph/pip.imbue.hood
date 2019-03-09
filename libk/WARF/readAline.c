@@ -15,7 +15,10 @@ int readAline(void)
     assert(line.size >= 0); 
 
     if((line.count == 0)) {text = malloc(sizeof(slot));}
-    else {text = realloc(text,(1+line.count)*sizeof(slot));}
+    else {
+           text = realloc(text,(1+line.count)*sizeof(slot));
+           if(!text) assert(text);
+         }
 
     char* ptr = NULL;
     if (line.size > 0) ptr = malloc(line.size*sizeof(char));

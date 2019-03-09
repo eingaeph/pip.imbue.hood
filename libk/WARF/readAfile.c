@@ -4,7 +4,7 @@ int readAfile(char *filename)
 {
     fp = fopen(filename,"r");
     if(fp == NULL) {return 0;}
-    int numb; int retval; int lastline;
+    int numb; int lastline;
 
     line.count = 0;
     for (numb = 0 ; numb < 200; numb++) 
