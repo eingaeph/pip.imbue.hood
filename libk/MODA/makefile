@@ -44,7 +44,7 @@ count:
 	cat ../EDAL/*c >> counter
 	cat ../REPL/*c >> counter
 	cat ../XLIN/*c >> counter
-	cat ../FIND/*c >> counter
+	cat ../MODA/*c >> counter
 	cat ../VT100.h >> counter
 	cat ../keyvals.h >> counter
 	cat ../libk.h  >> counter

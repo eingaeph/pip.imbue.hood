@@ -1,6 +1,6 @@
 stem    = /home/ubuntu/git/repo.1/libk/
 new = FIND
-old = XLIN
+old = MODA
 nstem = $(stem)$(new)/
 ostem = $(stem)$(old)/
 libn =  $(nstem)lib$(new).a
@@ -44,6 +44,7 @@ count:
 	cat ../EDAL/*c >> counter
 	cat ../REPL/*c >> counter
 	cat ../XLIN/*c >> counter
+	cat ../MODA/*c >> counter
 	cat ../FIND/*c >> counter
 	cat ../VT100.h >> counter
 	cat ../keyvals.h >> counter

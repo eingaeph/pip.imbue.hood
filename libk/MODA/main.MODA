@@ -29,16 +29,13 @@ int main(int arc, char** argv)
     glob.iy = 0; glob.ix = 0;
     printf("\n%d lines were read\n\n",glob.numbLines);
 
-/*  preliminaries */ headwind(); // now draw the window
-
-    wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
-
-//  set cursor position corresponding to ix, iy
-
-    tailwind();
-
     while(1)
    {
+    setWindow();
+    headwind(); // now draw the window
+    wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
+//  set cursor position corresponding to ix, iy
+    tailwind();
     int retval = ReadKey(); if (retval == CTRL_Q) return 0;
     moda(retval); 
    }

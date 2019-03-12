@@ -9,7 +9,7 @@ int main(int arc, char** argv)
 
     char *filename =argv[1];
 
-    printf("test.EDAL executing\n");
+    printf("test.FIND executing\n");
     printf("filename = %s\n",filename);
 
 //  following is the init segment, later move to init()
@@ -31,7 +31,9 @@ int main(int arc, char** argv)
 
     while(1)
    {
-    callWind(glob.ix -glob.xmin, glob.iy -glob.ymin);
+    setWindow(); headwind();
+    wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
+    tailwind();
 
     int retval = ReadKey(); if (retval == CTRL_Q) return 0;
     if (retval != CTRL_S) moda(retval); else modb(retval);
