@@ -1,0 +1,46 @@
+// test.MODA
+
+#include "../libk.h"
+
+int main(int arc, char** argv)
+{
+
+//   set pointer to input filename
+
+    char *filename =argv[1];
+
+    printf("test.MODA executing\n");
+    printf("filename = %s\n",filename);
+
+//  following is the init segment, later move to init()
+
+    glob.numbLines = readAfile(filename);
+
+//   set rows, cols
+
+    enableRawMode(); uvset(); disableRawMode();
+
+//  set initial window parms and insertion point
+
+    glob.xmin = 0; glob.xmax = glob.cols -1;
+    glob.ymin = 0; glob.ymax = glob.rows -1; 
+    if(glob.ymax > glob.numbLines -1) glob.ymax = glob.numbLines -1;
+  
+    glob.iy = 0; glob.ix = 0;
+    printf("\n%d lines were read\n\n",glob.numbLines);
+
+/*  preliminaries */ headwind(); // now draw the window
+
+    wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
+
+//  set cursor position corresponding to ix, iy
+
+    tailwind();
+
+    while(1)
+   {
+    int retval = ReadKey(); if (retval == CTRL_Q) return 0;
+    moda(retval); 
+   }
+    return 0;
+}

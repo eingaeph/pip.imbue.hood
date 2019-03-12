@@ -33,8 +33,12 @@ int choi(int flag, char option[5]);
 
 void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
 void callWind(int cu, int cv);
-void moda(int retval);
 void modb(int retval);
+
+// MODA
+
+void headwind(void);
+void tailwind(void);
 
 // XLIN
 
