@@ -1,0 +1,2 @@
+make dryrun 2>delme.1
+cat delme.1

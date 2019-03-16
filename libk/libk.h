@@ -32,13 +32,14 @@ int choi(int flag, char option[5]);
 #define _GNU_SOURCE 
 
 void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
-void callWind(int cu, int cv);
-void modb(int retval);
+// void callWind(int cu, int cv);
+void modb(char* query);
 
 // MODA
 
 void headwind(void);
 void tailwind(void);
+void moda(int retval);
 
 // XLIN
 

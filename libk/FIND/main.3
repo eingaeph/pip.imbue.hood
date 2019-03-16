@@ -36,8 +36,6 @@ int main(int arc, char** argv)
   tailwind();
 
   static int iq; iq = 0;
-  char query[80]; char* s = query;
-
   while(1)
    {
 
@@ -45,6 +43,7 @@ int main(int arc, char** argv)
 
 /**** FIND functionality ******/
 
+    char query[80]; char* s = query;
 
     int testa = (retval == CTRL_S) && (!iq) && (s == query);           //begin query entry
     int testb = (retval == CTRL_S) && (iq)  && ((int)( s- query) > 0); //end query entry
@@ -81,9 +80,6 @@ int main(int arc, char** argv)
              printf(CursorToTopLeft "\x1b[999B" "query = %s",query);  fflush(stdout);
              break;
            }
-     }
-    
-    if(testa || testb || testc) continue;
 
 /**** EDAL functionality ******/
 
@@ -93,6 +89,6 @@ int main(int arc, char** argv)
     tailwind();
 
    } //end while(1)
-   
+   }
     assert(0); 
 }

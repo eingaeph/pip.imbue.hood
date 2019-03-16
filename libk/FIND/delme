@@ -1,0 +1,30 @@
+
+
+/**** FIND functionality ******/
+
+
+beginning search (testa)
+    retval == CTRL_S
+    !iq is true         (iq is toggled to false) 
+    s == query
+
+ending search    (testb)
+    retval == CTRL_S
+    iq is true          (iq is toggled to false)
+    int (s - query) > 0 (s set = query)
+
+search entry     (testc)
+    retval != CTRL_S  
+    iq is true
+    retval != CTRL_S    (s is incremented)
+
+if (testa) choice = 'a'
+if (testb) choice = 'b'
+if (testc) choice = 'c'
+
+switch   
+
+if (testa || testb || testc)  continue
+    
+
+
