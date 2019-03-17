@@ -1,3 +1,4 @@
 make dryrun 2>delme
-rm *.o
+make cleano
+wc delme
 head delme

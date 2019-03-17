@@ -26,7 +26,7 @@ highlight* arg3;
 int maxidx(void);
 void bildABUF(char** abuf, int* look);
 void bildHL_1(char* query, char* abuf, int* look);
-void bildRBUF(char** abuf, char** rbuf);
+void bildRBUF(char* abuf, char** rbuf);
 
 // FIND
 

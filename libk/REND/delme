@@ -1,8 +1,0 @@
-/home/ubuntu/git/repo.1/libk/REND/test.c: In function ‘main’:
-/home/ubuntu/git/repo.1/libk/REND/test.c:76:23: warning: passing argument 1 of ‘bildRBUF’ from incompatible pointer type [-Wincompatible-pointer-types]
-              bildRBUF(abuf,&rbuf);
-                       ^~~~
-In file included from /home/ubuntu/git/repo.1/libk/REND/test.c:3:0:
-/home/ubuntu/git/repo.1/libk/REND/../libk.h:29:6: note: expected ‘char **’ but argument is of type ‘char *’
- void bildRBUF(char** abuf, char** rbuf);
-      ^~~~~~~~
