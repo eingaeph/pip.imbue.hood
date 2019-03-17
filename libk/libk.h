@@ -23,9 +23,10 @@ typedef struct {ssize_t size; char *row; int count;}   slot;
 typedef struct {int HLindex; char* HLchange;} highlight;
 highlight* arg3;
 
-void rend(int xmin, int xmax, int ymin, int ymax, int numbLines);
-void bildHL(int option, int look, char* abuf);
-int choi(int flag, char option[5]);
+int maxidx(void);
+void bildABUF(char** abuf, int* look);
+void bildHL_1(char* query, char* abuf, int* look);
+void bildRBUF(char** abuf, char** rbuf);
 
 // FIND
 

@@ -1,0 +1,75 @@
+/home/ubuntu/git/repo.1/libk/REND/bildRBUF.c: In function ‘bildRBUF’:
+/home/ubuntu/git/repo.1/libk/REND/bildRBUF.c:23:43: warning: passing argument 1 of ‘strlen’ from incompatible pointer type [-Wincompatible-pointer-types]
+    int na; int nr = 0; int limit = strlen(abuf); int counter = 0;
+                                           ^~~~
+In file included from /home/ubuntu/git/repo.1/libk/REND/../libk.h:9:0,
+                 from /home/ubuntu/git/repo.1/libk/REND/bildRBUF.c:1:
+/usr/include/string.h:384:15: note: expected ‘const char *’ but argument is of type ‘char **’
+ extern size_t strlen (const char *__s)
+               ^~~~~~
+/home/ubuntu/git/repo.1/libk/REND/bildRBUF.c:34:16: warning: assignment makes integer from pointer without a cast [-Wint-conversion]
+      rbuff[nr] = abuf[na]; nr++;
+                ^
+/home/ubuntu/git/repo.1/libk/REND/bildRBUF.c:40:8: error: ‘abuff’ undeclared (first use in this function); did you mean ‘rbuff’?
+     if(abuff != NULL) free(abuff);
+        ^~~~~
+        rbuff
+/home/ubuntu/git/repo.1/libk/REND/bildRBUF.c:40:8: note: each undeclared identifier is reported only once for each function it appears in
+/home/ubuntu/git/repo.1/libk/REND/bildRBUF.c:14:24: warning: unused variable ‘look’ [-Wunused-variable]
+     int count = 0; int look = 0;
+                        ^~~~
+/home/ubuntu/git/repo.1/libk/REND/bildRBUF.c:14:9: warning: unused variable ‘count’ [-Wunused-variable]
+     int count = 0; int look = 0;
+         ^~~~~
+/home/ubuntu/git/repo.1/libk/REND/maxidx.c: In function ‘maxidx’:
+/home/ubuntu/git/repo.1/libk/REND/maxidx.c:15:24: warning: unused variable ‘look’ [-Wunused-variable]
+     int count = 0; int look = 0;
+                        ^~~~
+/home/ubuntu/git/repo.1/libk/REND/maxidx.c:15:9: warning: unused variable ‘count’ [-Wunused-variable]
+     int count = 0; int look = 0;
+         ^~~~~
+/home/ubuntu/git/repo.1/libk/REND/test.c: In function ‘main’:
+/home/ubuntu/git/repo.1/libk/REND/test.c:73:48: error: ‘maxindex’ undeclared (first use in this function); did you mean ‘maxidx’?
+              char* abuff = malloc(sizeof(char)*maxindex); assert(abuff != NULL);
+                                                ^~~~~~~~
+                                                maxidx
+/home/ubuntu/git/repo.1/libk/REND/test.c:73:48: note: each undeclared identifier is reported only once for each function it appears in
+/home/ubuntu/git/repo.1/libk/REND/test.c:75:24: error: ‘abuf’ undeclared (first use in this function); did you mean ‘abuff’?
+              bildABUF(&abuf,&look);
+                        ^~~~
+                        abuff
+/home/ubuntu/git/repo.1/libk/REND/test.c:76:14: warning: implicit declaration of function ‘bildHL’; did you mean ‘bildHL_1’? [-Wimplicit-function-declaration]
+              bildHL(1);
+              ^~~~~~
+              bildHL_1
+/home/ubuntu/git/repo.1/libk/REND/test.c:77:20: error: redefinition of ‘abuff’
+              char* abuff = malloc(sizeof(char)*maxindex); assert(rbuff != NULL);
+                    ^~~~~
+/home/ubuntu/git/repo.1/libk/REND/test.c:73:20: note: previous definition of ‘abuff’ was here
+              char* abuff = malloc(sizeof(char)*maxindex); assert(abuff != NULL);
+                    ^~~~~
+In file included from /home/ubuntu/git/repo.1/libk/REND/../libk.h:10:0,
+                 from /home/ubuntu/git/repo.1/libk/REND/test.c:3:
+/home/ubuntu/git/repo.1/libk/REND/test.c:77:66: error: ‘rbuff’ undeclared (first use in this function); did you mean ‘abuff’?
+              char* abuff = malloc(sizeof(char)*maxindex); assert(rbuff != NULL);
+                                                                  ^
+/home/ubuntu/git/repo.1/libk/REND/test.c:78:29: error: ‘rbuf’ undeclared (first use in this function); did you mean ‘rbuff’?
+              bildRBUF(abuf,&rbuf);
+                             ^~~~
+                             rbuff
+/home/ubuntu/git/repo.1/libk/REND/test.c:81:14: warning: statement with no effect [-Wunused-value]
+              free abuf; free rbuf;
+              ^~~~
+/home/ubuntu/git/repo.1/libk/REND/test.c:81:19: error: expected ‘;’ before ‘abuf’
+              free abuf; free rbuf;
+                   ^~~~
+/home/ubuntu/git/repo.1/libk/REND/test.c:81:25: warning: statement with no effect [-Wunused-value]
+              free abuf; free rbuf;
+                         ^~~~
+/home/ubuntu/git/repo.1/libk/REND/test.c:81:30: error: expected ‘;’ before ‘rbuf’
+              free abuf; free rbuf;
+                              ^~~~
+/home/ubuntu/git/repo.1/libk/REND/test.c:77:20: warning: unused variable ‘abuff’ [-Wunused-variable]
+              char* abuff = malloc(sizeof(char)*maxindex); assert(rbuff != NULL);
+                    ^~~~~
+make: *** [dryrun] Error 1

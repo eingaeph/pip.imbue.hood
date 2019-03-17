@@ -4,7 +4,7 @@
     note: both are written in terms of text coordinates x,y
 */
 
-void rend(char** abuf, char** rbuf)
+void bildRBUF(char** abuf, char** rbuf)
 {
     int ymin = glob.ymin;
     int ymax = glob.ymax;
@@ -20,7 +20,7 @@ void rend(char** abuf, char** rbuf)
      maxindex = maxindex + 1000; 
 
    char* rbuff = malloc(maxindex*sizeof(char));
-   int na; int nr = 0; int limit = strlen(abuff); int counter = 0; 
+   int na; int nr = 0; int limit = strlen(abuf); int counter = 0; 
    for( na = 0; na <= limit; na ++)
    {
 
@@ -31,7 +31,7 @@ void rend(char** abuf, char** rbuf)
           nr = nr + strlen(ptr);
           counter++;
         }
-     rbuff[nr] = abuff[na]; nr++;
+     rbuff[nr] = abuf[na]; nr++;
    }
 
    assert(nr < maxindex);

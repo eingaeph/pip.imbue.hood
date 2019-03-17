@@ -4,7 +4,7 @@
     note: both are written in terms of text coordinates x,y
 */
 
-void bildABUF(char** abuf)
+void bildABUF(char** abuf, int* look)
 {
     int xmin = glob.xmin;
     int xmax = glob.xmax;
@@ -14,7 +14,7 @@ void bildABUF(char** abuf)
     assert(ymin >= 0); assert(ymax < glob.numbLines);
     assert(ymax >= ymin); assert((ymax - ymin) < glob.rows);
 
-    int count = 0; int look = 0;
+    int count = 0; *look = 0;
     int y; int maxindex = 0;
     for (y =  ymin; y <= ymax; y++)
     {
@@ -35,7 +35,7 @@ void bildABUF(char** abuf)
 
 //  here *s tests ok, assign it to abuff[]
 
-        if (x == glob.ix && y == glob.iy) look = count;
+        if (x == glob.ix && y == glob.iy) *look = count;
         abuff[count] = *s; s++; count++; assert(count < maxindex);
        } //end inner for loop
 

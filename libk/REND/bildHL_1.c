@@ -4,7 +4,7 @@
 // int look is the offset: where to start looking for the next occurence of query
 // of an opening brace
 
-void bildHL_1(char* query, char* abuff)
+void bildHL_1(char* query, char* abuf, int* look)
 {
 
 // highlight segment with  the <esc>[31m escape sequence and <esc>[39m sequence.
@@ -21,14 +21,14 @@ void bildHL_1(char* query, char* abuff)
       // int ndex;         the index of the current found query
       int counter = 0;   //the number of occurrences, before the current 
   
-      while(strstr(abuff + look,query) != NULL) 
+      while(strstr(abuf + *look,query) != NULL) 
         {
-         int ndex = (int) (strstr(abuff + look,query) - abuff);
+         int ndex = (int) (strstr(abuf + *look,query) - abuf);
 
          arg3[counter].HLindex = ndex;     arg3[counter].HLchange = red;    
          counter++;
-         look = ndex + strlen(query);
-         arg3[counter].HLindex = look;     arg3[counter].HLchange = revert; 
+         *look = ndex + strlen(query);
+         arg3[counter].HLindex = *look;     arg3[counter].HLchange = revert; 
          counter++;
         }   
       return; 
