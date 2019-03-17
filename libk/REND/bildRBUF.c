@@ -11,7 +11,6 @@ void bildRBUF(char** abuf, char** rbuf)
     assert(ymin >= 0); assert(ymax < glob.numbLines);
     assert(ymax >= ymin); assert((ymax - ymin) < glob.rows);
 
-    int count = 0; int look = 0;
     int y; int maxindex = 0;
     for (y =  ymin; y <= ymax; y++)
     {
@@ -20,7 +19,7 @@ void bildRBUF(char** abuf, char** rbuf)
      maxindex = maxindex + 1000; 
 
    char* rbuff = malloc(maxindex*sizeof(char));
-   int na; int nr = 0; int limit = strlen(abuf); int counter = 0; 
+   int na; int nr = 0; int limit = strlen(*abuf); int counter = 0; 
    for( na = 0; na <= limit; na ++)
    {
 
@@ -31,14 +30,9 @@ void bildRBUF(char** abuf, char** rbuf)
           nr = nr + strlen(ptr);
           counter++;
         }
-     rbuff[nr] = abuf[na]; nr++;
+     rbuff[nr] = *abuf[na]; nr++;
    }
 
    assert(nr < maxindex);
-   printf("%s",rbuff);
-
-    if(abuff != NULL) free(abuff);
-    if(rbuff != NULL) free(rbuff);
-    if(arg3  != NULL) free(arg3);
 
 }

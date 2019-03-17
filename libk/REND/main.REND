@@ -70,12 +70,15 @@ int main(int arc, char** argv)
              modb(query);
              setWindow(); headwind();
 //             wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
-             char* abuff = malloc(sizeof(char)*maxindex); assert(abuff != NULL);
              int maxindex = maxidx();
+             char* abuf = malloc(sizeof(char)*maxindex); assert(abuf != NULL);
+             char* rbuf = malloc(sizeof(char)*maxindex); assert(rbuf != NULL);
              bildABUF(&abuf,&look);
-             bildHL(1);
-             char* abuff = malloc(sizeof(char)*maxindex); assert(rbuff != NULL);
+             void bildHL_1(query, abuf, &look);
              bildRBUF(abuf,&rbuf);
+             if(abuf != NULL) free(abuf);
+             if(rbuf != NULL) free(rbuf);
+             if(arg3 != NULL) free(arg3);
              printf("%s",rbuf);
              tailwind();
              free abuf; free rbuf; 

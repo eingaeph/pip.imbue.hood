@@ -12,7 +12,6 @@ int maxidx(void)
     assert(ymin >= 0); assert(ymax < glob.numbLines);
     assert(ymax >= ymin); assert((ymax - ymin) < glob.rows);
 
-    int count = 0; int look = 0;
     int y; int maxindex = 0;
     for (y =  ymin; y <= ymax; y++)
     {
