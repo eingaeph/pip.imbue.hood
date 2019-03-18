@@ -25,10 +25,12 @@ printf("bildHL_1 strlen abuf = %d\n",(int)strlen(abuf));
         {
          int ndex = (int) (strstr(abuf + *look,query) - abuf);
 
-         arg3[counter].HLindex = ndex;     arg3[counter].HLchange = red;    
+         arg3[counter].HLindex = ndex;     arg3[counter].HLchange = red;
+         counter++;    
          *look = ndex + strlen(query);
 printf("look is changed %d, counter = %d \n",*look, counter);
          arg3[counter].HLindex = *look;     arg3[counter].HLchange = revert; 
+printf("                    counter = %d \n",counter);
          counter++;
         }   
       return; 

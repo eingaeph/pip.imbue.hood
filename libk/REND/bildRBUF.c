@@ -1,7 +1,6 @@
 #include "../libk.h"
 /*
-    rend.c is a ../WARF/wind.c derivative
-    note: both are written in terms of text coordinates x,y
+    insert arg3[counter].HLchange
 */
 
 void bildRBUF(char* abuf, char* rbuf)
@@ -17,8 +16,8 @@ printf("rbuf strlen abuf = %d\n",(int)strlen(abuf));
         { 
 printf("rbuf counter = %d \n",counter);
           char* ptr = arg3[counter].HLchange;
-          memcpy((rbuf+nr),ptr,strlen(ptr) - 1); 
-          nr = nr + strlen(ptr) -1;
+          memcpy((rbuf+nr),ptr,strlen(ptr) ); 
+          nr = nr + strlen(ptr);
           counter++;
         }
      rbuf[nr] = abuf[na]; nr++;
