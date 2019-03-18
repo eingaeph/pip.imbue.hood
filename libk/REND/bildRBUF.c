@@ -4,35 +4,30 @@
     note: both are written in terms of text coordinates x,y
 */
 
-void bildRBUF(char* abuf, char** rbuf)
+void bildRBUF(char* abuf, char* rbuf)
 {
-    int ymin = glob.ymin;
-    int ymax = glob.ymax;
-    assert(ymin >= 0); assert(ymax < glob.numbLines);
-    assert(ymax >= ymin); assert((ymax - ymin) < glob.rows);
+ 
+printf("rbuf strlen abuf = %d\n",(int)strlen(abuf));
 
-    int y; int maxindex = 0;
-    for (y =  ymin; y <= ymax; y++)
-    {
-     maxindex = maxindex + text[y].size;
-    }
-     maxindex = maxindex + 1000; 
-
-   char* rbuff = malloc(maxindex*sizeof(char));
    int na; int nr = 0; int limit = strlen(abuf); int counter = 0; 
    for( na = 0; na <= limit; na ++)
    {
 
      if (na ==arg3[counter].HLindex)  
         { 
+printf("rbuf counter = %d \n",counter);
           char* ptr = arg3[counter].HLchange;
-          memcpy(rbuff+nr,ptr,strlen(ptr)); 
-          nr = nr + strlen(ptr);
+          memcpy((rbuf+nr),ptr,strlen(ptr) - 1); 
+          nr = nr + strlen(ptr) -1;
           counter++;
         }
-     rbuff[nr] = abuf[na]; nr++;
+     rbuf[nr] = abuf[na]; nr++;
    }
 
-   assert(nr < maxindex);
+//   assert(nr < maxindex);
+
+printf("rbuf nr = %d\n", nr);
+rbuf[nr] = '\0';
+printf("rbuf strlen rbuf = %d\n",(int) strlen(rbuf));
 
 }

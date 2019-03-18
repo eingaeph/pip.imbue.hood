@@ -69,25 +69,32 @@ int main(int arc, char** argv)
          case 'b':
            { 
              iq = !iq; s = query; int look;
-             printf("made it to end query processing\n"); 
+printf("made it to end query processing\n"); 
              modb(query);
              int maxindex = maxidx();
              char* abuf = malloc(sizeof(char)*maxindex); assert(abuf != NULL);
              char* rbuf = malloc(sizeof(char)*maxindex); assert(rbuf != NULL);
              bildABUF(abuf,&look,maxindex);
              assert( maxindex > strlen(abuf) ); 
-             printf("the first character of abuf is %c\n",abuf[1]);
-             printf("the value of look is %d\n",look);
-             exit(0);
+printf("the first character of abuf is %c\n",abuf[1]);
+printf("the first value of look is %d\n",look);
              bildHL_1(query, abuf, &look);
-             bildRBUF(abuf,&rbuf);
-             if(abuf != NULL) free(abuf);
-             if(rbuf != NULL) free(rbuf);
-             if(arg3 != NULL) free(arg3);
+printf("the last value of look is %d\n",look);
+printf("the length of abuf is %d\n", (int) strlen(abuf));
+rbuf[0]='\0';
+             bildRBUF(abuf,rbuf);
+printf("main the length of abuf is %d\n", (int) strlen(abuf));
+printf("main the length of rbuf is %d\n", (int) strlen(rbuf));
+
              setWindow(); headwind();
 //             wind(glob.xmin,glob.xmax, glob.ymin, glob.ymax, glob.numbLines);
              printf("%s",rbuf); 
              tailwind();
+
+             if(abuf != NULL) free(abuf);
+             if(rbuf != NULL) free(rbuf);
+             if(arg3 != NULL) free(arg3);
+exit(0);
              break;
            }
          case 'c':

@@ -33,8 +33,9 @@ void bildABUF(char* abuf, int* look, int maxindex)
       if(y != ymax) {abuf[count] = '\n'; count++;}    
      }  //end outer for loop
 
-   count++;
+printf("bildABUF count = %d\n",count);
    abuf[count] = '\0'; 
+printf("bildABUF the length of abuf is %d \n",(int) strlen(abuf));
    return;
 }
 
