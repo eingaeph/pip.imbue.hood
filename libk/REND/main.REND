@@ -1,4 +1,4 @@
-// test.FIND
+// test.REND
 
 #include "../libk.h"
 
@@ -9,7 +9,7 @@ int main(int arc, char** argv)
 
     char *filename =argv[1];
 
-    printf("test.FIND executing\n");
+    printf("test.REND executing\n");
     printf("filename = %s\n",filename);
 
 //  following is the init segment, later move to init()
@@ -49,11 +49,13 @@ int main(int arc, char** argv)
     int testa = (retval == CTRL_S) && (!iq) && (s == query);           //begin query entry
     int testb = (retval == CTRL_S) && (iq)  && ((int)( s- query) > 0); //end query entry
     int testc = (retval != CTRL_S) && (iq);                            //build query
+    int testd = (retval != CTRL_S) && (!iq);                           //skip query
 
     char choice;
     if (testa) choice = 'a';
     if (testb) choice = 'b';
     if (testc) choice = 'c';
+    if (testd) choice = 'd';
 
     switch(choice) 
       {  
@@ -67,11 +69,15 @@ int main(int arc, char** argv)
          case 'b':
            { 
              iq = !iq; s = query; int look;
+             printf("made it to end query processing\n"); 
              modb(query);
              int maxindex = maxidx();
              char* abuf = malloc(sizeof(char)*maxindex); assert(abuf != NULL);
              char* rbuf = malloc(sizeof(char)*maxindex); assert(rbuf != NULL);
              bildABUF(&abuf,&look);
+             printf("the first character of abuf is %c\n",abuf[1]);
+             printf("the value of look is %d\n",look);
+             exit(0);
              bildHL_1(query, abuf, &look);
              bildRBUF(abuf,&rbuf);
              if(abuf != NULL) free(abuf);
@@ -91,9 +97,11 @@ int main(int arc, char** argv)
              printf(CursorToTopLeft "\x1b[999B" "query = %s",query);  fflush(stdout);
              break;
            }
+         case 'd':
+             break;
      }
     
-    if(testa || testb || testc) continue;
+    if(!testd ) continue;
 
 /**** EDAL functionality ******/
 
