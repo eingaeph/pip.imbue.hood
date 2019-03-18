@@ -20,7 +20,7 @@ void bildHL_1(char* query, char* abuf, int* look)
       // int look          the offset to start looking for the next occurence of query
       // int ndex;         the index of the current found query
       int counter = 0;   //the number of occurrences, before the current 
-printf("bildHL_1 strlen abuf = %d\n",(int)strlen(abuf));
+
       while(strstr(abuf + *look,query) != NULL) 
         {
          int ndex = (int) (strstr(abuf + *look,query) - abuf);
@@ -28,9 +28,7 @@ printf("bildHL_1 strlen abuf = %d\n",(int)strlen(abuf));
          arg3[counter].HLindex = ndex;     arg3[counter].HLchange = red;
          counter++;    
          *look = ndex + strlen(query);
-printf("look is changed %d, counter = %d \n",*look, counter);
          arg3[counter].HLindex = *look;     arg3[counter].HLchange = revert; 
-printf("                    counter = %d \n",counter);
          counter++;
         }   
       return; 

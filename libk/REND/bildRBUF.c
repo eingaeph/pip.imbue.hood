@@ -25,8 +25,6 @@ printf("rbuf counter = %d \n",counter);
 
 //   assert(nr < maxindex);
 
-printf("rbuf nr = %d\n", nr);
 rbuf[nr] = '\0';
-printf("rbuf strlen rbuf = %d\n",(int) strlen(rbuf));
 
 }
