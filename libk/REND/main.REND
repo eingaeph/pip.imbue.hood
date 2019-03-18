@@ -74,7 +74,8 @@ int main(int arc, char** argv)
              int maxindex = maxidx();
              char* abuf = malloc(sizeof(char)*maxindex); assert(abuf != NULL);
              char* rbuf = malloc(sizeof(char)*maxindex); assert(rbuf != NULL);
-             bildABUF(&abuf,&look);
+             bildABUF(abuf,&look,maxindex);
+             assert( maxindex > strlen(abuf) ); 
              printf("the first character of abuf is %c\n",abuf[1]);
              printf("the value of look is %d\n",look);
              exit(0);

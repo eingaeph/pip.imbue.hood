@@ -24,7 +24,7 @@ typedef struct {int HLindex; char* HLchange;} highlight;
 highlight* arg3;
 
 int maxidx(void);
-void bildABUF(char** abuf, int* look);
+void bildABUF(char* abuf, int* look, int maxindex);
 void bildHL_1(char* query, char* abuf, int* look);
 void bildRBUF(char* abuf, char** rbuf);
 
