@@ -13,15 +13,21 @@
 // REND
 
 /*
+
 typedef struct {ssize_t size; char *row; int count;}   slot;
 
     slot line;
     slot *text;
 */
 
-
 typedef struct {int HLindex; char* HLchange;} highlight;
 highlight* arg3;
+
+// BRAS
+
+void bildHL_2(int look, char* abuf);
+
+// REND
 
 int maxidx(void);
 void bildABUF(char* abuf, int* look, int maxindex);
