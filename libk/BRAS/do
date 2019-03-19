@@ -1,0 +1,4 @@
+make dryrun 2>delme
+make cleano
+wc delme
+head delme
