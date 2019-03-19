@@ -154,7 +154,7 @@ global glob;
 
 struct termios orig_termios;
 
-#include "/data.base/product/libk/VT100.h"
-#include "/data.base/product/libk/keyvals.h"
+#include "/home/ubuntu/git/repo.1/libk/VT100.h"
+#include "/home/ubuntu/git/repo.1/libk/keyvals.h"
 
 

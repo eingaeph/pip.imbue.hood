@@ -1,6 +1,7 @@
 enum KEY_CODES
 {
         KEY_NULL = 0,       /* NULL */
+        CTRL_B = 2,         /* Ctrl-b */
         CTRL_C = 3,         /* Ctrl-c */
         CTRL_D = 4,         /* Ctrl-d */
         CTRL_F = 6,         /* Ctrl-f */
@@ -14,8 +15,9 @@ enum KEY_CODES
         ESC = 27,           /* Escape */
         BACKSPACE =  127,   /* Backspace */
 
-        /* The following are just soft codes, reported by the
-         * terminal as groups of glyphs. */
+        /* The following are soft codes, 
+           reported by the terminal 
+           as groups of glyphs. */
 
         ARROW_LEFT = 1000,
 /*1001*/ARROW_RIGHT,

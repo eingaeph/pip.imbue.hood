@@ -19,7 +19,7 @@ void bildHL_2(int look, char* abuf)
 
 // highlight completed braces sequence (BRAS)
   
-   char* s = abuff;
+   char* s = abuf;
    int i=0;   /* i indicates the depth of bracketing */ 
    int k = 0; /* k indicates the number of bracket initiated */  
    int ndex;  /* ndex is the index into abuf (and s) */
