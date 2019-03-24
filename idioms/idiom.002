@@ -1,9 +1,0 @@
-main.EDAL
-
-    34	//  set initial window and insertion point
-    35	
-    36	    glob.xmin = 0; glob.xmax = glob.cols -1;
-    37	    glob.ymin = 0; glob.ymax = glob.rows -1; 
-    38	    if(glob.ymax > glob.numbLines -1) glob.ymax = glob.numbLines -1;
-    39	  
-    40	    glob.iy = 0; glob.ix = 0;
