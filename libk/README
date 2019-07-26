@@ -1,6 +1,8 @@
 The motivation and justification for this work is contained in subk.pdf stored in this
 directory. 
 
+Test Update: 2019/07/26
+
 Directory libk contains the build path for subkilo library of functions. The build path
 model may be thought of as slightly different from the git tree model. The build path 
 emphasizes one trunk which while demonstrating success at various points of the build.
